@@ -1,0 +1,127 @@
+USER MANUAL GENERATION PROMPT
+==============================
+
+You are a senior technical writer specializing in enterprise software documentation. Generate a comprehensive, professional user manual for the following software system.
+
+INSTRUCTIONS:
+- Write in clear, concise language accessible to non-technical end users.
+- Use consistent formatting with numbered steps for procedures.
+- Include practical examples and screenshot placeholders where applicable.
+- Follow Microsoft Manual of Style conventions.
+- Target audience: business users with basic computer literacy.
+
+INPUT REQUIRED:
+- Software/System Name: [INSERT NAME]
+- Version Number: [INSERT VERSION]
+- Target Audience: [INSERT AUDIENCE]
+- Key Features: [LIST KEY FEATURES]
+- Platform(s): [WEB / DESKTOP / MOBILE]
+- Client/Organization Name: [INSERT NAME]
+
+GENERATE THE FOLLOWING SECTIONS:
+
+1. COVER PAGE
+   - Document title: "[System Name] User Manual"
+   - Version number and date
+   - Prepared by / Prepared for
+   - Confidentiality notice
+   - Document control number
+
+2. DOCUMENT CONTROL
+   - Revision history table (version, date, author, change description)
+   - Approval signatures table (role, name, signature, date)
+   - Distribution list
+
+3. TABLE OF CONTENTS
+   - Auto-generated section listing with page references
+   - List of figures
+   - List of tables
+
+4. INTRODUCTION
+   - Purpose of the document
+   - Scope of the system
+   - Intended audience and reading guide
+   - Document conventions (icons, formatting, terminology)
+   - References to related documents
+
+5. SYSTEM OVERVIEW
+   - High-level system description
+   - Key business objectives the system supports
+   - System architecture overview (simplified for end users)
+   - User roles and permissions summary table
+
+6. SYSTEM REQUIREMENTS
+   - Hardware requirements (minimum and recommended)
+   - Software requirements (OS, browser, dependencies)
+   - Network requirements
+   - Account prerequisites and access provisioning
+
+7. GETTING STARTED
+   - How to access the system (URL, login page)
+   - First-time login and password setup
+   - Dashboard overview and navigation guide
+   - User profile setup and preferences
+   - Workspace/environment configuration
+
+8. FEATURE GUIDE (repeat for each major feature)
+   - Feature name and purpose
+   - Step-by-step usage instructions with numbered steps
+   - Screenshots/UI references (placeholder: [Screenshot: description])
+   - Input field descriptions and validation rules
+   - Tips and best practices
+   - Common workflows and use cases
+
+9. REPORTS AND ANALYTICS
+   - Available reports listing
+   - How to generate, filter, and export reports
+   - Report field definitions
+   - Scheduling automated reports
+
+10. ADMINISTRATION (if applicable)
+    - User management (add, edit, deactivate users)
+    - Role and permission configuration
+    - System settings and configuration options
+    - Audit log access
+
+11. INTEGRATIONS
+    - Third-party system connections
+    - API access overview (if user-facing)
+    - Data import/export procedures
+
+12. TROUBLESHOOTING
+    - Common issues table (symptom, possible cause, resolution)
+    - Error message reference table (error code, meaning, action)
+    - Performance optimization tips
+    - Browser/device-specific known issues
+
+13. FREQUENTLY ASKED QUESTIONS (FAQ)
+    - Minimum 15 FAQs covering login, navigation, data, reports, and permissions
+    - Organized by category
+
+14. GLOSSARY
+    - Alphabetical list of technical terms and business-specific terminology
+    - Minimum 20 terms with clear definitions
+
+15. APPENDICES
+    - Keyboard shortcuts reference
+    - Data field reference tables
+    - Workflow diagrams (placeholder)
+    - Sample data examples
+
+16. SUPPORT AND CONTACT INFORMATION
+    - Help desk contact details (email, phone, portal)
+    - Support hours and SLA summary
+    - Escalation matrix
+    - Feedback and enhancement request process
+
+FORMAT REQUIREMENTS:
+- Use heading hierarchy (H1 for sections, H2 for subsections, H3 for sub-subsections)
+- Number all steps in procedures sequentially
+- Use tables for structured data (requirements, error codes, FAQs)
+- Include placeholder markers for screenshots: [Screenshot: Brief Description]
+- Add "Note:", "Tip:", "Warning:", and "Important:" callout boxes where appropriate
+- Total length: 30-60 pages equivalent
+- Language: English (use formal but accessible tone)
+
+OUTPUT:
+Generate the complete user manual following all sections above. Ensure every section contains substantive content, not just headers. Each feature guide section should have at least 5 detailed steps.

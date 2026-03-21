@@ -1,0 +1,165 @@
+QA STATUS REPORT GENERATION PROMPT
+=====================================
+
+You are a senior QA manager preparing a comprehensive quality assurance status report for project stakeholders. Generate a professional QA status report based on the provided testing data and project context.
+
+INSTRUCTIONS:
+- Present data clearly with executive summary first, then detailed analysis.
+- Use RAG (Red/Amber/Green) status indicators for quick assessment.
+- Include trend analysis comparing current period to previous periods.
+- Provide actionable recommendations, not just data.
+- Highlight risks and blockers prominently.
+- Include visual-ready data (tables formatted for easy chart creation).
+
+INPUT REQUIRED:
+- Project Name: [INSERT PROJECT NAME]
+- Sprint/Phase: [INSERT SPRINT NUMBER OR PHASE NAME]
+- Reporting Period: [INSERT DATE RANGE]
+- Report Date: [INSERT DATE]
+- QA Lead: [INSERT NAME]
+- Test Environment: [INSERT ENVIRONMENT DETAILS]
+- Testing Phase: [UNIT / SIT / UAT / REGRESSION / PERFORMANCE]
+- Total Requirements in Scope: [INSERT NUMBER]
+- Team Size: [INSERT QA TEAM SIZE]
+
+TEST EXECUTION DATA (provide actuals):
+- Total Test Cases Planned: [NUMBER]
+- Test Cases Executed: [NUMBER]
+- Passed: [NUMBER]
+- Failed: [NUMBER]
+- Blocked: [NUMBER]
+- Not Executed: [NUMBER]
+- Defects Found: [NUMBER]
+- Critical Defects Open: [NUMBER]
+- Defects Fixed and Retested: [NUMBER]
+
+GENERATE THE FOLLOWING REPORT SECTIONS:
+
+1. EXECUTIVE SUMMARY
+   - Overall QA status: [GREEN / AMBER / RED] with justification
+   - One-paragraph summary of testing progress, quality posture, and key risks
+   - Go/No-Go recommendation for the current phase
+   - Top 3 highlights and top 3 concerns
+
+2. TEST PROGRESS DASHBOARD
+   a) Test Execution Summary
+      | Metric                    | Planned | Actual | % Complete | Status |
+      | Total Test Cases          |         |        |            | [RAG]  |
+      | Functional Tests          |         |        |            | [RAG]  |
+      | Integration Tests (SIT)   |         |        |            | [RAG]  |
+      | Acceptance Tests (UAT)    |         |        |            | [RAG]  |
+      | Regression Tests          |         |        |            | [RAG]  |
+      | Performance Tests         |         |        |            | [RAG]  |
+      | Security Tests            |         |        |            | [RAG]  |
+
+   b) Test Execution Trend (daily/weekly breakdown)
+      | Date/Week | Planned | Executed | Passed | Failed | Blocked | Cumulative % |
+
+   c) Test Execution Rate
+      - Planned rate vs. actual rate
+      - Projected completion date based on current velocity
+      - Schedule variance analysis
+
+3. DEFECT ANALYSIS
+   a) Defect Summary
+      | Metric                    | Count | Trend vs Last Period |
+      | Total Defects Found       |       | [Up/Down/Stable]     |
+      | Open Defects              |       |                      |
+      | Closed/Verified Defects   |       |                      |
+      | Reopened Defects          |       |                      |
+      | Deferred Defects          |       |                      |
+      | Rejected/Duplicate        |       |                      |
+
+   b) Defect Distribution by Severity
+      | Severity    | Open | In Progress | Fixed | Verified | Total |
+      | S1-Blocker  |      |             |       |          |       |
+      | S2-Critical |      |             |       |          |       |
+      | S3-Major    |      |             |       |          |       |
+      | S4-Minor    |      |             |       |          |       |
+      | S5-Cosmetic |      |             |       |          |       |
+
+   c) Defect Distribution by Module/Feature
+      | Module | Total Defects | Open | Critical/Blocker | Defect Density |
+
+   d) Defect Aging Analysis
+      | Age Range    | S1-Blocker | S2-Critical | S3-Major | S4-Minor |
+      | 0-2 days     |            |             |          |          |
+      | 3-5 days     |            |             |          |          |
+      | 6-10 days    |            |             |          |          |
+      | 11-20 days   |            |             |          |          |
+      | 20+ days     |            |             |          |          |
+
+   e) Defect Trend Chart Data
+      - Daily/weekly defect found vs. fixed trend
+      - Cumulative open defect trend
+      - Defect discovery rate analysis
+
+   f) Top 10 Open Defects
+      | # | Defect ID | Title | Severity | Module | Age (days) | Assigned To | Blocker? |
+
+4. QUALITY METRICS
+   | Metric                          | Value  | Target | Status |
+   | Test Case Pass Rate             |    %   |    %   | [RAG]  |
+   | Defect Detection Rate           |        |        | [RAG]  |
+   | Defect Fix Rate                 |    %   |    %   | [RAG]  |
+   | Defect Reopen Rate              |    %   | <5%    | [RAG]  |
+   | Defect Rejection Rate           |    %   | <10%   | [RAG]  |
+   | Test Coverage (Req. to TC)      |    %   | 100%   | [RAG]  |
+   | Defect Density (per module)     |        |        | [RAG]  |
+   | Average Defect Resolution Time  |  days  |  days  | [RAG]  |
+   | SLA Compliance                  |    %   |    %   | [RAG]  |
+   | Automation Coverage             |    %   |    %   | [RAG]  |
+
+5. REQUIREMENT TRACEABILITY
+   | Requirement ID | Description | # Test Cases | Executed | Passed | Covered? |
+   - Requirements with no test coverage (gap analysis)
+   - Requirements with failed test cases (risk areas)
+
+6. ENVIRONMENT AND INFRASTRUCTURE
+   - Environment availability and uptime during the period
+   - Environment issues encountered and resolution
+   - Test data readiness status
+   - Tool/infrastructure issues
+
+7. RISKS AND ISSUES
+   | # | Type | Description | Impact | Probability | Mitigation | Owner | Status |
+   - Testing risks (schedule, resource, technical, dependency)
+   - Open issues requiring management attention
+   - Dependencies on other teams/vendors
+
+8. BLOCKERS
+   | # | Blocker Description | Impact | Blocked Since | Escalated To | Resolution ETA |
+   - Items preventing test progress
+   - Required actions and owners
+
+9. RESOURCE UTILIZATION
+   | Team Member | Role | Allocated % | Actual % | Modules Assigned | Status |
+   - Team capacity vs. demand analysis
+   - Resource constraints and needs
+
+10. UPCOMING PERIOD PLAN
+    - Test cases planned for next period
+    - Key milestones and deadlines
+    - Resource requirements
+    - Dependencies and prerequisites
+    - Risk mitigation actions planned
+
+11. RECOMMENDATIONS
+    - Actionable recommendations for improving quality
+    - Process improvement suggestions
+    - Resource or tool requests
+    - Escalation recommendations
+
+12. APPENDICES
+    - Detailed defect list
+    - Test execution logs
+    - Environment configuration details
+    - Glossary of terms used in the report
+
+OUTPUT FORMAT:
+- Professional report format suitable for stakeholder presentation
+- Use tables for all quantitative data
+- Include RAG status indicators
+- Add trend arrows (improvement/decline) where applicable
+- Keep executive summary to one page
+- Total report: 8-15 pages equivalent

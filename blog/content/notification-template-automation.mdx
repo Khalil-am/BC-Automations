@@ -1,0 +1,110 @@
+---
+title: "Notification Template Automation"
+description: "Create professional email notifications, system alerts, and communication templates for business workflows using AI-driven automation prompts."
+date: "2026-03-18"
+tags: ["Notifications", "Templates", "Automation"]
+featured: true
+readTime: "5 min read"
+author: "khalil"
+---
+
+## Automation Name
+
+**Notification Template Automation**
+
+This automation generates a complete set of notification templates for business systems — including email notifications, in-app alerts, SMS messages, and workflow status updates. Ideal for consultants configuring notification workflows in ERP, CRM, or custom business applications.
+
+---
+
+## Prompt
+
+```text
+You are a senior business analyst specializing in enterprise communication workflows.
+Generate a complete notification template package for [BUSINESS PROCESS NAME]
+in [SYSTEM NAME].
+
+The package should include:
+1. Overview — purpose and scope of notifications in this process
+2. Notification Matrix — table with columns:
+   - Notification ID (format: NOTIF-[PROCESS]-001)
+   - Trigger Event (what action triggers this notification)
+   - Notification Type (Email/SMS/In-App/Push)
+   - Recipient Role(s)
+   - Priority (Critical/High/Medium/Low)
+   - Frequency (Real-time/Daily Digest/Weekly)
+3. Email Templates for each notification:
+   - Subject line with dynamic placeholders using {{variable_name}} syntax
+   - Email body with professional formatting
+   - Dynamic fields clearly marked
+   - Call-to-action buttons where appropriate
+   - Footer with standard disclaimers
+4. In-App Alert Templates:
+   - Alert title
+   - Alert message (max 100 characters)
+   - Action link
+   - Icon suggestion
+5. SMS Templates (max 160 characters each)
+6. Escalation Rules:
+   - Time-based escalation triggers
+   - Escalation recipient chain
+   - Maximum escalation levels
+7. Template Variables Reference — table of all dynamic variables used
+
+Generate templates for at least 8 different notification scenarios
+covering the full lifecycle of the process.
+```
+
+---
+
+## Description
+
+Notification templates are a critical but often overlooked component of system implementations. This automation produces a complete notification package that covers every touchpoint in a business process — from initial triggers to escalation chains.
+
+### Key Benefits
+
+- **Full Coverage** — Email, SMS, in-app, and push notification templates in one package
+- **Dynamic Variables** — Pre-defined placeholder syntax ready for system configuration
+- **Escalation Logic** — Built-in escalation rules with time-based triggers
+- **Multi-Channel** — Templates optimized for each communication channel
+- **Process-Aware** — Covers the entire lifecycle of the business process
+
+### How to Use
+
+1. Copy the prompt above
+2. Replace `[BUSINESS PROCESS NAME]` (e.g., "Purchase Requisition Approval")
+3. Replace `[SYSTEM NAME]` (e.g., "ServiceNow", "SAP Ariba")
+4. Run the prompt in your preferred AI tool
+5. Review and customize templates for client branding
+6. Map dynamic variables to actual system fields
+7. Configure in the target notification engine
+
+### Common Use Cases
+
+- **Approval Workflows** — Request submitted, pending approval, approved, rejected
+- **Order Processing** — Order placed, confirmed, shipped, delivered
+- **Incident Management** — Ticket created, assigned, escalated, resolved
+- **Employee Onboarding** — Welcome, task assignments, progress updates, completion
+- **Contract Management** — Draft created, review pending, signed, expiring
+
+---
+
+## Downloadable Templates
+
+<DownloadSection>
+  <DownloadButton
+    fileName="notification-prompt.txt"
+    label="Notification Template Prompt"
+    description="Complete AI prompt for generating notification packages"
+  />
+  <DownloadButton
+    fileName="notification-matrix.txt"
+    label="Notification Matrix Template"
+    description="Blank notification matrix for mapping triggers and recipients"
+  />
+</DownloadSection>
+
+---
+
+## Conclusion
+
+The Notification Template Automation saves hours of configuration work by generating a complete, structured notification package for any business process. Use this alongside the User Manual and Test Case automations to deliver a comprehensive implementation package to your clients.

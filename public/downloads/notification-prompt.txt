@@ -1,0 +1,119 @@
+NOTIFICATION TEMPLATE GENERATION PROMPT
+=========================================
+
+You are a senior business analyst and UX writer specializing in enterprise communication design. Generate a comprehensive notification framework for the following system, covering all communication channels and escalation rules.
+
+INSTRUCTIONS:
+- Write notification copy that is clear, actionable, and professional.
+- Each notification must include a clear call-to-action.
+- Follow UX writing best practices: concise, human, helpful.
+- Ensure tone consistency across all channels.
+- Include dynamic variable placeholders using {{variable_name}} syntax.
+- Design for localization readiness.
+
+INPUT REQUIRED:
+- System/Application Name: [INSERT NAME]
+- Organization Name: [INSERT ORG NAME]
+- Key Workflows: [LIST MAIN WORKFLOWS THAT TRIGGER NOTIFICATIONS]
+- User Roles: [LIST ALL USER ROLES]
+- Communication Channels Available: [EMAIL / SMS / IN-APP / PUSH / WHATSAPP / SLACK]
+- Business Hours: [INSERT HOURS AND TIMEZONE]
+- SLA Requirements: [INSERT SLA DETAILS IF ANY]
+- Branding Guidelines: [INSERT OR REFERENCE BRAND TONE/VOICE]
+
+GENERATE THE FOLLOWING:
+
+1. NOTIFICATION INVENTORY
+   Create a complete inventory of all system notifications organized by:
+   - Trigger event (what action or condition initiates the notification)
+   - Notification type: Informational / Action Required / Warning / Alert / Confirmation
+   - Target audience (which user role receives it)
+   - Channel(s): Email, SMS, In-App, Push Notification
+   - Priority: Critical / High / Medium / Low
+   - Frequency: Real-time / Batched (hourly/daily) / Scheduled
+
+2. EMAIL NOTIFICATION TEMPLATES (minimum 15 templates)
+   For each email template provide:
+   - Template ID and name
+   - Trigger event
+   - Subject line (max 60 characters, include {{variables}})
+   - Preheader text (max 100 characters)
+   - Email body with:
+     * Greeting: "Dear {{user_name}},"
+     * Context paragraph (what happened)
+     * Details section (key information with variables)
+     * Action required (clear CTA with button text)
+     * Deadline/urgency if applicable
+     * Support information
+     * Sign-off
+   - Categories to cover:
+     * Account: Welcome, password reset, profile update, account locked
+     * Workflow: Task assigned, approval needed, status change, deadline reminder
+     * System: Maintenance window, downtime alert, release notes
+     * Reporting: Report ready, threshold breach, SLA warning
+     * Administrative: Role change, access granted/revoked
+
+3. SMS NOTIFICATION TEMPLATES (minimum 10 templates)
+   For each SMS template provide:
+   - Template ID and name
+   - Trigger event
+   - Message body (max 160 characters per segment)
+   - Include {{variables}} for personalization
+   - Include short URL placeholder for action links
+   - Categories: urgent approvals, OTP/verification, deadline alerts, status updates
+
+4. IN-APP NOTIFICATION TEMPLATES (minimum 12 templates)
+   For each in-app notification provide:
+   - Template ID and name
+   - Trigger event
+   - Notification title (max 50 characters)
+   - Notification body (max 150 characters)
+   - Icon/type indicator: info / success / warning / error
+   - Action link destination
+   - Auto-dismiss: Yes (with duration) / No (requires manual dismiss)
+   - Persist in notification center: Yes / No
+
+5. PUSH NOTIFICATION TEMPLATES (minimum 8 templates)
+   For each push notification provide:
+   - Template ID and name
+   - Trigger event
+   - Title (max 40 characters)
+   - Body (max 120 characters)
+   - Deep link destination
+   - Sound: default / custom / silent
+
+6. ESCALATION RULES
+   Define escalation chains for critical notifications:
+   - Level 1: Initial notification (channel, timing, recipient)
+   - Level 2: First escalation (channel, timing, recipient) - if no response in X minutes
+   - Level 3: Second escalation (channel, timing, recipient) - if no response in X hours
+   - Level 4: Management escalation (channel, timing, recipient)
+   - Cover scenarios:
+     * Pending approval beyond SLA
+     * System downtime/outage
+     * Security incident
+     * Failed integration/data sync
+     * Overdue task/milestone
+
+7. NOTIFICATION PREFERENCES MATRIX
+   Define default notification preferences per role:
+   | Event Type | Role | Email | SMS | In-App | Push | Configurable? |
+   User opt-out rules and mandatory notifications
+
+8. DO NOT DISTURB (DND) RULES
+   - Quiet hours definition
+   - DND override conditions (critical/emergency only)
+   - Batching rules for non-critical notifications during DND
+   - Time zone handling
+
+9. NOTIFICATION FREQUENCY CAPS
+   - Maximum notifications per channel per hour/day
+   - Digest/batching rules for high-frequency events
+   - Duplicate suppression rules
+
+OUTPUT REQUIREMENTS:
+- Use {{variable_name}} for all dynamic content
+- Include character counts for SMS and push notifications
+- Provide both English and Arabic placeholders where applicable
+- Mark mandatory vs. optional notifications
+- Include A/B test suggestions for key notifications

@@ -1,0 +1,96 @@
+TEST CASE GENERATION PROMPT
+==============================
+
+You are a senior QA engineer with expertise in enterprise software testing. Generate comprehensive test cases for the following system module. Include both System Integration Testing (SIT) and User Acceptance Testing (UAT) cases.
+
+INSTRUCTIONS:
+- Write test cases that are clear, repeatable, and independently executable.
+- Each test case must have a single, verifiable expected result.
+- Cover positive scenarios, negative scenarios, boundary conditions, and edge cases.
+- Prioritize based on business criticality and risk.
+- Follow IEEE 829 test documentation standards.
+
+INPUT REQUIRED:
+- Project Name: [INSERT PROJECT NAME]
+- Module/Feature Name: [INSERT MODULE NAME]
+- Module Description: [DESCRIBE THE MODULE FUNCTIONALITY]
+- Business Rules: [LIST KEY BUSINESS RULES]
+- User Roles Involved: [LIST ROLES]
+- Integrations: [LIST CONNECTED SYSTEMS]
+- Environment: [DEV / SIT / UAT / STAGING]
+
+GENERATE TEST CASES IN THE FOLLOWING FORMAT:
+
+For each test case, include:
+
+| Field              | Description                                                    |
+|--------------------|----------------------------------------------------------------|
+| Test Case ID       | Unique identifier (format: [MODULE]-[TYPE]-[NNN])              |
+|                    | TYPE: SIT for integration, UAT for acceptance                  |
+| Test Suite         | Logical grouping of related test cases                         |
+| Test Scenario      | High-level description of what is being tested                 |
+| Test Case Title    | Concise title of the specific test                             |
+| Preconditions      | Required state/setup before test execution                     |
+| Test Steps         | Numbered step-by-step actions (minimum 3 steps per case)       |
+| Test Data          | Specific input values to use during testing                    |
+| Expected Result    | Precise, measurable expected outcome                           |
+| Actual Result      | [To be filled during execution]                                |
+| Status             | [Not Executed / Pass / Fail / Blocked / Skipped]               |
+| Priority           | P1-Critical / P2-High / P3-Medium / P4-Low                    |
+| Severity           | S1-Blocker / S2-Critical / S3-Major / S4-Minor / S5-Cosmetic  |
+| Test Type          | Functional / Integration / Regression / Security / Performance |
+| Tested By          | [To be filled during execution]                                |
+| Test Date          | [To be filled during execution]                                |
+| Defect ID          | [To be filled if test fails]                                   |
+| Comments/Notes     | Additional observations or dependencies                        |
+
+COVERAGE REQUIREMENTS:
+
+1. FUNCTIONAL TEST CASES (minimum 15 per module)
+   - Happy path / positive scenarios (at least 5)
+   - Negative scenarios and error handling (at least 4)
+   - Boundary value testing (at least 3)
+   - Data validation rules (at least 3)
+
+2. SYSTEM INTEGRATION TEST (SIT) CASES (minimum 8)
+   - API request/response validation
+   - Data flow between integrated systems
+   - Error handling for integration failures
+   - Data transformation and mapping accuracy
+   - Timeout and retry mechanism testing
+   - Authentication and authorization between systems
+
+3. USER ACCEPTANCE TEST (UAT) CASES (minimum 10)
+   - End-to-end business workflow scenarios
+   - Business rule validation
+   - Role-based access verification
+   - Report accuracy validation
+   - User interface and usability checks
+   - Real-world data scenario testing
+
+4. REGRESSION TEST CASES (minimum 5)
+   - Core functionality smoke tests
+   - Previously reported defect verification
+   - Cross-module impact validation
+
+5. SECURITY TEST CASES (minimum 5)
+   - Authentication and session management
+   - Authorization and role enforcement
+   - Input validation and injection prevention
+   - Sensitive data handling
+   - Audit trail verification
+
+6. PERFORMANCE TEST CASES (minimum 3)
+   - Page/API response time under normal load
+   - Concurrent user handling
+   - Data volume stress testing
+
+ADDITIONAL REQUIREMENTS:
+- Include a Test Summary section at the top with total counts by type and priority
+- Include a Traceability Matrix mapping test cases to requirements
+- Flag any assumptions or dependencies
+- Note any test environment requirements or test data setup needs
+- Suggest automation candidates (mark with [AUTOMATE] tag)
+
+OUTPUT:
+Generate the complete test case document with all categories above. Every test case must be fully detailed with specific test data values - do not use generic placeholders like "valid data" without specifying the actual values.

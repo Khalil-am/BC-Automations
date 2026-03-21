@@ -1,0 +1,349 @@
+CLIENT ONBOARDING CHECKLIST TEMPLATE
+========================================
+
+Client Name: _______________________________________________
+Project Name: ______________________________________________
+Solution: __________________________________________________
+Project Manager: ___________________________________________
+Implementation Lead: _______________________________________
+Contract Start Date: _______________________________________
+Target Go-Live Date: _______________________________________
+Version: ____________________________________________________
+
+STATUS LEGEND:
+  [ ] Not Started    [~] In Progress    [x] Complete    [!] Blocked    [-] N/A
+
+================================================================================
+
+PHASE 1: PRE-ONBOARDING
+-------------------------
+Target: Week -2 to Week 0
+Phase Owner: ___________________________
+
+1.1 CONTRACT AND COMMERCIALS
+    [ ] Contract fully executed and filed                    Owner: _______ Due: _______
+    [ ] SOW/scope document finalized and signed              Owner: _______ Due: _______
+    [ ] NDA signed by all parties                            Owner: _______ Due: _______
+    [ ] Payment terms confirmed and billing set up           Owner: _______ Due: _______
+    [ ] Licenses provisioned and entitlements confirmed      Owner: _______ Due: _______
+    [ ] Insurance/liability documentation received           Owner: _______ Due: _______
+
+1.2 INTERNAL READINESS
+    [ ] Project manager assigned                             Owner: _______ Due: _______
+    [ ] Implementation lead assigned                         Owner: _______ Due: _______
+    [ ] Technical resources allocated                        Owner: _______ Due: _______
+    [ ] Project workspace created (Jira/Confluence/etc.)     Owner: _______ Due: _______
+    [ ] Internal kickoff meeting held                        Owner: _______ Due: _______
+    [ ] Client requirements reviewed                         Owner: _______ Due: _______
+    [ ] Risk assessment completed                            Owner: _______ Due: _______
+    [ ] Onboarding materials prepared                        Owner: _______ Due: _______
+
+1.3 CLIENT COMMUNICATION
+    [ ] Welcome email sent                                   Owner: _______ Due: _______
+    [ ] Onboarding questionnaire sent and received           Owner: _______ Due: _______
+    [ ] Kickoff meeting scheduled                            Owner: _______ Due: _______
+    [ ] Point-of-contact details shared                      Owner: _______ Due: _______
+    [ ] Project portal access provided                       Owner: _______ Due: _______
+
+QUALITY GATE 1: Pre-Onboarding Complete
+  [ ] All contracts signed
+  [ ] Team assigned and briefed
+  [ ] Client communication initiated
+  Approved By: _________________ Date: _________________
+
+================================================================================
+
+PHASE 2: KICKOFF AND DISCOVERY
+-------------------------------
+Target: Week 1-2
+Phase Owner: ___________________________
+
+2.1 KICKOFF MEETING
+    [ ] Kickoff meeting conducted                            Owner: _______ Due: _______
+    [ ] Scope and objectives confirmed                       Owner: _______ Due: _______
+    [ ] Timeline and milestones reviewed                     Owner: _______ Due: _______
+    [ ] Communication plan agreed                            Owner: _______ Due: _______
+    [ ] Governance structure established                     Owner: _______ Due: _______
+    [ ] Success criteria defined                             Owner: _______ Due: _______
+    [ ] Risk register initialized                            Owner: _______ Due: _______
+    [ ] Meeting minutes distributed                          Owner: _______ Due: _______
+
+2.2 REQUIREMENTS DISCOVERY
+    [ ] Business process workshops scheduled                 Owner: _______ Due: _______
+    [ ] As-is process documentation completed                Owner: _______ Due: _______
+    [ ] To-be requirements documented                        Owner: _______ Due: _______
+    [ ] Integration requirements gathered                    Owner: _______ Due: _______
+    [ ] Data migration requirements documented               Owner: _______ Due: _______
+    [ ] Reporting requirements gathered                      Owner: _______ Due: _______
+    [ ] Security/compliance requirements listed              Owner: _______ Due: _______
+    [ ] User roles and access matrix defined                 Owner: _______ Due: _______
+    [ ] Requirements sign-off obtained                       Owner: _______ Due: _______
+
+2.3 TECHNICAL DISCOVERY
+    [ ] Infrastructure assessment completed                  Owner: _______ Due: _______
+    [ ] Network/connectivity requirements documented         Owner: _______ Due: _______
+    [ ] Integration architecture reviewed                    Owner: _______ Due: _______
+    [ ] Data inventory and quality assessment done           Owner: _______ Due: _______
+    [ ] Security checklist completed                         Owner: _______ Due: _______
+    [ ] API specifications reviewed                          Owner: _______ Due: _______
+    [ ] Third-party vendor coordination planned              Owner: _______ Due: _______
+
+QUALITY GATE 2: Discovery Complete
+  [ ] All requirements documented and signed off
+  [ ] Technical assessment complete
+  [ ] Project plan finalized
+  Approved By: _________________ Date: _________________
+
+================================================================================
+
+PHASE 3: ENVIRONMENT SETUP
+----------------------------
+Target: Week 2-4
+Phase Owner: ___________________________
+
+3.1 INFRASTRUCTURE
+    [ ] Dev environment provisioned                          Owner: _______ Due: _______
+    [ ] SIT environment provisioned                          Owner: _______ Due: _______
+    [ ] UAT environment provisioned                          Owner: _______ Due: _______
+    [ ] Production environment provisioned                   Owner: _______ Due: _______
+    [ ] Database setup completed                             Owner: _______ Due: _______
+    [ ] Network/firewall rules configured                    Owner: _______ Due: _______
+    [ ] SSL certificates installed                           Owner: _______ Due: _______
+    [ ] Backup and DR configured                             Owner: _______ Due: _______
+    [ ] Monitoring and alerting set up                       Owner: _______ Due: _______
+
+3.2 ACCESS MANAGEMENT
+    [ ] Admin accounts created                               Owner: _______ Due: _______
+    [ ] SSO/LDAP integration configured                      Owner: _______ Due: _______
+    [ ] RBAC configured                                      Owner: _______ Due: _______
+    [ ] MFA/2FA enabled                                      Owner: _______ Due: _______
+    [ ] VPN access set up (if needed)                        Owner: _______ Due: _______
+    [ ] Service accounts created for integrations            Owner: _______ Due: _______
+
+3.3 INTEGRATION SETUP
+    [ ] API credentials exchanged                            Owner: _______ Due: _______
+    [ ] Integration environments configured                  Owner: _______ Due: _______
+    [ ] Connectivity tested for all integration points       Owner: _______ Due: _______
+    [ ] Data mapping and transformation configured           Owner: _______ Due: _______
+
+QUALITY GATE 3: Environments Ready
+  [ ] All environments provisioned and accessible
+  [ ] Integration connectivity verified
+  [ ] Security controls in place
+  Approved By: _________________ Date: _________________
+
+================================================================================
+
+PHASE 4: CONFIGURATION AND CUSTOMIZATION
+------------------------------------------
+Target: Week 3-6
+Phase Owner: ___________________________
+
+4.1 SYSTEM CONFIGURATION
+    [ ] Base system configured per requirements              Owner: _______ Due: _______
+    [ ] Workflows and business rules set up                  Owner: _______ Due: _______
+    [ ] Notifications and alerts configured                  Owner: _______ Due: _______
+    [ ] Reports and dashboards configured                    Owner: _______ Due: _______
+    [ ] Templates and forms set up                           Owner: _______ Due: _______
+    [ ] Localization settings applied                        Owner: _______ Due: _______
+    [ ] Branding and white-labeling applied                  Owner: _______ Due: _______
+    [ ] Configuration review with client                     Owner: _______ Due: _______
+
+4.2 DATA MIGRATION
+    [ ] Data extracted from source systems                   Owner: _______ Due: _______
+    [ ] Data cleansing completed                             Owner: _______ Due: _______
+    [ ] Data mapping validated                               Owner: _______ Due: _______
+    [ ] Trial migration (dry run) executed                   Owner: _______ Due: _______
+    [ ] Data validation and reconciliation done              Owner: _______ Due: _______
+    [ ] Migration sign-off from client                       Owner: _______ Due: _______
+
+4.3 CUSTOM DEVELOPMENT (if applicable)
+    [ ] Custom features developed                            Owner: _______ Due: _______
+    [ ] Custom integrations developed                        Owner: _______ Due: _______
+    [ ] Custom reports developed                             Owner: _______ Due: _______
+    [ ] Code review completed                                Owner: _______ Due: _______
+    [ ] Unit testing passed                                  Owner: _______ Due: _______
+
+QUALITY GATE 4: Configuration Complete
+  [ ] All configurations reviewed and approved by client
+  [ ] Data migration dry run successful
+  [ ] Custom development unit tested
+  Approved By: _________________ Date: _________________
+
+================================================================================
+
+PHASE 5: TESTING
+-----------------
+Target: Week 5-8
+Phase Owner: ___________________________
+
+5.1 SYSTEM INTEGRATION TESTING (SIT)
+    [ ] SIT test plan prepared and approved                  Owner: _______ Due: _______
+    [ ] Test cases developed                                 Owner: _______ Due: _______
+    [ ] SIT executed                                         Owner: _______ Due: _______
+    [ ] Defects logged and tracked                           Owner: _______ Due: _______
+    [ ] All critical/blocker defects resolved                Owner: _______ Due: _______
+    [ ] SIT sign-off obtained                                Owner: _______ Due: _______
+
+5.2 USER ACCEPTANCE TESTING (UAT)
+    [ ] UAT plan and schedule approved                       Owner: _______ Due: _______
+    [ ] UAT environment prepared                             Owner: _______ Due: _______
+    [ ] Test data loaded                                     Owner: _______ Due: _______
+    [ ] UAT executed by client                               Owner: _______ Due: _______
+    [ ] Defects resolved and retested                        Owner: _______ Due: _______
+    [ ] UAT sign-off from client stakeholders                Owner: _______ Due: _______
+
+5.3 PERFORMANCE AND SECURITY
+    [ ] Load testing completed                               Owner: _______ Due: _______
+    [ ] Security assessment completed                        Owner: _______ Due: _______
+    [ ] Penetration testing completed (if required)          Owner: _______ Due: _______
+    [ ] Performance benchmarks met                           Owner: _______ Due: _______
+    [ ] Security sign-off obtained                           Owner: _______ Due: _______
+
+QUALITY GATE 5: Testing Complete
+  [ ] All test types executed and signed off
+  [ ] No open S1/S2 defects
+  [ ] Performance benchmarks met
+  [ ] Security clearance obtained
+  Approved By: _________________ Date: _________________
+
+================================================================================
+
+PHASE 6: TRAINING AND ENABLEMENT
+----------------------------------
+Target: Week 7-9
+Phase Owner: ___________________________
+
+    [ ] Training needs assessment completed                  Owner: _______ Due: _______
+    [ ] Training materials developed                         Owner: _______ Due: _______
+    [ ] Training environment set up                          Owner: _______ Due: _______
+    [ ] Admin training delivered                             Owner: _______ Due: _______
+    [ ] End-user training delivered                          Owner: _______ Due: _______
+    [ ] IT/technical team training delivered                 Owner: _______ Due: _______
+    [ ] Training assessment/certification completed          Owner: _______ Due: _______
+    [ ] Training feedback collected                          Owner: _______ Due: _______
+    [ ] User manual delivered                                Owner: _______ Due: _______
+    [ ] Admin guide delivered                                Owner: _______ Due: _______
+    [ ] Technical documentation delivered                    Owner: _______ Due: _______
+    [ ] Operations runbook delivered                         Owner: _______ Due: _______
+
+QUALITY GATE 6: Training Complete
+  [ ] All user groups trained
+  [ ] Documentation delivered and accepted
+  [ ] Training satisfaction score > ____%
+  Approved By: _________________ Date: _________________
+
+================================================================================
+
+PHASE 7: GO-LIVE PREPARATION
+------------------------------
+Target: Week 9-10
+Phase Owner: ___________________________
+
+    [ ] Go-live checklist reviewed                           Owner: _______ Due: _______
+    [ ] Production environment validated                     Owner: _______ Due: _______
+    [ ] Final data migration executed                        Owner: _______ Due: _______
+    [ ] Production smoke testing passed                      Owner: _______ Due: _______
+    [ ] Rollback plan documented and reviewed                Owner: _______ Due: _______
+    [ ] Go/No-Go meeting conducted                           Owner: _______ Due: _______
+    [ ] Go-live communication plan ready                     Owner: _______ Due: _______
+    [ ] Cutover plan finalized with timing                   Owner: _______ Due: _______
+    [ ] Support team briefed and on standby                  Owner: _______ Due: _______
+
+QUALITY GATE 7: Go-Live Approved
+  [ ] Go/No-Go decision: GO
+  [ ] All prerequisites met
+  [ ] Rollback plan approved
+  [ ] Support team ready
+  Approved By: _________________ Date: _________________
+
+================================================================================
+
+PHASE 8: GO-LIVE AND HYPERCARE
+---------------------------------
+Target: Week 10-14
+Phase Owner: ___________________________
+
+8.1 GO-LIVE
+    [ ] Cutover plan executed                                Owner: _______ Due: _______
+    [ ] Production validation completed                      Owner: _______ Due: _______
+    [ ] User access verified                                 Owner: _______ Due: _______
+    [ ] Integrations operational                             Owner: _______ Due: _______
+    [ ] Go-live announcement sent                            Owner: _______ Due: _______
+
+8.2 HYPERCARE (Weeks 10-14)
+    [ ] Daily health check meetings scheduled                Owner: _______ Due: _______
+    [ ] Support team providing dedicated coverage            Owner: _______ Due: _______
+    [ ] Issues triaged and resolved within SLA               Owner: _______ Due: _______
+    [ ] Performance monitored and stable                     Owner: _______ Due: _______
+    [ ] User feedback collected and addressed                Owner: _______ Due: _______
+    [ ] Weekly hypercare status reports issued                Owner: _______ Due: _______
+    [ ] Hypercare exit criteria met                          Owner: _______ Due: _______
+
+================================================================================
+
+PHASE 9: TRANSITION TO BAU
+----------------------------
+Target: Week 14-16
+Phase Owner: ___________________________
+
+9.1 HANDOVER
+    [ ] Knowledge transfer to client operations              Owner: _______ Due: _______
+    [ ] Support handover to BAU team                         Owner: _______ Due: _______
+    [ ] Escalation matrix documented                         Owner: _______ Due: _______
+    [ ] Monitoring handover completed                        Owner: _______ Due: _______
+    [ ] All credentials/access documented                    Owner: _______ Due: _______
+
+9.2 PROJECT CLOSURE
+    [ ] Lessons learned workshop conducted                   Owner: _______ Due: _______
+    [ ] Client satisfaction survey completed                 Owner: _______ Due: _______
+    [ ] Project closure report prepared                      Owner: _______ Due: _______
+    [ ] Final deliverables signed off                        Owner: _______ Due: _______
+    [ ] Outstanding items documented as backlog              Owner: _______ Due: _______
+    [ ] Contract reconciliation completed                    Owner: _______ Due: _______
+    [ ] Project formally closed                              Owner: _______ Due: _______
+
+================================================================================
+
+RAID LOG
+---------
+
+RISKS
+| # | Description | Impact | Probability | Mitigation | Owner | Status |
+|---|-------------|--------|-------------|------------|-------|--------|
+|   |             | [ ] H [ ] M [ ] L | [ ] H [ ] M [ ] L |  |  | [ ] Open [ ] Closed |
+|   |             |        |             |            |       |        |
+|   |             |        |             |            |       |        |
+
+ASSUMPTIONS
+| # | Assumption | Impact if Invalid | Validated? | Date |
+|---|------------|-------------------|------------|------|
+|   |            |                   | [ ] Yes [ ] No |  |
+|   |            |                   |            |      |
+
+ISSUES
+| # | Description | Impact | Priority | Owner | Resolution | Status |
+|---|-------------|--------|----------|-------|------------|--------|
+|   |             |        | [ ] H [ ] M [ ] L |  |  | [ ] Open [ ] Resolved |
+|   |             |        |          |       |            |        |
+
+DEPENDENCIES
+| # | Description | Dependent On | Required By | Status |
+|---|-------------|--------------|-------------|--------|
+|   |             |              |             | [ ] Met [ ] At Risk [ ] Missed |
+|   |             |              |             |        |
+
+================================================================================
+
+SIGN-OFF
+---------
+
+| Role                  | Name           | Signature      | Date       |
+|-----------------------|----------------|----------------|------------|
+| Project Manager       | ______________ | ______________ | __________ |
+| Implementation Lead   | ______________ | ______________ | __________ |
+| Client Project Sponsor| ______________ | ______________ | __________ |
+| Client IT Lead        | ______________ | ______________ | __________ |
+
+================================================================================
+END OF TEMPLATE

@@ -1,0 +1,244 @@
+CLIENT ONBOARDING CHECKLIST GENERATION PROMPT
+=================================================
+
+You are a senior IT business consultant specializing in enterprise software implementation and client onboarding. Generate a comprehensive client onboarding checklist for a new software implementation project.
+
+INSTRUCTIONS:
+- Create a structured, phase-based onboarding plan that ensures nothing is missed.
+- Include both technical and business onboarding activities.
+- Assign clear ownership and timelines for each task.
+- Include quality gates between phases.
+- Cover compliance, security, and governance requirements.
+- Design for repeatability across multiple client onboardings.
+
+INPUT REQUIRED:
+- Client/Organization Name: [INSERT NAME]
+- Project Name: [INSERT PROJECT NAME]
+- Solution/Product Being Implemented: [INSERT SOLUTION NAME]
+- Implementation Type: [NEW / MIGRATION / UPGRADE]
+- Deployment Model: [CLOUD / ON-PREMISE / HYBRID]
+- Contract Start Date: [INSERT DATE]
+- Target Go-Live Date: [INSERT DATE]
+- Client Industry: [INSERT INDUSTRY]
+- Client Size: [SMB / MID-MARKET / ENTERPRISE]
+- Key Stakeholders: [LIST NAMES AND ROLES]
+- Implementation Team: [LIST TEAM MEMBERS AND ROLES]
+
+GENERATE THE FOLLOWING ONBOARDING PHASES:
+
+PHASE 1: PRE-ONBOARDING (Week -2 to 0)
+  1.1 Contract and Commercials
+      - Contract execution and sign-off verification
+      - SOW/scope document finalization
+      - NDA and confidentiality agreements
+      - Payment terms and billing setup
+      - License provisioning and entitlements
+      - Insurance and liability documentation
+
+  1.2 Internal Readiness
+      - Assign project manager and implementation lead
+      - Assign technical resources and SMEs
+      - Create internal project workspace (Jira, Confluence, etc.)
+      - Schedule internal kickoff meeting
+      - Review client requirements and discovery notes
+      - Prepare client-facing materials and templates
+      - Risk assessment and mitigation planning
+
+  1.3 Client Communication
+      - Send welcome email with onboarding timeline
+      - Share onboarding questionnaire
+      - Schedule kickoff meeting
+      - Provide point-of-contact details
+      - Share project portal access instructions
+
+PHASE 2: KICKOFF AND DISCOVERY (Week 1-2)
+  2.1 Kickoff Meeting
+      - Introductions and team alignment
+      - Project scope and objectives review
+      - Timeline and milestone walkthrough
+      - Communication plan agreement (frequency, channels, escalation)
+      - Governance structure and decision-making framework
+      - Success criteria and KPI definition
+      - Risk register initialization
+      - Action items and next steps
+
+  2.2 Requirements Discovery
+      - Business process workshops (schedule and facilitate)
+      - Current state (as-is) documentation
+      - Future state (to-be) requirements
+      - Integration requirements gathering
+      - Data migration requirements
+      - Reporting and analytics requirements
+      - Security and compliance requirements
+      - User roles and access requirements
+      - Customization and configuration needs
+
+  2.3 Technical Discovery
+      - Infrastructure assessment
+      - Network and connectivity requirements
+      - Integration architecture review
+      - Data inventory and quality assessment
+      - Security assessment and compliance checklist
+      - API and interface specifications
+      - Third-party vendor coordination plan
+
+PHASE 3: ENVIRONMENT SETUP (Week 2-4)
+  3.1 Infrastructure Provisioning
+      - Environment setup (Dev, SIT, UAT, Production)
+      - Server/cloud resource provisioning
+      - Database setup and configuration
+      - Network configuration and firewall rules
+      - SSL certificates and domain setup
+      - Backup and disaster recovery configuration
+      - Monitoring and alerting setup
+
+  3.2 Access Management
+      - Client admin account creation
+      - User provisioning plan
+      - SSO/LDAP/AD integration setup
+      - Role-based access control configuration
+      - MFA/2FA setup
+      - VPN access (if required)
+      - Service account creation for integrations
+
+  3.3 Integration Setup
+      - API key/credential exchange
+      - Integration environment configuration
+      - Middleware/ESB setup (if applicable)
+      - Test connectivity for all integration points
+      - Data mapping and transformation setup
+
+PHASE 4: CONFIGURATION AND CUSTOMIZATION (Week 3-6)
+  4.1 System Configuration
+      - Base system configuration per requirements
+      - Workflow and business rule configuration
+      - Notification and alert setup
+      - Report and dashboard configuration
+      - Template and form setup
+      - Localization and language settings
+      - Branding and white-labeling (logo, colors, email templates)
+
+  4.2 Data Migration
+      - Data extraction from source systems
+      - Data cleansing and transformation
+      - Data mapping validation
+      - Trial migration (dry run)
+      - Data validation and reconciliation
+      - Migration sign-off from client
+      - Final production migration plan
+
+  4.3 Customization/Development
+      - Custom feature development (if in scope)
+      - Custom integration development
+      - Custom report development
+      - Code review and quality assurance
+      - Unit testing of custom components
+
+PHASE 5: TESTING (Week 5-8)
+  5.1 System Integration Testing (SIT)
+      - Test plan preparation and approval
+      - Test case development
+      - SIT execution
+      - Defect logging and tracking
+      - Integration point validation
+      - SIT sign-off
+
+  5.2 User Acceptance Testing (UAT)
+      - UAT plan and schedule
+      - UAT environment preparation
+      - Test data setup
+      - Client UAT execution support
+      - Defect resolution and retesting
+      - UAT sign-off from client stakeholders
+
+  5.3 Performance and Security Testing
+      - Load testing
+      - Stress testing
+      - Security vulnerability assessment
+      - Penetration testing (if required)
+      - Performance optimization
+      - Security sign-off
+
+PHASE 6: TRAINING AND ENABLEMENT (Week 7-9)
+  6.1 Training Preparation
+      - Training needs assessment
+      - Training material development
+      - Training environment setup
+      - Train-the-trainer program (if applicable)
+      - Training schedule and invitations
+
+  6.2 Training Delivery
+      - Administrator training
+      - End-user training (role-based)
+      - Technical/IT team training
+      - Training assessment/certification
+      - Training feedback collection
+
+  6.3 Documentation Handover
+      - User manual delivery
+      - Admin guide delivery
+      - Technical documentation
+      - API documentation
+      - Runbook/operations manual
+      - Known issues and workarounds document
+
+PHASE 7: GO-LIVE PREPARATION (Week 9-10)
+  7.1 Go-Live Readiness
+      - Go-live checklist review
+      - Production environment validation
+      - Final data migration
+      - Production smoke testing
+      - Rollback plan preparation and review
+      - Go/No-Go meeting and decision
+      - Communication plan for go-live (internal and external)
+
+  7.2 Cutover Plan
+      - Detailed cutover steps with timing
+      - Responsible person for each step
+      - Communication checkpoints
+      - Validation checkpoints
+      - Rollback triggers and procedures
+
+PHASE 8: GO-LIVE AND HYPERCARE (Week 10-14)
+  8.1 Go-Live Execution
+      - Execute cutover plan
+      - Production validation
+      - User access verification
+      - Integration monitoring
+      - Go-live announcement to users
+
+  8.2 Hypercare Support
+      - Dedicated support team availability
+      - Daily health check meetings
+      - Rapid defect resolution process
+      - Performance monitoring
+      - User feedback collection
+      - Issue triage and prioritization
+      - Weekly status reports during hypercare
+
+PHASE 9: TRANSITION TO BAU (Week 14-16)
+  9.1 Handover
+      - Knowledge transfer to client IT/operations team
+      - Support handover to BAU support team
+      - Escalation matrix and SLA documentation
+      - Monitoring and alerting handover
+      - Access and credential handover
+      - Vendor management documentation
+
+  9.2 Project Closure
+      - Lessons learned workshop
+      - Client satisfaction survey
+      - Project closure report
+      - Final deliverables sign-off
+      - Outstanding items and backlog handover
+      - Contract reconciliation
+      - Celebrate success
+
+OUTPUT REQUIREMENTS:
+- Each task must have: task description, owner, due date, status field, dependencies, and notes
+- Include quality gates between phases with pass/fail criteria
+- Include RAID log (Risks, Assumptions, Issues, Dependencies)
+- Mark critical path items
+- Include estimated effort for each task
+- Provide the checklist in a trackable format (suitable for project management tools)
+- Total: 150-250 individual checklist items across all phases

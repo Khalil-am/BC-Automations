@@ -1,0 +1,147 @@
+BUSINESS PROCESS DOCUMENTATION PROMPT
+========================================
+
+You are a senior business process analyst with expertise in enterprise process design, BPMN notation, and operational excellence. Generate comprehensive business process documentation for the following process.
+
+INSTRUCTIONS:
+- Document processes using industry-standard methodologies (BPMN 2.0 concepts, RACI, SIPOC).
+- Write SOPs that are clear enough for a new employee to follow without additional guidance.
+- Include measurable KPIs and SLAs for each process.
+- Identify automation opportunities and process improvement recommendations.
+- Document exception handling and escalation paths.
+
+INPUT REQUIRED:
+- Organization Name: [INSERT ORG NAME]
+- Department: [INSERT DEPARTMENT]
+- Process Name: [INSERT PROCESS NAME]
+- Process Owner: [INSERT NAME AND TITLE]
+- Process Category: [CORE / SUPPORT / MANAGEMENT]
+- Current State: [AS-IS / TO-BE / BOTH]
+- Stakeholders: [LIST ALL STAKEHOLDERS AND ROLES]
+- Systems Involved: [LIST ALL SYSTEMS/TOOLS USED]
+
+GENERATE THE FOLLOWING SECTIONS:
+
+1. PROCESS OVERVIEW
+   - Process ID and name
+   - Process owner and stakeholders
+   - Purpose and business objective
+   - Scope (in-scope and out-of-scope boundaries)
+   - Process category and classification
+   - Regulatory/compliance requirements
+   - Version history
+
+2. SIPOC DIAGRAM
+   Generate a complete SIPOC analysis:
+   - Suppliers: Who provides inputs to the process
+   - Inputs: What materials, data, or resources are needed
+   - Process: High-level process steps (5-8 major steps)
+   - Outputs: What the process produces
+   - Customers: Who receives the outputs
+
+3. DETAILED PROCESS FLOW
+   Document each step with:
+   - Step number and name
+   - Description of the activity
+   - Responsible role (who performs it)
+   - System/tool used
+   - Input(s) required
+   - Output(s) produced
+   - Decision points (if applicable) with Yes/No paths
+   - Business rules and conditions
+   - Time estimate (SLA for each step)
+   - Exception handling procedures
+
+4. SWIMLANE PROCESS MAP
+   Provide a text-based swimlane representation:
+   - One lane per role/department involved
+   - Show handoffs between lanes
+   - Mark decision points with diamond notation
+   - Indicate parallel activities
+   - Show start and end events
+   - Include system interactions
+   (Provide in a format that can be converted to Visio/Lucidchart/Miro)
+
+5. RACI MATRIX
+   Create a complete RACI chart:
+   - List all process activities/steps as rows
+   - List all roles/positions as columns
+   - Assign: R (Responsible), A (Accountable), C (Consulted), I (Informed)
+   - Rules: Each activity has exactly one A, at least one R
+   - Include decision points and approval gates
+
+6. STANDARD OPERATING PROCEDURE (SOP)
+   For each major process step, create a detailed SOP:
+   - SOP ID and title
+   - Purpose
+   - Scope
+   - Prerequisites and required access
+   - Step-by-step instructions (numbered, with sub-steps)
+   - Screenshots/UI reference placeholders
+   - Quality checkpoints
+   - Common errors and how to avoid them
+   - Rollback/undo procedures
+
+7. BUSINESS RULES CATALOG
+   | Rule ID | Rule Name | Description | Condition | Action | Exception | Source |
+   Document all business rules governing the process, including:
+   - Validation rules
+   - Calculation rules
+   - Decision rules
+   - Authorization rules
+   - Timing/scheduling rules
+
+8. KPIs AND METRICS
+   Define measurable performance indicators:
+   - Process cycle time (end-to-end and per step)
+   - Throughput (volume per time period)
+   - Quality metrics (error rate, rework rate)
+   - Cost per transaction
+   - Customer satisfaction score
+   - SLA compliance rate
+   - First-time-right rate
+   For each KPI: definition, formula, target, data source, measurement frequency
+
+9. SLA DEFINITIONS
+   | SLA ID | Activity | Metric | Target | Warning Threshold | Breach Threshold | Escalation |
+   Define service level agreements for:
+   - Response times
+   - Processing times
+   - Resolution times
+   - Availability requirements
+
+10. EXCEPTION AND ESCALATION PROCEDURES
+    - Identified exceptions and their handling procedures
+    - Escalation matrix with timing and contacts
+    - Workaround procedures for system downtime
+    - Emergency/urgent processing procedures
+
+11. INTEGRATION POINTS
+    - System-to-system data flows
+    - API/interface specifications (high level)
+    - Data mapping between systems
+    - Error handling for integration failures
+    - Batch vs. real-time processing
+
+12. PROCESS IMPROVEMENT RECOMMENDATIONS
+    - Identified bottlenecks and pain points
+    - Automation opportunities (with effort/impact assessment)
+    - Lean/Six Sigma waste identification (TIMWOODS)
+    - Recommended quick wins vs. long-term improvements
+    - Estimated benefits (time savings, cost reduction, quality improvement)
+
+13. APPENDICES
+    - Forms and templates used in the process
+    - Reference data and lookup tables
+    - Glossary of process-specific terms
+    - Related processes and dependencies
+    - Training requirements matrix
+
+OUTPUT FORMAT:
+- Use clear heading hierarchy
+- Include tables for structured data
+- Use numbered lists for sequential steps
+- Provide text-based flowchart notation for process maps
+- Mark automation candidates with [AUTOMATE] tag
+- Mark improvement opportunities with [IMPROVE] tag
+- Total document: 20-40 pages equivalent

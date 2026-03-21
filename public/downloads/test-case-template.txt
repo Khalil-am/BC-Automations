@@ -1,0 +1,153 @@
+TEST CASE DOCUMENT TEMPLATE
+==============================
+
+Project Name: _______________________________________________
+Module/Feature: _____________________________________________
+Prepared By: ________________________________________________
+Date: _______________________________________________________
+Version: ____________________________________________________
+Environment: [DEV / SIT / UAT / STAGING]
+
+================================================================================
+
+TEST SUMMARY
+-------------
+| Test Type          | Total | Not Executed | Pass | Fail | Blocked | Skipped |
+|--------------------|-------|--------------|------|------|---------|---------|
+| Functional         |       |              |      |      |         |         |
+| Integration (SIT)  |       |              |      |      |         |         |
+| Acceptance (UAT)   |       |              |      |      |         |         |
+| Regression         |       |              |      |      |         |         |
+| Security           |       |              |      |      |         |         |
+| Performance        |       |              |      |      |         |         |
+| TOTAL              |       |              |      |      |         |         |
+
+Pass Rate: _____ %
+Defects Found: _____
+Blocked Cases: _____
+
+================================================================================
+
+TEST CASES
+-----------
+
+TEST CASE #1
+| Field              | Value                                                  |
+|--------------------|--------------------------------------------------------|
+| Test Case ID       |                                                        |
+| Test Suite         |                                                        |
+| Test Scenario      |                                                        |
+| Test Case Title    |                                                        |
+| Preconditions      |                                                        |
+| Test Steps         | 1.                                                     |
+|                    | 2.                                                     |
+|                    | 3.                                                     |
+|                    | 4.                                                     |
+|                    | 5.                                                     |
+| Test Data          |                                                        |
+| Expected Result    |                                                        |
+| Actual Result      |                                                        |
+| Status             | [ ] Not Executed  [ ] Pass  [ ] Fail  [ ] Blocked      |
+| Priority           | [ ] P1-Critical  [ ] P2-High  [ ] P3-Medium  [ ] P4-Low|
+| Severity           | [ ] S1  [ ] S2  [ ] S3  [ ] S4  [ ] S5                 |
+| Test Type          | [ ] Functional  [ ] Integration  [ ] Regression        |
+|                    | [ ] Security  [ ] Performance                          |
+| Tested By          |                                                        |
+| Test Date          |                                                        |
+| Defect ID          |                                                        |
+| Comments           |                                                        |
+
+--------------------------------------------------------------------------------
+
+TEST CASE #2
+| Field              | Value                                                  |
+|--------------------|--------------------------------------------------------|
+| Test Case ID       |                                                        |
+| Test Suite         |                                                        |
+| Test Scenario      |                                                        |
+| Test Case Title    |                                                        |
+| Preconditions      |                                                        |
+| Test Steps         | 1.                                                     |
+|                    | 2.                                                     |
+|                    | 3.                                                     |
+|                    | 4.                                                     |
+|                    | 5.                                                     |
+| Test Data          |                                                        |
+| Expected Result    |                                                        |
+| Actual Result      |                                                        |
+| Status             | [ ] Not Executed  [ ] Pass  [ ] Fail  [ ] Blocked      |
+| Priority           | [ ] P1-Critical  [ ] P2-High  [ ] P3-Medium  [ ] P4-Low|
+| Severity           | [ ] S1  [ ] S2  [ ] S3  [ ] S4  [ ] S5                 |
+| Test Type          | [ ] Functional  [ ] Integration  [ ] Regression        |
+|                    | [ ] Security  [ ] Performance                          |
+| Tested By          |                                                        |
+| Test Date          |                                                        |
+| Defect ID          |                                                        |
+| Comments           |                                                        |
+
+--------------------------------------------------------------------------------
+
+TEST CASE #3
+| Field              | Value                                                  |
+|--------------------|--------------------------------------------------------|
+| Test Case ID       |                                                        |
+| Test Suite         |                                                        |
+| Test Scenario      |                                                        |
+| Test Case Title    |                                                        |
+| Preconditions      |                                                        |
+| Test Steps         | 1.                                                     |
+|                    | 2.                                                     |
+|                    | 3.                                                     |
+|                    | 4.                                                     |
+|                    | 5.                                                     |
+| Test Data          |                                                        |
+| Expected Result    |                                                        |
+| Actual Result      |                                                        |
+| Status             | [ ] Not Executed  [ ] Pass  [ ] Fail  [ ] Blocked      |
+| Priority           | [ ] P1-Critical  [ ] P2-High  [ ] P3-Medium  [ ] P4-Low|
+| Severity           | [ ] S1  [ ] S2  [ ] S3  [ ] S4  [ ] S5                 |
+| Test Type          | [ ] Functional  [ ] Integration  [ ] Regression        |
+|                    | [ ] Security  [ ] Performance                          |
+| Tested By          |                                                        |
+| Test Date          |                                                        |
+| Defect ID          |                                                        |
+| Comments           |                                                        |
+
+--------------------------------------------------------------------------------
+(Copy and repeat the test case block above for additional test cases)
+
+================================================================================
+
+TRACEABILITY MATRIX
+--------------------
+| Requirement ID | Requirement Description | Test Case IDs | Coverage Status |
+|----------------|-------------------------|---------------|-----------------|
+|                |                         |               | [ ] Covered     |
+|                |                         |               | [ ] Covered     |
+|                |                         |               | [ ] Covered     |
+|                |                         |               | [ ] Covered     |
+|                |                         |               | [ ] Covered     |
+
+================================================================================
+
+DEFECT LOG
+-----------
+| Defect ID | Test Case ID | Summary | Severity | Status | Assigned To | Date |
+|-----------|--------------|---------|----------|--------|-------------|------|
+|           |              |         |          |        |             |      |
+|           |              |         |          |        |             |      |
+|           |              |         |          |        |             |      |
+
+================================================================================
+
+TEST EXECUTION SIGN-OFF
+------------------------
+| Role              | Name           | Signature      | Date       |
+|-------------------|----------------|----------------|------------|
+| QA Lead           | ______________ | ______________ | __________ |
+| Business Analyst  | ______________ | ______________ | __________ |
+| Product Owner     | ______________ | ______________ | __________ |
+| Project Manager   | ______________ | ______________ | __________ |
+
+================================================================================
+END OF TEMPLATE
