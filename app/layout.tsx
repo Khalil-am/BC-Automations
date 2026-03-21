@@ -43,6 +43,17 @@ export default function RootLayout({
           <SiteNav />
           {children}
           <Footer />
+          {/* Decorative watermark */}
+          <div
+            className="fixed bottom-0 left-0 z-0 pointer-events-none select-none"
+            aria-hidden="true"
+          >
+            <img
+              src="/watermark.svg"
+              alt=""
+              className="w-[320px] md:w-[420px] h-auto opacity-[0.08] dark:opacity-[0.10] -translate-x-1/4 translate-y-1/4"
+            />
+          </div>
         </ThemeProvider>
       </body>
     </html>
