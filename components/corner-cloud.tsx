@@ -3,10 +3,10 @@
 import { IconCloud } from "@/components/ui/icon-cloud";
 
 const images = [
-  "https://cdn.simpleicons.org/microsoftword",
-  "https://cdn.simpleicons.org/microsoftpowerpoint",
-  "https://cdn.simpleicons.org/microsoftexcel",
-  "https://cdn.simpleicons.org/microsoftproject",
+  "https://img.icons8.com/color/96/microsoft-word-2019.png",
+  "https://img.icons8.com/color/96/microsoft-powerpoint-2019.png",
+  "https://img.icons8.com/color/96/microsoft-excel-2019.png",
+  "https://img.icons8.com/color/96/ms-project.png",
   "https://cdn.simpleicons.org/n8n",
   "https://cdn.simpleicons.org/claude",
 ];
