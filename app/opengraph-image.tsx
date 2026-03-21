@@ -1,154 +1,215 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Blog - Magic UI";
+export const alt = "BC Automations";
 export const size = {
   width: 1200,
   height: 630,
 };
 export const contentType = "image/png";
 
-const getAssetData = async () => {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
-
-    const fontUrls = {
-      clashDisplay: `${baseUrl}/fonts/ClashDisplay-Semibold.ttf`,
-      cabinetGrotesk: `${baseUrl}/fonts/CabinetGrotesk-Medium.ttf`,
-      logo: `${baseUrl}/magicui-logo.png`,
-    };
-
-    const [clashDisplayRes, cabinetGroteskRes, logoRes] = await Promise.all([
-      fetch(fontUrls.clashDisplay),
-      fetch(fontUrls.cabinetGrotesk),
-      fetch(fontUrls.logo),
-    ]);
-
-    if (!clashDisplayRes.ok || !cabinetGroteskRes.ok || !logoRes.ok) {
-      return null;
-    }
-
-    const [clashDisplay, cabinetGrotesk, logoImage] = await Promise.all([
-      clashDisplayRes.arrayBuffer(),
-      cabinetGroteskRes.arrayBuffer(),
-      logoRes.arrayBuffer(),
-    ]);
-
-    const logoBase64 = `data:image/png;base64,${Buffer.from(logoImage).toString(
-      "base64"
-    )}`;
-
-    return {
-      clashDisplay,
-      cabinetGrotesk,
-      logoBase64,
-    };
-  } catch (error) {
-    console.error("Failed to load assets:", error);
-    return null;
-  }
-};
-
-const styles = {
-  wrapper: {
-    height: "100%",
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    padding: "40px",
-  },
-  container: {
-    height: "100%",
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    border: "4px solid black",
-    padding: "60px",
-  },
-  title: {
-    fontSize: "64px",
-    color: "black",
-    marginBottom: "10px",
-    textAlign: "center",
-    fontFamily: "Clash Display",
-    letterSpacing: "0.5px",
-  },
-  description: {
-    fontSize: "28px",
-    color: "black",
-    textAlign: "center",
-    maxWidth: "800px",
-    fontFamily: "Clash Display",
-    letterSpacing: "0.5px",
-    border: "3px solid black",
-    padding: "10px 15px",
-    borderRadius: "100px",
-  },
-} as const;
-
 export default async function Image() {
-  try {
-    const assetData = await getAssetData();
-
-    return new ImageResponse(
-      (
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          height: "100%",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "#0D1B3E",
+          fontFamily: "sans-serif",
+        }}
+      >
+        {/* Top header bar */}
         <div
           style={{
-            ...styles.wrapper,
-            fontFamily: assetData ? "Clash Display" : "system-ui",
+            width: "100%",
+            height: "72px",
+            display: "flex",
+            alignItems: "center",
+            padding: "0 56px",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
           }}
         >
-          <div style={styles.container}>
-            <img
-              src={
-                assetData?.logoBase64 ||
-                `${process.env.NEXT_PUBLIC_SITE_URL}/magicui-logo.png`
-              }
-              alt="MagicUI Logo"
-              width={100}
-              height={100}
+          <span
+            style={{
+              fontSize: "20px",
+              fontWeight: 700,
+              color: "rgba(255,255,255,0.9)",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            master team
+          </span>
+          <span
+            style={{
+              marginLeft: "auto",
+              fontSize: "11px",
+              fontWeight: 600,
+              letterSpacing: "0.1em",
+              color: "rgba(255,255,255,0.45)",
+            }}
+          >
+            AUTOMATION TEMPLATES
+          </span>
+        </div>
+
+        {/* Main content */}
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            padding: "0 56px",
+          }}
+        >
+          {/* Eyebrow */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              marginBottom: "24px",
+            }}
+          >
+            <div
+              style={{
+                width: "28px",
+                height: "2px",
+                background: "#4A5AE8",
+                borderRadius: "2px",
+              }}
             />
-            <h1 style={styles.title}>Blog</h1>
-            <p style={styles.description}>
-              A blog about design, development, and other things.
-            </p>
+            <span
+              style={{
+                fontSize: "12px",
+                fontWeight: 700,
+                letterSpacing: "0.18em",
+                color: "#4A5AE8",
+              }}
+            >
+              BUSINESS CONSULTING
+            </span>
+          </div>
+
+          {/* Title */}
+          <div
+            style={{
+              display: "flex",
+              fontSize: "52px",
+              fontWeight: 800,
+              lineHeight: 1.15,
+              letterSpacing: "-0.02em",
+              marginBottom: "16px",
+            }}
+          >
+            <span style={{ color: "#FFFFFF" }}>BC </span>
+            <span style={{ color: "#4A5AE8" }}>Automations</span>
+          </div>
+
+          {/* Subtitle */}
+          <span
+            style={{
+              fontSize: "18px",
+              fontWeight: 400,
+              color: "rgba(255,255,255,0.55)",
+              lineHeight: 1.6,
+              maxWidth: "500px",
+              marginBottom: "48px",
+            }}
+          >
+            AI-powered automation templates for user manuals, test cases, notifications, and business process documentation.
+          </span>
+
+          {/* Gradient divider */}
+          <div
+            style={{
+              width: "56px",
+              height: "3px",
+              background: "linear-gradient(90deg, #3540DA 0%, #4A5AE8 100%)",
+              borderRadius: "3px",
+              marginBottom: "32px",
+            }}
+          />
+
+          {/* Meta grid */}
+          <div
+            style={{
+              display: "flex",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "10px",
+              background: "rgba(255,255,255,0.04)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                padding: "16px 24px",
+                borderRight: "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
+              <span style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.35)", marginBottom: "6px" }}>
+                TEMPLATES
+              </span>
+              <span style={{ fontSize: "14px", fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>
+                6 Automations
+              </span>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                padding: "16px 24px",
+                borderRight: "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
+              <span style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.35)", marginBottom: "6px" }}>
+                AUTHOR
+              </span>
+              <span style={{ fontSize: "14px", fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>
+                Khalil
+              </span>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                padding: "16px 24px",
+              }}
+            >
+              <span style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.35)", marginBottom: "6px" }}>
+                POWERED BY
+              </span>
+              <span style={{ fontSize: "14px", fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>
+                Claude AI
+              </span>
+            </div>
           </div>
         </div>
-      ),
-      {
-        ...size,
-        fonts: assetData
-          ? [
-              {
-                name: "Clash Display",
-                data: assetData.clashDisplay,
-                weight: 500,
-                style: "normal",
-              },
-              {
-                name: "Cabinet Grotesk",
-                data: assetData.cabinetGrotesk,
-                weight: 500,
-                style: "normal",
-              },
-            ]
-          : undefined,
-      }
-    );
-  } catch (error) {
-    console.error("Error generating image:", error);
-    return new Response(
-      `Failed to generate image: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`,
-      {
-        status: 500,
-      }
-    );
-  }
+
+        {/* Footer bar */}
+        <div
+          style={{
+            width: "100%",
+            height: "48px",
+            display: "flex",
+            alignItems: "center",
+            padding: "0 56px",
+            borderTop: "1px solid rgba(255,255,255,0.08)",
+          }}
+        >
+          <span style={{ fontSize: "11px", fontWeight: 500, color: "rgba(255,255,255,0.35)" }}>
+            2026 Master team. All rights reserved.
+          </span>
+          <span style={{ marginLeft: "auto", fontSize: "11px", fontWeight: 500, color: "rgba(255,255,255,0.35)" }}>
+            bc-automations.click
+          </span>
+        </div>
+      </div>
+    ),
+    { ...size }
+  );
 }
