@@ -19,6 +19,7 @@ import {
   DownloadButton,
   DownloadSection,
 } from "@/components/download-button";
+import { ClaudeCTA } from "@/components/claude-cta";
 
 const createHeading = (level: number) => {
   const Heading = ({
@@ -54,6 +55,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     Author,
     DownloadButton,
     DownloadSection,
+    ClaudeCTA,
     h1: createHeading(1),
     h2: createHeading(2),
     h3: createHeading(3),
