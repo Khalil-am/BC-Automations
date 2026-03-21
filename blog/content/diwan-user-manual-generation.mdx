@@ -1,0 +1,244 @@
+---
+title: "Diwan User Manual Generation Automation"
+description: "Automatically translate and generate professional user manuals for the Diwan Committee Management System in Arabic or English, using the client's official branded PowerPoint template."
+date: "2026-03-21"
+tags: ["Diwan System", "User Manuals", "Arabic ↔ English", "PPTX Automation"]
+featured: true
+readTime: "8 min read"
+author: "khalil"
+---
+
+## Automation Name
+
+**Diwan User Manual Generation — Bilingual (AR/EN)**
+
+This automation converts a Diwan Committee Management System user manual into a fully translated, professionally formatted PowerPoint presentation using the client's official branded template. Instead of manually translating 85+ slides and reformatting them one by one, this prompt produces a complete 50-slide user manual in the target language in minutes — covering all 11 system sections with consistent branding, proper text alignment, and section-by-section structure.
+
+---
+
+## Prompt
+
+```text
+Fill this template for my client [Client Name] with the Diwan content, but in [Language: AR/EN].
+Make sure all slides from the source are included and translated to [Language: AR/EN].
+
+Requirements:
+1. Use the [Client Name] template (.pptx) as the base for all slides
+2. Translate ALL content from the Diwan user manual to professional [Language: AR/EN]
+3. Maintain the full document structure:
+   - Cover slide with title: "Committee Management System" and subtitle: "User Manual Document" + version
+   - Table of Contents listing all 11 sections
+   - Section dividers (purple/branded slides) for each major section
+   - Content slides (white/branded slides) for all detailed content
+   - Thank You closing slide
+4. Include ALL sections from the source manual:
+   Section 1: Introduction (version history, approval table, overview)
+   Section 2: Visual Identity (logo, color palette, login background)
+   Section 3: Login Page
+   Section 4: Home Page
+   Section 5: Dashboard
+   Section 6: Committees Page (overview, creation, details, all 7 tabs: Data, Members, Meetings, Decisions, Tasks, Assignments, Documents)
+   Section 7: Meetings Page (overview, creation form, meeting details)
+   Section 8: Team Members Screen
+   Section 9: Circulars Center (overview, creation workflow)
+   Section 10: Executive Performance Dashboard (overview, committee details)
+   Section 11: Roles (Committee Chairperson, Committee Secretary, Committee Member — each with their specific permissions and capabilities)
+5. Consolidate duplicate content across roles while preserving unique permissions/capabilities
+6. All text must be properly aligned for [Language: AR/EN] (RTL for Arabic, LTR for English)
+7. Use the template's fonts as defined in the branded template
+8. Output as a single .pptx file
+```
+
+---
+
+## Required Files
+
+Attach **both** of the following files to your Claude conversation **before** pasting the prompt:
+
+| # | File Name | Purpose | Notes |
+|---|-----------|---------|-------|
+| 1 | User_manuel_template_en.pptx | Client's branded template with slide layouts (Cover, Content, Section Divider, Thank You) | Do NOT modify — contains all client branding assets |
+| 2 | Diwan_Usermanual_v1.2.pptx | Diwan user manual source content for translation (Arabic) | Use the latest version available |
+
+---
+
+## Description
+
+The Diwan Committee Management System is a governance platform used by organizations to manage all aspects of committee operations — creation, membership, meetings, decisions, tasks, assignments, circulars, and executive performance dashboards. The source user manual contains 85+ slides documenting every screen and workflow.
+
+This automation takes the full source manual and produces a professionally structured version in the target language using the client's official PowerPoint template, ready for client delivery without any additional formatting work.
+
+### What Gets Generated
+
+A complete **50-slide presentation** covering:
+
+| Slide Type | Count | Description |
+|------------|-------|-------------|
+| Cover | 1 | Branded slide with client logo, system title, and version number |
+| Table of Contents | 1 | Branded slide listing all 11 sections |
+| Section Dividers | ~15 | Purple slides marking each major section and role sub-sections |
+| Content Slides | ~32 | Content slides with body text, client logo footer, and accent bar |
+| Thank You | 1 | Branded closing slide with client logo |
+
+### Template Slide Layouts
+
+The client template provides 4 master layouts. Claude maps content to these automatically:
+
+| Layout | Visual Style | Used For |
+|--------|-------------|----------|
+| **Cover** (slide 1) | Branded background, client logo top-left, large bold title + subtitle | First slide only |
+| **Content** (slide 2) | White/light background, bold title top-left, client logo bottom-left, accent bar bottom | All detail/content slides |
+| **Section Divider** (slide 3) | Purple/dark magenta background, large white bold title | Section breaks |
+| **Thank You** (slide 4) | Branded background, centered client logo, "Thank you" text | Last slide only |
+
+### Full Content Mapping (Arabic to English)
+
+Every section from the source is translated and mapped:
+
+| # | Arabic Section | English Section | Slides |
+|---|---------------|-----------------|--------|
+| 1 | المقدمة | Introduction | Divider + 3 content |
+| 2 | الهوية البصرية | Visual Identity | Divider + 1 content |
+| 3 | صفحة تسجيل الدخول | Login Page | Divider + 1 content |
+| 4 | الصفحة الرئيسية | Home Page | Divider + 1 content |
+| 5 | لوحة القيادة | Dashboard | Divider + 1 content |
+| 6 | صفحة اللجان | Committees Page | Divider + 9 content |
+| 7 | صفحة الاجتماعات | Meetings Page | Divider + 3 content |
+| 8 | شاشة الأعضاء | Team Members Screen | Divider + 1 content |
+| 9 | مركز التعاميم | Circulars Center | Divider + 2 content |
+| 10 | لوحة الأداء التنفيذية | Executive Performance Dashboard | Divider + 2 content |
+| 11 | الادوار | Roles | 3 sub-dividers + 9 content |
+
+### Key Benefits
+
+- **85 slides to 50 slides** — Consolidates duplicate role-based content while preserving all unique information
+- **Full bilingual translation (AR to EN)** — Professional business translation, not machine-translated
+- **Brand-consistent output** — Uses the client's official template with correct logo, colors, and fonts
+- **RTL to LTR conversion** — Text alignment automatically adjusted based on target language
+- **Minutes not days** — Complete manual generated in a single Claude session (~3 minutes)
+- **Version-agnostic** — Works with any version of the Diwan manual (v1.0, v1.2, v2.0, etc.)
+
+### How to Use
+
+1. Open [Claude](https://claude.ai/new) (web or desktop app)
+2. Click the attachment button and upload **both files** (client template + Diwan source manual)
+3. Copy and paste the prompt from the box above
+4. Press Enter and wait for Claude to process (~2-3 minutes for the full 50 slides)
+5. Download the generated `.pptx` file
+6. Open in PowerPoint and add actual Diwan system screenshots where needed
+7. Review, adjust version numbers if needed, and deliver to client
+
+### Best Practices
+
+- Always use the **latest version** of both files — if the client releases a new Diwan version, update the source manual first
+- Add actual **Diwan system screenshots** in PowerPoint after generation for maximum impact
+- Update the **approval table** with real names and signatures before client delivery
+- Verify the **version number** on the cover matches the latest Diwan release
+- For a different client, provide their branded template file and replace `[Client Name]` in the prompt
+- If you need the full 85-slide version with repeated role content, add to the prompt: *"Do not consolidate. Keep all slides from the source, even if content repeats across roles."*
+
+### Customization Options
+
+Add any of these lines to the end of the prompt for specific adjustments:
+
+- **Different language:** "Translate to Arabic" or "Translate to English"
+- **Different client:** "This is for [Client Name] — use their branding from the attached template"
+- **Add screenshot placeholders:** "Include [SCREENSHOT] markers on each content slide"
+- **Partial generation:** "Only generate sections 1-6 (Introduction through Committees)"
+- **No consolidation:** "Do not consolidate. Keep all slides even if duplicated across roles."
+
+---
+
+## Quality Checklist
+
+After generating the manual, verify the following before client delivery:
+
+| Check | What to Verify |
+|-------|---------------|
+| Structure | All 11 sections present with section dividers |
+| Cover | Correct system name ("Committee Management System") and version number |
+| TOC | Table of Contents lists all 11 sections |
+| Introduction | Contains version history, approval table, and system overview |
+| Committees | All 7 tabs documented (Data, Members, Meetings, Decisions, Tasks, Assignments, Documents) |
+| Roles | All 3 roles covered (Chairperson, Secretary, Member) |
+| Language | All text is in the target language — no mixed-language text remaining |
+| Alignment | Text direction matches the target language (RTL for Arabic, LTR for English) |
+| Branding | Client logo on cover, content slides (bottom-left), and thank you slide |
+| Formatting | Accent bar on all content slides; branded section dividers |
+| Closing | Thank You slide is the final slide |
+
+---
+
+## Adding Screenshots with Video
+
+If you want the screenshots aligned and placed into the user manual automatically, follow this workflow:
+
+### Step 1: Record a Screen Walkthrough
+
+Record a short video of the Diwan system screens. As you navigate each screen, **say the name of the section out loud** (e.g., "This is the Login Page", "This is the Committees Page — Data tab", etc.). Cover all 11 sections in order.
+
+### Step 2: Re-prompt Claude with the Video
+
+Upload the video to Claude along with the generated `.pptx` file, and use the following prompt:
+
+```text
+I have a user manual PowerPoint (.pptx) for the Diwan Committee Management System.
+I also have a screen recording video where I walk through every screen of the system
+and name each section as I navigate.
+
+Please:
+1. Watch the video and extract/identify the relevant screenshot for each section
+2. Match each screenshot to the correct slide in the attached .pptx file based on
+   the section name I say in the video and the slide title
+3. For each content slide that has a screenshot placeholder or empty image area:
+   - Crop the video frame to show only the relevant application screen
+   - Remove any browser chrome, taskbar, or desktop elements
+   - Place the screenshot in the slide with proper sizing and alignment:
+     * Position: right-aligned on the slide for LTR, left-aligned for RTL
+     * Size: approximately 45-50% of the slide width
+     * Add a subtle drop shadow and 4px rounded corners
+     * Ensure the screenshot does not overlap with the text content
+4. Maintain all existing text, branding, and formatting — only add the screenshots
+5. Output the updated .pptx file with all screenshots embedded
+
+Sections to match (in order):
+- Login Page
+- Home Page
+- Dashboard
+- Committees Page (overview, creation form, details view, and all 7 tabs)
+- Meetings Page (list view, creation form, meeting details)
+- Team Members Screen
+- Circulars Center (list view, creation workflow)
+- Executive Performance Dashboard (overview, committee details)
+```
+
+### Step 3: Review and Deliver
+
+Open the updated file in PowerPoint, verify all screenshots are correctly placed and aligned, then deliver to the client.
+
+---
+
+## Downloadable Templates
+
+<DownloadSection>
+  <DownloadButton
+    fileName="User_manuel_template_en.pptx"
+    label="Client Branded Template (.pptx)"
+    description="Official branded PowerPoint template with slide layouts (Cover, Content, Section Divider, Thank You)"
+  />
+  <DownloadButton
+    fileName="Diwan_Usermanual_v1_2.pptx"
+    label="Diwan Source Manual v1.2 (.pptx)"
+    description="Diwan Committee Management System user manual — source content for translation (Arabic)"
+  />
+</DownloadSection>
+
+---
+
+## Conclusion
+
+The Diwan User Manual Generation Automation eliminates the most time-consuming part of the documentation delivery cycle — translating and reformatting system manuals into polished client deliverables in the target language. By standardizing the process around a reusable prompt and branded template, any team member can produce consistent, professional output in minutes rather than days. Works for any client and supports both Arabic and English output.
+
+This automation is part of the BC Automations consulting toolkit. Pair it with the [Test Case Generation](/blog/test-case-generation) and [Notification Template](/blog/notification-template-automation) automations for a complete Diwan documentation suite.
+
+<ClaudeCTA />
