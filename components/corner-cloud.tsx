@@ -9,6 +9,9 @@ const images = [
   "https://img.icons8.com/color/96/ms-project.png",
   "https://cdn.simpleicons.org/n8n",
   "https://cdn.simpleicons.org/claude",
+  "https://cdn.prod.website-files.com/65bac0754dd64f7bb25ac655/6605db7826d4dc3461c568a3_pplus%20(1).svg",
+  "https://cdn.prod.website-files.com/65bac0754dd64f7bb25ac655/6605db7858098dffa778e08e_splus%20(1).svg",
+  "https://cdn.prod.website-files.com/65bac0754dd64f7bb25ac655/695f7a4ef3ac704367242b75_Diwan-B-icon-p-500.png",
 ];
 
 export function CornerCloud() {
