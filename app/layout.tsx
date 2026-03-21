@@ -6,6 +6,7 @@ import { siteConfig } from "@/lib/site";
 import { metadataKeywords } from "./metadata";
 import { SiteNav } from "@/components/site-nav";
 import Footer from "@/components/footer";
+import { CornerCloud } from "@/components/corner-cloud";
 import "@/app/globals.css";
 
 export const viewport: Viewport = {
@@ -43,6 +44,7 @@ export default function RootLayout({
           <SiteNav />
           {children}
           <Footer />
+          <CornerCloud />
           {/* Decorative watermark */}
           <div
             className="fixed bottom-0 left-0 z-0 pointer-events-none select-none"
