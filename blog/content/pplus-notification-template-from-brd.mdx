@@ -1,0 +1,255 @@
+---
+title: "P+ Notification Template from BRD"
+description: "Automatically generate a client-specific P+ notification template by cross-referencing any BRD against the standard notification master — removing unneeded notifications and preserving only what the client's system supports."
+date: "2026-03-22"
+tags: ["PPlus", "Notification Template"]
+featured: true
+readTime: "8 min read"
+author: "Khalil Abu Mushref"
+---
+
+## Automation Name
+
+**P+ Notification Template from BRD — Bilingual (AR/EN)**
+
+This automation takes a client's BRD or Configuration Manual (.pptx/.pdf/.docx) and cross-references it against the standard P+ notification template (.xlsx) to produce a cleaned, client-specific notification file. Instead of manually reading through 100+ slides to identify which system modules exist and then hand-editing the notification spreadsheet, this prompt produces a validated, ready-to-configure notification template in minutes — with only the notifications that match the client's actual system scope.
+
+---
+
+## Prompt
+
+```
+I have two files:
+
+1. A P+ Notification Template (.xlsx) — the standard bilingual notification template
+   with 4 sheets: Level, Logs, Level WF, Log WF
+2. A client BRD / Configuration Manual — describing the client's actual P+ system
+   modules, features, logs, approval cycles, and phase gates
+
+Please cross-reference the BRD against the notification template and produce an
+updated notification template with ONLY the notifications that are supported by
+the client's BRD.
+
+Requirements:
+1. READ the BRD thoroughly — identify every module, log, feature, approval cycle,
+   and phase gate that exists in the client's system
+2. READ the notification template — understand every notification row across all
+   4 sheets (Level, Logs, Level WF, Log WF)
+3. CROSS-REFERENCE each notification against the BRD:
+   - If the BRD contains the module/feature/action → KEEP the notification row
+   - If the BRD does NOT contain the module/feature/action → REMOVE the row
+4. DO NOT add any new notifications — only remove unneeded ones
+5. PRESERVE the exact structure, formatting, column order, and bilingual content
+   of the original template — do not restructure or restyle anything
+6. PRESERVE all 4 sheet names exactly: Level, Logs, Level WF, Log WF
+7. Clean up any empty trailing rows after deletions
+8. Output as a single .xlsx file
+
+Cross-reference checklist (map each notification to a BRD section):
+
+LEVEL SHEET — Check if the BRD has:
+  - Level/Sector/Project creation, update, deletion
+
+LOGS SHEET — Check if the BRD has these modules at the project/workspace level:
+  - Tasks / Activities (create, update, delete, progress update)
+  - Task discussions / comments
+  - Deliverables (create, update, delete)
+  - Deliverable discussions / comments
+  - Milestones (create, update, delete)
+  - Milestone discussions / comments
+  - Risks (create, update, close, transfer to issue, delete)
+  - Issues (create, update, close, delete)
+  - Stakeholders (create, update, delete)
+  - Charter process
+  - Closure process
+  - Change Request process
+  - Deliverable Acceptance process
+  - Progress Updates
+  - Custom Logs (create, update, delete)
+  - Phase Gates (phase adoption, phase start)
+
+LEVEL WF SHEET — Check if the BRD has:
+  - Create Level approval workflow (approve, reject, return, start, terminate, resubmit)
+  - Create Level approval steps
+
+LOG WF SHEET — Check if the BRD has these approval workflows:
+  - Add Log Request (approve, reject, return, start, terminate, resubmit + steps)
+  - Update Log Request (approve, reject, return, start + steps)
+  - Delete Log Request (approve, reject, return, start + steps)
+  - Close Log Request (approve, reject, return, start + steps)
+  - Update Progress Log Request (approve, reject, return, start + steps)
+  - Move PhaseGate Request (approve, reject, return, start + steps)
+
+After completing the cross-reference, list what was REMOVED and why, then output
+the cleaned .xlsx file.
+```
+
+---
+
+## Required Files
+
+Attach **both** of the following files to your Claude conversation **before** pasting the prompt:
+
+| # | File | Purpose | Notes |
+|---|------|---------|-------|
+| 1 | `Notifications_Template.xlsx` | Standard P+ bilingual notification template with all 4 sheets | Do NOT modify — this is the master template |
+| 2 | Client BRD / Config Manual | Client's system specification describing modules, features, and approval cycles | Use the latest version available (.pptx / .pdf / .docx) |
+
+---
+
+## Downloadable Templates
+
+<a href="/templates/Notifications_Template.xlsx" download>Download P+ Notification Master Template (.xlsx)</a> — Standard bilingual notification template with all 4 sheets: Level, Logs, Level WF, Log WF.
+
+---
+
+## Description
+
+Every P+ (Project Management) system deployment requires a notification template that defines what email and in-app notifications are sent for each system action. The standard template covers **every possible** P+ module and workflow — but most clients only use a subset of features. Configuring notifications that don't exist in the client's system causes confusion during UAT and wastes configuration time.
+
+This automation reads the client's BRD to understand their actual system scope, then strips out notifications for features that don't exist in their deployment — producing a clean, client-specific template ready for system configuration.
+
+### What Gets Generated
+
+A cleaned `.xlsx` file with 4 sheets, containing only the notifications relevant to the client's BRD:
+
+| Sheet | Standard Template | After Cleanup | Content |
+|-------|------------------|---------------|---------|
+| **Level** | 3 rows | 3 rows (rarely changes) | Level create / update / delete notifications |
+| **Logs** | 35 rows | Varies by client | Module-level notifications (Tasks, Deliverables, Milestones, Risks, Issues, etc.) |
+| **Level WF** | 10 rows | 10 rows (rarely changes) | Create Level Request approval workflow notifications |
+| **Log WF** | 50 rows | Varies by client | Log-level approval workflow notifications (Add/Update/Delete/Close/Progress/PhaseGate) |
+
+### Template Structure (All 4 Sheets)
+
+Each sheet follows the same column structure:
+
+| Column | Level Sheet | Logs / Level WF / Log WF Sheets |
+|--------|------------|----------------------------------|
+| A | Event | Log (module name) |
+| B | Subject (bilingual) | Events (action trigger) |
+| C | English Email Template | Subject (bilingual) |
+| D | Arabic Email Template | Email Body English |
+| E | English App Template | Email Body Arabic |
+| F | Arabic App Template | Notification Centre Body English |
+| G | — | Notification Centre Body Arabic |
+
+### Notification Categories Mapped to BRD Sections
+
+| Notification Category | What to Look For in BRD | Common BRD Section Names |
+|----------------------|------------------------|--------------------------|
+| Tasks / Activities | Task creation forms, activity tabs, Gantt/schedule | "Activity", "Schedule", "Tasks" |
+| Discussions | Comment/discussion features on tasks, deliverables, milestones | "Discussion", "Comments" |
+| Deliverables | Deliverable creation forms, acceptance workflows | "Deliverables", "Outputs" |
+| Milestones | Milestone creation forms, weight/date fields | "Milestones", "Key Milestones" |
+| Risks | Risk creation forms, risk matrix, impact/probability | "Risks", "Risk Management" |
+| Issues | Issue creation forms, resolution plans | "Issues", "Challenges" |
+| Stakeholders | Stakeholder tabs, internal/external roles | "Stakeholders", "Team Members" |
+| Charter | Charter creation process, approval cycle | "Project Charter", "Charter" |
+| Closure | Closure forms, completion reports | "Closure", "Project Completion" |
+| Change Request | CR forms, impact assessment | "Change Request", "CR" |
+| Deliverable Acceptance | DAF forms, acceptance workflows | "Deliverable Acceptance", "DAF" |
+| Progress Updates | Status update forms, progress reporting | "Progress Update", "Status Update" |
+| Custom Logs | Additional log types, custom modules | "Custom Log", "Additional Logs" |
+| Phase Gates | Phase gate tabs, phase checklists | "PhaseGate", "Phase Gate", "Phases" |
+| Approval Workflows | Approval cycles, workflow diagrams | "Approval Cycles", "Workflows" |
+
+### Key Benefits
+
+- **98 notification rows audited automatically** — No manual line-by-line BRD comparison needed
+- **Zero false notifications** — Only notifications for features that exist in the client's system
+- **Bilingual integrity preserved** — Arabic and English content maintained exactly as-is
+- **Structure untouched** — Same 4 sheets, same columns, same formatting — just fewer rows
+- **Minutes not hours** — Complete cross-reference and cleanup in a single Claude session (~2 minutes)
+- **BRD-agnostic** — Works with any P+ client BRD regardless of format (.pptx, .pdf, .docx)
+- **Audit trail** — Claude lists every removed notification and the reason, so you can verify
+
+---
+
+## How to Use
+
+1. Open [Claude](https://claude.ai/new) (web or desktop app)
+2. Click the attachment button and upload **both files** (notification template + client BRD)
+3. Copy and paste the prompt from the box above
+4. Press Enter and wait for Claude to process (~2-3 minutes)
+5. Review the **removal summary** Claude provides — verify each removal makes sense
+6. Download the generated `.xlsx` file
+7. Open in Excel and spot-check a few notifications against the BRD
+8. Deliver to the configuration team
+
+---
+
+## Best Practices
+
+- Always use the **latest version** of the client's BRD — if the BRD is outdated, the notification template will be too
+- **Review the removal list carefully** — if Claude removed something you expected to keep, double-check the BRD for that feature
+- **Do not edit the master template** — always start from a clean copy of `Notifications_Template.xlsx`
+- If the client has **custom modules or logs** not in the standard template, you'll need to add those manually after generation
+- For clients with **multiple BRD versions**, use the most comprehensive/latest one
+- If the BRD is a **video recording or screenshots-only**, convert it to a text-based format first
+- **Cross-reference with the approval cycles section** of the BRD — this is where most Log WF removals come from
+
+---
+
+## Customization Options
+
+Add any of these lines to the end of the prompt for specific adjustments:
+
+- **Keep all workflows:** `"Keep all Level WF and Log WF rows even if no matching approval cycle is found in the BRD — the client may add these later"`
+- **Aggressive cleanup:** `"Also remove notifications for modules that exist in the BRD but are marked as Phase 2 or Future Scope"`
+- **Add status update workflow:** `"The client also needs a Status Update Request workflow — add it to Log WF using the same pattern as Add Log Request but for Status Updates"`
+- **Multiple BRDs:** `"I'm attaching 2 BRDs — one for the PMO processes and one for the system modules. Cross-reference both."`
+- **Partial cleanup:** `"Only clean up the Logs sheet — keep Level, Level WF, and Log WF as-is"`
+
+---
+
+## Quality Checklist
+
+After generating the notification template, verify the following before delivering to the configuration team:
+
+| Check | What to Verify |
+|-------|---------------|
+| **Sheet count** | All 4 sheets present: Level, Logs, Level WF, Log WF |
+| **Column structure** | Column headers unchanged on all sheets |
+| **Level sheet** | Level create/update/delete notifications present (almost always needed) |
+| **Tasks** | Task notifications present if BRD has Activity/Schedule tab |
+| **Deliverables** | Deliverable notifications present if BRD has Deliverables tab |
+| **Milestones** | Milestone notifications present if BRD has Milestones section |
+| **Risks** | Risk notifications present including transfer-to-issue if BRD supports it |
+| **Issues** | Issue notifications present including close if BRD supports it |
+| **Discussions** | Discussion notifications REMOVED if BRD has no comment/discussion feature |
+| **Stakeholders** | Stakeholder notifications present if BRD has Stakeholders tab |
+| **PMO Processes** | Charter, Closure, CR, DAF notifications match BRD's PMO process list |
+| **Phase Gates** | Phase gate notifications present if BRD has PhaseGate tab |
+| **Approval workflows** | Log WF rows match the approval cycles defined in the BRD |
+| **No additions** | No new notification rows were added — only removals |
+| **No empty rows** | No blank/empty rows left in any sheet after cleanup |
+| **Bilingual content** | Both Arabic and English text preserved in all remaining rows |
+| **Formatting** | Cell formatting, fonts, and column widths unchanged |
+
+---
+
+## Common Removal Scenarios
+
+These are the most frequently removed notifications across client BRDs:
+
+| Removed Notification | Reason | Frequency |
+|---------------------|--------|-----------|
+| Task discussion created | Most P+ deployments don't enable task-level discussions | Very Common |
+| Deliverable discussion created | Discussions are a rarely-used feature | Very Common |
+| Milestone discussion created | Discussions are a rarely-used feature | Very Common |
+| Risk transferred to issue | Some clients don't enable risk-to-issue conversion | Common |
+| Custom Log (all 3) | Clients without custom log modules | Common |
+| Close Log Request (all WF rows) | Clients without log closure workflows | Occasional |
+| Update Progress Log Request (all WF rows) | Clients without progress-specific approval cycles | Occasional |
+| Move PhaseGate Request (all WF rows) | Clients without phase gate approval workflows | Rare |
+
+---
+
+## Conclusion
+
+The P+ Notification Template from BRD automation eliminates the tedious manual cross-referencing between a client's BRD and the standard notification template. By reading the BRD programmatically and mapping every notification to a documented feature, it produces a clean, client-specific template that's ready for system configuration — with an audit trail of what was removed and why. Works with any P+ client BRD in any format.
+
+This automation is part of the BC Automations consulting toolkit. Pair it with the [Diwan User Manual Generation](/blog/diwan-user-manual-generation) automation for a complete documentation suite.
+
+<ClaudeCTA />
