@@ -1,0 +1,346 @@
+---
+title: "Diwan Notification Template from BRD"
+description: "Automatically generate a complete, BRD-aligned Diwan notification template by cross-referencing any BRD against the standard Diwan notification master — adding missing event notifications and preserving the existing template structure."
+date: "2026-03-22"
+tags: ["Diwan", "Notification Template"]
+featured: true
+readTime: "10 min read"
+author: "Khalil Abu Mushref"
+---
+
+## Automation Name
+
+**Diwan Notification Template from BRD — Bilingual (AR/EN)**
+
+This automation takes a client's Diwan BRD (.docx/.pdf/.pptx) and cross-references it against the standard Diwan notification template (.xlsx) to produce a complete, BRD-aligned notification file. Instead of manually reading through hundreds of business rules to identify which system events need notifications and then hand-writing bilingual templates for each, this prompt produces a validated, ready-to-configure notification template in minutes — with every BRD-documented event covered across all 7 modules.
+
+---
+
+## Prompt
+
+```text
+I have two files:
+1. A Diwan Notification Template (.xlsx) — the standard bilingual notification
+   template with 7 sheets: Committees, Meetings, Tasks, Assignments, Circulars,
+   Competitions, Voting
+2. A client Diwan BRD — describing the client's system modules, features, business
+   rules, workflows, and lifecycle events
+
+Please cross-reference the BRD against the notification template and produce an
+updated notification template with ALL events from the BRD covered.
+
+Requirements:
+1. READ the BRD thoroughly — identify every module, feature, lifecycle event,
+   status change, workflow transition, approval cycle, and user action that should
+   trigger a notification
+2. READ the notification template — understand every existing notification row
+   across all 7 sheets
+3. CROSS-REFERENCE each BRD section against the template:
+   - If the BRD event already has a matching notification → KEEP as-is
+   - If the BRD describes an event with NO matching notification → ADD a new row
+4. DO NOT remove any existing notifications — only add missing ones
+5. DO NOT change the template structure — preserve exact column order, formatting,
+   sheet names, and bilingual content style
+6. PRESERVE all 7 sheet names exactly: Committees, Meetings, Tasks, Assignments,
+   Circulars, Competitions, Voting
+7. New notifications must follow the EXACT same bilingual template pattern:
+   - Column A: Arabic event name (الحدث)
+   - Column B: Bilingual subject line (Arabic / English)
+   - Column C: English Email Template (with placeholders)
+   - Column D: Arabic Email Template (with placeholders)
+   - Column E: English App Template (short version)
+   - Column F: Arabic App Template (short version)
+   - Column G: Recipients in Arabic (المستلمون)
+8. Use the same placeholder variable naming convention as existing rows
+9. Highlight all newly added rows in light yellow (#FFFFCC) so they are easy to
+   identify during review
+10. Output as a single .xlsx file
+
+Cross-reference checklist (map each BRD section to notification events):
+
+COMMITTEES SHEET — Check if the BRD has events for:
+  - Committee creation, modification, cancellation (should exist)
+  - Committee member addition / removal (often missing)
+  - Committee ended / expired status
+  - Committee meeting creation from committee context
+  - Member role changes (Chairman, Secretary, Vice Chairman)
+
+MEETINGS SHEET — Check if the BRD has events for:
+  - Meeting creation, update (should exist)
+  - Meeting cancellation
+  - Meeting acceptance / rejection (should exist)
+  - Meeting reminder (upcoming meeting)
+  - Meeting minutes creation
+  - Meeting decisions created
+  - Meeting assignments created
+  - Meeting tasks created (should exist)
+  - Meeting attendance recorded
+  - Meeting status changes (Scheduled → In Progress → Finished)
+
+TASKS SHEET — Check if the BRD has events for:
+  - Task creation, update, deletion (should exist)
+  - Task progress update (should exist)
+  - Task completion (should exist)
+  - Task comment / discussion added (should exist)
+  - Task archive (should exist)
+  - Sub-task progress update (should exist)
+  - Task members update (should exist)
+  - Task overdue notification (BRD mentions flagging delayed tasks)
+  - Task reassignment
+  - Weekly task reminder (should exist)
+  - Support request events (create, submit, close, due date)
+
+ASSIGNMENTS SHEET — Check if the BRD has events for:
+  - Assignment creation, update, deletion (should exist)
+  - Assignment progress update (should exist)
+  - Assignment completion, closure (should exist)
+  - Assignment archive, resumption (should exist)
+  - Sub-assignment progress update (should exist)
+  - Assignment comment / discussion added (often missing — parity with Tasks)
+  - Assignment overdue notification
+  - Assignment reassignment
+  - Weekly assignment reminder (should exist)
+  - Support request events (create, submit, close, due date)
+
+CIRCULARS SHEET — Check if the BRD has events for:
+  - Circular issuance, update, cancellation (should exist)
+  - Circular read confirmation / acknowledgement
+  - Circular draft saved / published status change
+
+COMPETITIONS SHEET — Check if the BRD has events for:
+  - Competition creation, modification, cancellation (should exist)
+  - Competition stage change (should exist)
+  - Competition status change (separate from stage change)
+  - Minutes creation (should exist)
+  - Minutes submitted for accreditation (Draft → Ready for Accreditation)
+  - Minutes rejected / returned to draft
+  - Final minutes approval (should exist)
+  - Evaluation minutes creation, approval (should exist)
+  - Competition award (should exist)
+  - Competition closing reminder (should exist)
+  - Evaluator assignment (BRD requires separate evaluator from weight-setter)
+  - Evaluation completed
+  - Delegation request and approval (BRD mentions delegation system)
+  - Competition SLA warning (BRD includes SLA countdown field)
+  - Bid disqualification notification
+
+VOTING SHEET — Check if the BRD has events for:
+  - Vote creation (should exist)
+  - Vote result — approved / rejected (should exist)
+  - Vote reminder (should exist)
+  - Individual vote cast confirmation (track progress toward quorum)
+  - Vote cancellation
+
+After completing the cross-reference:
+1. List ALL newly added notifications grouped by sheet, with the BRD section that
+   justifies each addition
+2. Provide a summary count: existing vs. added per sheet
+3. Output the updated .xlsx file
+```
+
+---
+
+## Required Files
+
+Attach both of the following files to your Claude conversation before pasting the prompt:
+
+| # | File | Purpose | Notes |
+|---|------|---------|-------|
+| 1 | `Diwan_Notifications_Template.xlsx` | Standard Diwan bilingual notification template with all 7 sheets | Do NOT modify — this is the master template |
+| 2 | Client Diwan BRD | Client's system specification describing modules, features, business rules, and workflows | Use the latest version available (.docx / .pdf / .pptx) |
+
+---
+
+## Downloadable Templates
+
+<DownloadSection>
+  <DownloadButton
+    fileName="Diwan_Notifications_Template.xlsx"
+    label="Diwan Notification Master Template (.xlsx)"
+    description="Standard bilingual notification template with all 7 sheets: Committees, Meetings, Tasks, Assignments, Circulars, Competitions, Voting"
+  />
+</DownloadSection>
+
+---
+
+## Description
+
+Every Diwan (Committee Management System) deployment requires a notification template that defines what email and in-app notifications are sent for each system action. The standard template covers the core lifecycle events for each module — but BRDs often describe additional workflows, status transitions, and business rules that require notifications not present in the base template. Delivering a notification template that doesn't cover all BRD-documented events leads to gaps during UAT, missed user communications, and configuration rework.
+
+This automation reads the client's Diwan BRD to understand their full system scope, then adds notifications for every documented event that's missing from the standard template — producing a complete, BRD-aligned template ready for system configuration.
+
+---
+
+## What Gets Generated
+
+An updated `.xlsx` file with 7 sheets, containing all original notifications plus new ones for every BRD-documented event:
+
+| Sheet | Standard Template | After BRD Alignment | Content |
+|-------|------------------|--------------------| --------|
+| Committees | 4 rows | ~7 rows | Committee lifecycle + member management notifications |
+| Meetings | 5 rows | ~11 rows | Meeting lifecycle + minutes, decisions, assignments, attendance |
+| Tasks | 14 rows | ~16 rows | Task lifecycle + overdue, reassignment notifications |
+| Assignments | 14 rows | ~17 rows | Assignment lifecycle + comments, overdue, reassignment |
+| Circulars | 3 rows | ~4 rows | Circular lifecycle + read confirmation |
+| Competitions | 10 rows | ~18 rows | Competition lifecycle + status change, evaluation, delegation, SLA |
+| Voting | 4 rows | ~6 rows | Voting lifecycle + individual vote tracking, cancellation |
+
+---
+
+## Template Structure (All 7 Sheets)
+
+Each sheet follows the same column structure:
+
+| Column | Arabic Header | English Equivalent | Content |
+|--------|--------------|-------------------|---------|
+| A | الحدث | Event | Arabic event name |
+| B | الموضوع | Subject | Bilingual subject line (Arabic / English) |
+| C | English Email Template | English Email Template | Full English email with placeholders |
+| D | Arabic Email Template | Arabic Email Template | Full Arabic email with placeholders |
+| E | English App Template | English App Template | Short English in-app notification |
+| F | Arabic App Template | Arabic App Template | Short Arabic in-app notification |
+| G | المستلمون | Recipients | Arabic description of notification recipients |
+
+---
+
+## Notification Categories Mapped to BRD Sections
+
+| Notification Category | What to Look For in BRD | Common BRD Section Names |
+|----------------------|------------------------|-------------------------|
+| Committee Lifecycle | Committee creation forms, types (internal/external), status fields | Committees, Committee Data |
+| Committee Members | Member addition forms, role assignment (Chairman/Secretary/Vice) | Members |
+| Meeting Lifecycle | Meeting creation forms, calendar views, status transitions | Meetings, Meeting Calendar |
+| Meeting Outputs | Minutes, decisions, tasks, assignments created from meetings | Meeting Minutes, Decisions, Tasks |
+| Meeting Attendance | Attendance toggles, acceptance/rejection, on behalf of | Invitees, Attendance |
+| Task Management | Task creation, progress bars, sub-tasks, follow-up officers | Tasks, Activity |
+| Task Discussions | Comment/discussion features on tasks | Discussion, Comments |
+| Assignment Management | Assignment creation, closure, archival, resumption | Assignments |
+| Support Requests | Support request forms on tasks/assignments | Support Request |
+| Circulars | Announcement forms, recipient groups, publish scheduling | Circulars, Announcements |
+| Competition Lifecycle | Competition creation, stage workflows, status changes | Competitions, Tenders |
+| Competition Stages | Workflow diagrams, stage transitions, side menu actions | Change Stage, Tender Stages |
+| Competition Status | Status dropdown, active/hold/completed/cancelled transitions | Change Status |
+| Minutes and Accreditation | Minutes templates, accreditation workflow, voting flow | Add Minutes, Accreditation |
+| Evaluation | Evaluation forms (low/medium/high), weight entry, scoring | Evaluation Forms, Tender Evaluation |
+| Delegation | Delegation requests, approval workflows | Delegations |
+| Voting | Vote creation, quorum rules, approve/reject/abstain options | Voting, Accreditation |
+
+---
+
+## Key Benefits
+
+- **Every BRD event covered** — No manual line-by-line BRD comparison needed
+- **Zero notification gaps** — Every documented system action triggers an appropriate notification
+- **Bilingual integrity** — Arabic and English content generated in the exact same pattern as existing rows
+- **Structure preserved** — Same 7 sheets, same columns, same formatting — just more complete coverage
+- **Visual diff** — All new rows highlighted in yellow for easy review and approval
+- **Minutes not hours** — Complete cross-reference and generation in a single Claude session (~3 minutes)
+- **BRD-agnostic** — Works with any Diwan BRD regardless of format (.docx, .pdf, .pptx)
+- **Audit trail** — Claude lists every added notification and the BRD section that justifies it
+
+---
+
+## How to Use
+
+1. Open Claude (web or desktop app)
+2. Click the attachment button and upload **both files** (notification template + client BRD)
+3. Copy and paste the prompt from the box above
+4. Press Enter and wait for Claude to process (~2-3 minutes)
+5. Review the addition summary Claude provides — verify each new notification is justified by the BRD
+6. Download the generated `.xlsx` file
+7. Open in Excel and spot-check new notifications (highlighted yellow) against the BRD
+8. Remove the yellow highlighting once reviewed, then deliver to the configuration team
+
+---
+
+## Best Practices
+
+- Always use the **latest version** of the client's BRD — if the BRD is outdated, the notification template will be too
+- Review the addition list carefully — if Claude added something you don't expect, check the BRD section it references
+- **Do not edit the master template** — always start from a clean copy of `Diwan_Notifications_Template.xlsx`
+- Check for **parity between Tasks and Assignments** — these modules are structurally similar, so if Tasks has a notification type (e.g., comments), Assignments should too
+- Validate placeholder names — ensure new placeholders follow the same naming convention as existing ones and can be populated by the Diwan system
+- **Cross-reference the Competitions workflows** — the BRD typically defines 6 procurement workflows; ensure stage change notifications cover all of them
+- For clients with custom modules or additional workflows not in the standard BRD, mention them in the prompt
+- If the BRD is a video recording or screenshots-only, convert it to a text-based format first
+- **Cross-reference with the evaluation section** — this is where most Competition sheet additions come from
+
+---
+
+## Customization Options
+
+Add any of these lines to the end of the prompt for specific adjustments:
+
+- **Conservative mode:** "Only add notifications for events that are explicitly described as user-facing actions in the BRD — do not infer events from business rules"
+- **Aggressive coverage:** "Also add notifications for events that are implied by business rules even if not explicitly documented as user actions"
+- **Specific modules only:** "Only cross-reference the Competitions and Voting sheets — keep all other sheets as-is"
+- **No highlighting:** "Do not highlight new rows — I want a clean template ready for configuration"
+- **Multiple BRDs:** "I'm attaching 2 BRDs — one for the core system and one for the Competitions module. Cross-reference both."
+- **Include Phase 2:** "Also add notifications for features marked as Phase 2 or Future Scope in the BRD"
+- **Recipients customization:** "For all new notifications, also include the System Administrator in the recipients list"
+
+---
+
+## Quality Checklist
+
+After generating the notification template, verify the following before delivering to the configuration team:
+
+| Check | What to Verify |
+|-------|---------------|
+| Sheet count | All 7 sheets present: Committees, Meetings, Tasks, Assignments, Circulars, Competitions, Voting |
+| Column structure | Column headers unchanged on all sheets |
+| Committees | Member addition/removal notifications present if BRD has member management |
+| Committees | Committee ended notification present if BRD has committee lifecycle |
+| Meetings | Meeting cancellation notification present if BRD has meeting lifecycle |
+| Meetings | Meeting minutes, decisions, assignments notifications present if BRD documents these outputs |
+| Meetings | Meeting reminder notification present if BRD has upcoming meeting calendar |
+| Tasks | Task overdue notification present if BRD mentions delayed task flagging |
+| Tasks/Assignments parity | Both modules have comment, overdue, and reassignment notifications |
+| Circulars | Read confirmation notification present if BRD has audit logging |
+| Competitions | Status change notification SEPARATE from stage change |
+| Competitions | Minutes accreditation workflow notifications (submit, reject, approve) |
+| Competitions | Evaluator assignment notification present if BRD requires separate evaluator |
+| Competitions | Delegation notifications present if BRD mentions delegation system |
+| Competitions | SLA warning notification present if BRD has SLA countdown field |
+| Voting | Individual vote cast confirmation present if BRD tracks quorum progress |
+| Voting | Vote cancellation notification present |
+| No removals | No existing notification rows were removed — only additions |
+| Yellow highlighting | All new rows highlighted in light yellow for review |
+| Bilingual content | Both Arabic and English text present in all new rows |
+| Placeholders | All placeholders follow existing naming convention |
+| Recipients | Recipients column uses Arabic role descriptions consistent with existing rows |
+| Formatting | Cell formatting, fonts, and column widths match existing template |
+
+---
+
+## Common Addition Scenarios
+
+These are the most frequently added notifications when cross-referencing Diwan BRDs:
+
+| Added Notification | BRD Trigger | Frequency |
+|-------------------|-------------|-----------|
+| Committee member addition/removal | BRD has member management forms with role assignment | Very Common |
+| Committee ended | BRD has committee lifecycle with Active to Ended status | Very Common |
+| Meeting cancellation | BRD has meeting lifecycle but no cancellation event | Very Common |
+| Meeting reminder | BRD has upcoming meetings calendar on home screen | Very Common |
+| Meeting minutes/decisions/assignments | BRD has meeting output sections | Common |
+| Task/Assignment overdue | BRD mentions flagging delayed items | Common |
+| Task/Assignment reassignment | BRD has member update functionality | Common |
+| Assignment comment | Parity with Tasks sheet (Tasks has comments, Assignments doesn't) | Common |
+| Competition status change | BRD defines status separately from stage | Very Common |
+| Minutes accreditation workflow | BRD describes Draft to Ready to Voting to Accredited flow | Very Common |
+| Evaluator assignment | BRD requires separate evaluator from weight-setter | Common |
+| Delegation request/approval | BRD mentions delegation system with approval | Occasional |
+| Competition SLA warning | BRD includes SLA countdown field on competition form | Occasional |
+| Vote cast confirmation | BRD tracks individual votes toward quorum threshold | Common |
+| Vote cancellation | BRD allows cancellation before confirmation | Occasional |
+
+---
+
+## Conclusion
+
+The Diwan Notification Template from BRD automation eliminates the tedious manual cross-referencing between a client's BRD and the standard notification template. By reading the BRD programmatically and mapping every documented event to a notification, it produces a complete, BRD-aligned template that's ready for system configuration — with an audit trail of what was added and why. All new rows are highlighted for easy review, and the original template structure is preserved exactly.
+
+This automation is part of the BC Automations consulting toolkit. Pair it with the **Diwan User Manual Generation** automation and the **P+ Notification Template from BRD** automation for a complete documentation suite.
+
+<ClaudeCTA />
