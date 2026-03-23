@@ -64,10 +64,17 @@ Requirements:
 7. UPDATE test case content ONLY when the BRD directly contradicts an existing TC
    (e.g. wrong hierarchy, wrong phase count, wrong tab list)
 
-8. OUTPUT a single .xlsx file with:
+8. LANGUAGE & TEXT DIRECTION:
+   - All test case content must be written in English (LTR — Left-to-Right)
+   - All cell text alignment must be Left-aligned for English content
+   - Do NOT use RTL alignment or Arabic text in any cell
+   - Sheet names, column headers, TC IDs, and TC summaries are all in English
+
+9. OUTPUT a single .xlsx file with:
    - All sheets in logical order (hierarchy → workspace modules → PMO → supporting)
    - Each sheet with correct Total/Summary counters (Untested count = TC count)
    - All 4 columns preserved: Test Case ID, Test Case Summary, Status (all "Untested")
+   - All text in English with LTR alignment throughout
 
 Cross-reference checklist (map each sheet to a BRD section):
 
@@ -137,6 +144,19 @@ Attach **both** of the following files to your Claude conversation **before** pa
 Every P+ deployment requires a UAT test case workbook that verifies every system module works as configured. The standard template covers every possible P+ module and workflow — but most clients use a different subset. Some have a Sector → Project hierarchy (2 levels), others have Portfolio → Department → Project (3 levels). Some have Stakeholders tabs, others don't. Some PMO process lists include RFP, PO, and Project Plan; others only have Charter, Change Request, and Closure.
 
 Manually reading a 136-slide BRD to reconcile it against a 18-sheet test case workbook takes hours and is error-prone. This automation does it in minutes — keeping what's valid, fixing what's misaligned, adding what's missing, and removing what doesn't apply.
+
+### Language & Text Direction
+
+| Property | Value |
+|----------|-------|
+| **Language** | English |
+| **Text Direction** | LTR (Left-to-Right) |
+| **Cell Alignment** | Left-aligned |
+| **Sheet Names** | English |
+| **Column Headers** | English |
+| **Test Case Summaries** | English |
+
+All test case content — including sheet names, column headers, TC IDs, and TC summaries — is written in **English** with **LTR (Left-to-Right)** text direction. Cell alignment across the entire workbook is **left-aligned**. Unlike notification templates which are bilingual (AR/EN), the test case workbook is English-only. If the client's BRD is in Arabic, Claude will still produce the test case content in English based on the module and feature names identified in the BRD.
 
 ### What Gets Generated
 
@@ -253,6 +273,8 @@ After generating the test case workbook, verify the following before delivering:
 | **Summary counters accurate** | Untested count and Total Number of Test Cases match actual TC rows on every sheet |
 | **All statuses are "Untested"** | No test case was accidentally pre-marked as Passed/Failed |
 | **Template formatting preserved** | Fonts (Times New Roman), colors (#2E75B5 header, #D9E2F3 values), and column widths unchanged |
+| **Language is English** | All TC summaries, sheet names, and column headers are in English — no Arabic or mixed-language text |
+| **Text direction is LTR** | All cells are left-aligned (Left-to-Right) — no RTL alignment anywhere in the workbook |
 | **No invented test cases** | Every TC maps to a feature explicitly described in the BRD |
 
 ---
