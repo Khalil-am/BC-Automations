@@ -1,0 +1,288 @@
+---
+title: "P+ Test Cases from BRD"
+description: "Automatically generate a complete, BRD-aligned P+ UAT test case workbook by cross-referencing any Configuration Manual against an existing test case template — adding missing modules, removing obsolete ones, and keeping every existing test case exactly as-is."
+date: "2026-03-24"
+tags: ["PPlus", "Test Cases", "QA", "BRD"]
+featured: true
+readTime: "10 min read"
+author: "Khalil Abu Mushref"
+---
+
+## Automation Name
+
+**P+ Test Cases from BRD — Module-Aligned UAT Workbook**
+
+This automation takes a client's BRD or Configuration Manual (`.pptx/.pdf/.docx`) and cross-references it against an existing P+ test case workbook (`.xlsx`) to produce an updated, client-specific UAT test case file. Instead of manually reading through 100+ BRD slides to figure out which modules exist and then hand-editing every sheet, this prompt produces a validated, ready-to-execute test workbook in minutes — with every module from the BRD covered, and nothing invented that isn't in scope.
+
+---
+
+## Prompt
+
+```
+I have two files:
+
+1. A P+ Test Cases Workbook (.xlsx) — an existing UAT test case template with one
+   sheet per module, each following the same header/summary/test-case structure
+2. A client BRD / Configuration Manual — describing the client's actual P+ system
+   modules, hierarchy, features, tabs, approval cycles, and phase gates
+
+Please cross-reference the BRD against the test case workbook and produce an
+updated workbook that accurately reflects the client's system scope.
+
+Requirements:
+
+1. READ the BRD thoroughly — identify:
+   - The system hierarchy (e.g. Sector > Project, or Portfolio > Department > Project)
+   - Every module, tab, form, workflow, and approval cycle present
+   - PMO process list (Charter, RFP, Project Plan, Contract, PO, Change Request,
+     Closure, Deliverable Acceptance, Change Status Request, Project Completion Report,
+     Status Update, etc.)
+   - Phase gate structure (how many phases and their names)
+   - Status logic for each level (Not Started, On Track, Delayed, etc.)
+
+2. READ the existing test case workbook — understand:
+   - Which sheets/modules already exist
+   - The exact template structure used (header block, summary block, TC rows)
+   - The formatting, font, column widths, and colors
+
+3. CROSS-REFERENCE each existing sheet against the BRD:
+   - Module exists in BRD with the same name → KEEP the sheet EXACTLY as-is
+   - Module exists in BRD under a DIFFERENT name → UPDATE the sheet content
+     to reflect the correct name and relevant test cases; keep the template format
+   - Module does NOT exist in BRD → REMOVE the sheet entirely
+
+4. ADD new sheets for any module in the BRD that has no matching sheet:
+   - Use the EXACT same template structure as existing sheets
+   - Follow the same header block, summary block, column headers, fonts, and colors
+   - Write relevant test cases based on what the BRD says about that module
+
+5. NEVER invent test cases for features not described in the BRD
+
+6. PRESERVE all existing test cases in sheets that are kept — do not modify, reword,
+   or reorder any existing TC rows unless the BRD explicitly contradicts them
+
+7. UPDATE test case content ONLY when the BRD directly contradicts an existing TC
+   (e.g. wrong hierarchy, wrong phase count, wrong tab list)
+
+8. OUTPUT a single .xlsx file with:
+   - All sheets in logical order (hierarchy → workspace modules → PMO → supporting)
+   - Each sheet with correct Total/Summary counters (Untested count = TC count)
+   - All 4 columns preserved: Test Case ID, Test Case Summary, Status (all "Untested")
+
+Cross-reference checklist (map each sheet to a BRD section):
+
+SYSTEM IDENTITY SHEET — Check BRD for: Logo, colors, login background image
+LOGIN SHEET — Check BRD for: Login page, credential validation, language toggle
+SYSTEM STRUCTURE SHEET — Check BRD for: Hierarchy levels, home screen, navigation
+LEVEL 1 (e.g. Sector/Portfolio) — Check BRD for: Creation form fields, card display,
+  workspace, approval workflow, status logic
+LEVEL 2 (e.g. Department) — Only include if BRD has a mid-tier level
+LEVEL 3 (e.g. Project / Strategic Project) — Check BRD for: Creation form fields,
+  workspace tabs list, approval workflow, status logic, baseline
+TASKS / ACTIVITIES SHEET — Check BRD for: Task/activity creation form, status logic
+SCHEDULE SHEET — Check BRD for: Baseline setting, import/export, weights
+DELIVERABLES SHEET — Check BRD for: Deliverable form, status logic, acceptance
+RISKS SHEET — Check BRD for: Risk form, matrix, impact/probability, card reflection
+ISSUES SHEET — Check BRD for: Issue form, impact options, card reflection
+MILESTONES SHEET — Check BRD for: Milestone form, status logic, card reflection
+PMO PROCESSES SHEET — Check BRD for: Phase gate structure (how many phases),
+  every process listed (Charter, RFP, Project Plan, Contract, PO, Change Request,
+  Closure, DAF, Change Status Request, Project Completion Report, Status Update)
+PROGRESS UPDATE SHEET — Check BRD for: Progress update form, mandatory fields
+TEAM MEMBERS SHEET — Check BRD for: Team member addition, role display
+STAKEHOLDERS SHEET — Only include if BRD has a Stakeholders tab
+LESSONS LEARNED SHEET — Check BRD for: Lesson form fields, category, optional links
+DEPENDENCIES SHEET — Check BRD for: Dependencies tab, project/task linking
+
+After completing the cross-reference:
+1. List every sheet that was KEPT unchanged and why
+2. List every sheet that was UPDATED and what changed
+3. List every sheet that was REMOVED and why
+4. List every new sheet that was ADDED and what module it covers
+Then output the final .xlsx file.
+```
+
+---
+
+## Required Files
+
+Attach **both** of the following files to your Claude conversation **before** pasting the prompt:
+
+| # | File | Purpose | Notes |
+|---|------|---------|-------|
+| 1 | `P+_Test_Cases.xlsx` | Existing test case workbook with one sheet per module | Use your most current version — Claude will base all additions on its template style |
+| 2 | Client BRD / Config Manual | Client's system specification describing modules, hierarchy, tabs, and approval cycles | Use the latest version available (.pptx / .pdf / .docx) |
+
+---
+
+## Downloadable Templates
+
+<DownloadSection>
+  <DownloadButton
+    fileName="test-case-template.txt"
+    label="P+ Test Case Template (.txt)"
+    description="Reference test case template structure for P+ UAT workbooks."
+  />
+  <DownloadButton
+    fileName="test-case-prompt.txt"
+    label="P+ Test Case Prompt (.txt)"
+    description="Standalone prompt file for generating test cases from BRD."
+  />
+</DownloadSection>
+
+---
+
+## Description
+
+Every P+ deployment requires a UAT test case workbook that verifies every system module works as configured. The standard template covers every possible P+ module and workflow — but most clients use a different subset. Some have a Sector → Project hierarchy (2 levels), others have Portfolio → Department → Project (3 levels). Some have Stakeholders tabs, others don't. Some PMO process lists include RFP, PO, and Project Plan; others only have Charter, Change Request, and Closure.
+
+Manually reading a 136-slide BRD to reconcile it against a 18-sheet test case workbook takes hours and is error-prone. This automation does it in minutes — keeping what's valid, fixing what's misaligned, adding what's missing, and removing what doesn't apply.
+
+### What Gets Generated
+
+A single `.xlsx` file with the correct number of sheets, each containing only the test cases relevant to the client's BRD:
+
+| Sheet | Always Present | Conditional | Content |
+|-------|---------------|-------------|---------|
+| System Identity | ✓ | | Logo, colors, login background |
+| Login | ✓ | | Credential validation, language toggle |
+| System Structure | ✓ | | Hierarchy, home screen, navigation |
+| Level 1 (Sector / Portfolio) | ✓ | | Creation, card, workspace, status logic |
+| Level 2 (Department) | | If BRD has 3-tier hierarchy | Department creation, card, status logic |
+| Project / Strategic Project | ✓ | | Creation, workspace tabs, approval, status |
+| Tasks / Activities | ✓ | | Task creation, status logic |
+| Schedule | ✓ | | Baseline, import/export, weights |
+| Deliverables | ✓ | | Deliverable form, status logic |
+| Risks | ✓ | | Risk form, matrix, card reflection |
+| Issues | ✓ | | Issue form, impact options |
+| Milestones | ✓ | | Milestone form, status, card reflection |
+| PMO Processes | ✓ | | Phase gates + every PMO process in BRD |
+| Progress Update | ✓ | | Progress update form fields |
+| Team Members | ✓ | | Team member addition and display |
+| Stakeholders | | If BRD has Stakeholders tab | Internal/external stakeholder management |
+| Lessons Learned | ✓ | | Lesson form fields, optional links |
+| Dependencies | ✓ | | Dependency creation and display |
+
+### Template Structure (All Sheets)
+
+Every sheet follows the same structure — Claude detects this from your uploaded file and replicates it exactly:
+
+| Block | Rows | Content |
+|-------|------|---------|
+| Project Info | 1–4 | Project Name, Created Date, Module Name, Prepared By, Reviewed By, Reviewed Date |
+| Total / Summary | 6–13 | Passed, Failed, Blocked, Untested, In Progress, NA, Total (auto-counted) |
+| Column Headers | 15 | Test Case ID \| Test Case Summary \| Status |
+| Test Cases | 16+ | TC_1, TC_2 … TC_N with Status = "Untested" |
+
+### What Claude Compares
+
+| Element Checked | Where to Find it in BRD | Impact on Test Cases |
+|----------------|------------------------|---------------------|
+| System hierarchy depth | System Structure slide | Adds/removes Level 2 sheet; fixes TC_1 wording |
+| Workspace tab list | Project Tabs slides | Updates Project TC_5 tab enumeration |
+| Phase gate count & names | PhaseGate slides | Updates PMO TC_1 phase list |
+| PMO process list | PMO Process section | Adds TCs for every listed process |
+| Status logic per level | Statuses slide per module | Verifies/updates status TC wording |
+| Mandatory fields per form | Creation form slides | Verifies TC_1 field list per module |
+| Stakeholders tab presence | Project Tabs / Stakeholders slide | Adds or removes Stakeholders sheet |
+| Approval cycles | Approval Cycles section | Ensures approval-workflow TCs exist |
+
+### Key Benefits
+
+- **17+ sheets audited automatically** — No manual line-by-line BRD comparison needed
+- **0 existing TCs changed unnecessarily** — Every existing test case is preserved unless the BRD directly contradicts it
+- **100% template formatting preserved** — Fonts, colors, column widths, and structure unchanged
+- **< 3 min full cross-reference runtime** — Complete reconciliation in a single Claude session
+- **BRD-agnostic** — Works with any P+ client BRD regardless of format (.pptx, .pdf, .docx)
+- **Audit trail** — Claude lists every sheet kept, updated, removed, and added with reasons
+
+---
+
+## How to Use
+
+1. Open [Claude](https://claude.ai/new) (web or desktop app)
+2. Click the attachment button and upload **both files** (test case workbook + client BRD)
+3. Copy and paste the prompt from the box above
+4. Press Enter and wait for Claude to process (~2–3 minutes)
+5. Review the **change summary** — Claude will list every sheet kept, updated, removed, and added with reasons
+6. Download the generated `.xlsx` file
+7. Open in Excel and spot-check a module was kept/removed correctly against the BRD
+8. Deliver to the QA / configuration team
+
+---
+
+## Best Practices
+
+- Always use the **latest version** of the client's BRD — if the BRD is outdated, the test cases will be too
+- **Review the change summary carefully** — if Claude removed a sheet you expected to keep, double-check the BRD for that module
+- **Do not pre-edit the test case file** before uploading — Claude uses the existing sheets as the template source; if they're already wrong, the output will be too
+- If the client has **custom modules** not in the standard template, describe them in a note appended to the prompt
+- For BRDs that are **video recordings or image-only**, extract them to a text-based PPTX or PDF first
+- **Cross-check the PMO Processes sheet** particularly carefully — this is where the most additions happen since every BRD has a different process list
+- If the BRD shows a **3-tier hierarchy** (Portfolio → Department → Project), the prompt will automatically add a Department sheet and Strategic Project sheet where relevant
+
+---
+
+## Customization Options
+
+Add any of these lines to the end of the prompt for specific adjustments:
+
+- **Keep all sheets:** `"Keep all existing sheets even if no matching module is found in the BRD — mark them as 'Out of Scope' in the Module Name cell but do not delete them"`
+- **Aggressive cleanup:** `"Also remove test cases for any tab or feature that is explicitly marked as Phase 2 or Future Scope in the BRD"`
+- **Rename module to client terminology:** `"The client calls 'Tasks' 'Activities' throughout their BRD — use 'Activities' as the sheet name and in all TC wording"`
+- **Multiple BRDs:** `"I'm attaching 2 BRDs — one covers the system structure and one covers the PMO processes. Cross-reference both."`
+- **Add a custom module:** `"The client has an additional module called 'Airport Companies Recharge' — add a sheet for it with test cases based on the form fields visible in the BRD slides"`
+- **Partial update (single sheet only):** `"Only update the PMO Processes sheet — leave all other sheets unchanged"`
+
+---
+
+## Quality Checklist
+
+After generating the test case workbook, verify the following before delivering:
+
+| Check | What to Verify |
+|-------|---------------|
+| **Sheet count matches BRD scope** | No extra sheets for modules not in BRD, no missing sheets for modules that exist |
+| **System Structure TC_1 hierarchy wording** | Matches the actual number of levels in the BRD (2-tier vs 3-tier) |
+| **Project TC_5 tab list** | Matches every tab shown in the BRD's Project workspace slides |
+| **PMO Processes TC_1 phase count** | Matches the actual number of phases (e.g. 5 phases: Ideation, Initiation, Planning, Execution, Closing) |
+| **PMO Processes TC count** | One "create" TC and one "approval workflow" TC for every process listed in the BRD's PMO Process section |
+| **Stakeholders sheet** | Present only if BRD has a Stakeholders tab in the Project workspace |
+| **Level 2 sheet (e.g. Department)** | Present only if BRD has a 3-tier hierarchy |
+| **Status logic TCs** | Wording matches the exact status labels used in the BRD (e.g. "Slightly Delayed" vs "Delayed") |
+| **Summary counters accurate** | Untested count and Total Number of Test Cases match actual TC rows on every sheet |
+| **All statuses are "Untested"** | No test case was accidentally pre-marked as Passed/Failed |
+| **Template formatting preserved** | Fonts (Times New Roman), colors (#2E75B5 header, #D9E2F3 values), and column widths unchanged |
+| **No invented test cases** | Every TC maps to a feature explicitly described in the BRD |
+
+---
+
+## Common Update Scenarios
+
+These are the most frequent changes made across different client BRDs:
+
+| Change | Reason | Frequency |
+|--------|--------|-----------|
+| Portfolio sheet renamed to Sector | MATARAT / airport clients use Sector as the top level, not Portfolio | Very Common |
+| Department + Strategic Project sheets removed | 2-tier hierarchy has no Department level and no Strategic Projects | Very Common |
+| System Structure TC_1 hierarchy text updated | Hierarchy wording must match the BRD exactly (2-tier vs 3-tier) | Very Common |
+| Project TC_5 tab list updated | Different clients have different tabs (e.g. Stakeholders, PhaseGate, Activity) | Common |
+| PMO Processes TC_1 phase count fixed | BRD shows 5 phases but TC said 4; Ideation phase was missing | Common |
+| New PMO process TCs added (RFP, PO, Project Plan) | Original TC file only covered Charter, CR, Closure, DAF | Common |
+| Stakeholders sheet added | BRD has a Stakeholders tab but original TC file had no matching sheet | Occasional |
+| Activities renamed from Tasks | Some clients use "Activities" terminology in their BRD | Occasional |
+| Progress Update sheet removed | Some deployments don't include the Progress Update feature | Occasional |
+
+> **Tip:** The PMO Processes sheet is almost always the one that needs the most additions. Most standard test case templates only cover Charter, Change Request, Closure, and DAF — but a full BRD typically lists 8–12 processes. Always compare the BRD's PMO Process list slide against the existing PMO Processes sheet line by line.
+
+---
+
+## Conclusion
+
+The P+ Test Cases from BRD automation eliminates the manual reconciliation between a client's Configuration Manual and a standard UAT test case workbook. By reading both files and doing a systematic cross-reference — hierarchy, modules, tabs, processes, and status logic — it produces an accurate, client-specific test workbook that's ready for UAT execution, with a full audit trail of every change made and why.
+
+The key principle: **never change what's correct, only fix what's wrong, add what's missing, and remove what doesn't apply.** Every existing test case is preserved unless the BRD directly contradicts it.
+
+This automation is part of the BC Automations consulting toolkit. Pair it with the [P+ Notification Template from BRD](/blog/pplus-notification-template-from-brd) automation for a complete deployment documentation suite.
+
+<ClaudeCTA />
