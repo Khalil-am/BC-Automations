@@ -1,0 +1,298 @@
+---
+title: "S+ Test Cases from BRD"
+description: "Automatically generate a complete, BRD-aligned S+ UAT test case workbook by cross-referencing any Configuration Manual against an existing test case template — adding missing modules, removing obsolete ones, and keeping every existing test case exactly as-is."
+date: "2026-03-24"
+tags: ["SPlus", "Test Cases", "BRD"]
+featured: true
+readTime: "10 min read"
+author: "Khalil Abu Mushref"
+---
+
+## Automation Name
+
+**S+ Test Cases from BRD — Module-Aligned UAT Workbook**
+
+This automation takes a client's S+ Configuration Manual (`.pptx/.pdf/.docx`) and cross-references it against the attached S+ test case template (`.xlsx`) to produce an updated, client-specific UAT test case file. Instead of manually reading through 60+ BRD slides to figure out which modules exist and then hand-editing every sheet, this prompt produces a validated, ready-to-execute test workbook in minutes — with every module from the BRD covered, and nothing invented that isn't in scope.
+
+**Key difference from P+ Test Cases from BRD:** S+ covers strategy management components (Objectives, KPIs, Key Results, Initiatives, Tracks) rather than project management modules. The hierarchy and performance threshold logic are S+-specific.
+
+---
+
+## Prompt
+
+```
+You are a Senior QA Analyst generating a complete S+ (Strategy Management System)
+UAT test case workbook.
+
+LANGUAGE: [EN/AR]
+- If EN → All text in English, LTR alignment throughout
+- If AR → All text in Arabic, RTL alignment throughout
+  (sheet.sheet_view.rightToLeft = True)
+
+You have TWO inputs:
+1. A Configuration Manual / BRD (.pptx/.pdf/.docx) — the source of truth for what
+   modules exist and their field specifications
+2. An existing S+ test case template (.xlsx) — the formatting reference
+
+RULES — read carefully:
+
+1. READ the Configuration Manual / BRD completely. Extract every module/component:
+   - Visual Identity (logo, colors, background)
+   - Login
+   - Strategy Model structure
+   - Principles (Vision, Mission, Values)
+   - Objectives (all levels)
+   - KPIs (all levels)
+   - Key Results
+   - Initiatives, Tracks, Projects
+   - Performance Levels / status thresholds
+   - Any other module present in the BRD
+
+2. READ the existing .xlsx template to learn the EXACT format:
+   - Sheet structure (Project Info header, metadata rows, Total/Summary section,
+     test case table)
+   - Column layout: Test Case ID, Test Case Summary, Status
+   - Styling: fonts, colors, fills, borders, column widths, merged cells
+   - Do NOT add extra columns. Do NOT rename columns. Match it exactly.
+
+3. For EACH module found in the BRD, create one sheet with test cases that cover:
+   - Form creation (verify user can create the item with all mandatory fields)
+   - Mandatory field validation (verify system prevents saving when required fields
+     are empty)
+   - Conditional field logic (e.g., "Unit of Measure Type appears only when Number
+     is selected")
+   - Dropdown/field type verification (only for fields with special behavior — do NOT
+     list every single field individually)
+   - Read-only field enforcement
+   - Edit-after-creation capability
+   - Attachments (optional upload)
+   - Parent-child linkage (e.g., "Level 2 KPI is correctly linked to its parent
+     Level 1 KPI")
+   - Performance status thresholds (where applicable)
+   - Keep test cases CONCISE — group field checks, don't enumerate every field
+     separately
+
+4. If a module exists in the template but NOT in the BRD → REMOVE that sheet
+5. If a module exists in the BRD but NOT in the template → ADD a new sheet for it
+6. If a module exists in BOTH → keep the template structure, update test cases to
+   match BRD content
+
+7. Every test case summary starts with "Verify that..."
+
+8. Sheet metadata for each sheet:
+   - Project Name: [Client Name] S+
+   - Created Date: [Today's Date]
+   - Module Name: [Sheet Module Name]
+   - Prepared By: QA Team
+   - Reviewed By: QA Team
+   - Reviewed Date: [Today's Date]
+   - Sheet names, column headers, TC IDs, and TC summaries are all in the selected
+     language [EN/AR]
+
+9. OUTPUT a single .xlsx file with:
+   - All sheets in logical order (identity → login → model → principles →
+     objectives → KPIs → key results → initiatives → tracks → projects →
+     performance)
+   - Each sheet with correct Total/Summary counters (Untested count = TC count)
+   - All 3 columns preserved: Test Case ID, Test Case Summary, Status
+     (all "Untested")
+   - If [EN] → LTR alignment throughout
+   - If [AR] → RTL alignment throughout with Arabic column headers
+     (معرف حالة الاختبار, ملخص حالة الاختبار, الحالة)
+
+10. VERIFY before delivering:
+    - Every BRD module has a corresponding sheet
+    - No sheet exists for a module NOT in the BRD
+    - No test case references a field or behavior not described in the BRD
+    - Total/Summary counts match actual TC rows per sheet
+    - No extra columns added beyond the template format
+```
+
+---
+
+## Required Files
+
+Attach **both** of the following files to your Claude conversation **before** pasting the prompt:
+
+| # | File | Purpose | Notes |
+|---|------|---------|-------|
+| 1 | `GADD_SPlus_Test_Cases.xlsx` | S+ test case template — formatting reference with sample modules | Download below — do NOT modify columns |
+| 2 | Client BRD / Config Manual | Client's S+ system specification describing modules, fields, and thresholds | Use the latest version available (.pptx / .pdf / .docx) |
+
+---
+
+## Downloadable Templates
+
+<DownloadSection>
+  <DownloadButton
+    fileName="GADD_SPlus_Test_Cases.xlsx"
+    label="S+ Test Case Template (GADD Sample) (.xlsx)"
+    description="Ready-to-use sample with 17 modules and 106 test cases covering the full S+ strategy management system."
+  />
+</DownloadSection>
+
+---
+
+## Description
+
+This automation takes a client's S+ Configuration Manual (`.pptx/.pdf/.docx`) and cross-references it against the attached S+ test case template (`.xlsx`) to produce an updated, client-specific UAT test case file.
+
+Instead of manually reading through 60+ BRD slides to figure out which modules exist and then hand-editing every sheet, this prompt produces a validated, ready-to-execute test workbook in minutes — with every module from the BRD covered, and nothing invented that isn't in scope.
+
+### Language & Text Direction
+
+| Property | EN (English) | AR (Arabic) |
+|----------|-------------|-------------|
+| **Language** | English | Arabic |
+| **Text Direction** | LTR (Left-to-Right) | RTL (Right-to-Left) |
+| **Cell Alignment** | Left-aligned | Right-aligned |
+| **Sheet Names** | English | Arabic |
+| **Column Headers** | Test Case ID \| Test Case Summary \| Status | معرف حالة الاختبار \| ملخص حالة الاختبار \| الحالة |
+| **TC Summaries** | English ("Verify that...") | Arabic ("التحقق من أن...") |
+
+Replace `[EN/AR]` in the prompt with your desired language before running. Use **EN** for mixed teams and cross-team handoffs. Use **AR** for Arabic-first clients and government entity deliverables where RTL alignment is expected.
+
+### What Gets Generated
+
+A single `.xlsx` file with one sheet per S+ module found in the BRD:
+
+| Sheet | Always Present | Conditional | Content |
+|-------|---------------|-------------|---------|
+| Visual Identity | ✓ | | Logo, colors, background image |
+| Login | ✓ | | Credential validation, language toggle |
+| Strategy Model | ✓ | | Model structure, hierarchy levels |
+| Principles (Vision) | ✓ | | Vision statement creation and display |
+| Principles (Mission) | ✓ | | Mission statement creation and display |
+| Principles (Values) | ✓ | | Values creation and display |
+| Objectives (Level 1) | ✓ | | Top-level objective creation, fields, linkage |
+| Objectives (Level 2+) | | If BRD has multi-level objectives | Sub-objective creation, parent linkage |
+| KPIs (Level 1) | ✓ | | KPI creation, measurement type, targets |
+| KPIs (Level 2+) | | If BRD has multi-level KPIs | Sub-KPI creation, parent linkage |
+| Key Results | | If BRD has Key Results module | Key result creation, linkage to objectives |
+| Initiatives | ✓ | | Initiative creation, fields, status |
+| Tracks | | If BRD has Tracks module | Track creation, initiative linkage |
+| Projects | | If BRD has Projects under Initiatives | Project creation, track/initiative linkage |
+| Performance Levels | ✓ | | Status thresholds, achievement ranges |
+
+### Template Structure (All Sheets)
+
+Every sheet follows the same structure — Claude detects this from your uploaded template and replicates it exactly:
+
+| Block | Rows | Content |
+|-------|------|---------|
+| Project Info | 1–4 | Project Name, Created Date, Module Name, Prepared By, Reviewed By, Reviewed Date |
+| Total / Summary | 6–13 | Passed, Failed, Blocked, Untested, In Progress, NA, Total (auto-counted) |
+| Column Headers | 15 | Test Case ID \| Test Case Summary \| Status |
+| Test Cases | 16+ | TC_1, TC_2 … TC_N with Status = "Untested" |
+
+### Test Case Coverage Per Module
+
+For each module, Claude generates test cases covering:
+
+| Coverage Area | Example TC Summary |
+|--------------|-------------------|
+| Form creation | "Verify that user can create a new Level 1 Objective with all mandatory fields" |
+| Mandatory field validation | "Verify that system prevents saving when required fields are empty" |
+| Conditional field logic | "Verify that Unit of Measure Type appears only when Number is selected" |
+| Dropdown/field verification | "Verify that Status dropdown contains the expected values from BRD" |
+| Read-only enforcement | "Verify that calculated fields cannot be manually edited" |
+| Edit-after-creation | "Verify that user can edit the objective after initial creation" |
+| Attachments | "Verify that user can optionally upload attachments" |
+| Parent-child linkage | "Verify that Level 2 KPI is correctly linked to its parent Level 1 KPI" |
+| Performance thresholds | "Verify that achievement percentage maps to correct performance level" |
+
+### Key Benefits
+
+- **17+ modules audited automatically** — No manual line-by-line BRD comparison needed
+- **Bilingual support (EN/AR)** — Full RTL alignment and Arabic headers for Arabic output
+- **0 existing TCs changed unnecessarily** — Every existing test case is preserved unless the BRD contradicts it
+- **100% template formatting preserved** — Fonts, colors, column widths, and structure unchanged
+- **Concise test cases** — Field checks are grouped, not enumerated individually
+- **< 3 min full cross-reference runtime** — Complete reconciliation in a single Claude session
+
+---
+
+## How to Use
+
+1. **Download** the S+ Test Case Template (`.xlsx`) from above
+2. **Gather** the client's S+ Configuration Manual / BRD (`.pptx`, `.pdf`, or `.docx`)
+3. **Open** a new [Claude](https://claude.ai/new) conversation
+4. **Paste** the prompt from the box above
+5. **Replace** `[EN/AR]` with your desired language:
+   - `EN` → English output, LTR alignment
+   - `AR` → Arabic output, RTL alignment
+6. **Attach** both files (template + BRD)
+7. **Send** — Claude will generate the complete test case workbook
+8. **Review** the change summary and download the `.xlsx` file
+9. **Spot-check** a module against the BRD before delivering
+
+---
+
+## Best Practices
+
+- **Always attach both files** — the template ensures formatting consistency, the BRD ensures content accuracy
+- **Don't modify the template columns** — the 3-column format (ID, Summary, Status) is intentional and standardized
+- **Use EN for mixed teams** — if your QA team works in both languages, EN is safer for cross-team handoffs
+- **Use AR for Arabic-first clients** — RTL alignment with Arabic headers matches government entity expectations
+- **Review performance thresholds** — each client may have different achievement ranges; verify against the BRD
+- **Cross-check Objectives and KPIs levels** — these are the modules most likely to vary between clients (some have 2 levels, others have 3+)
+
+---
+
+## Customization Options
+
+Add any of these lines to the end of the prompt for specific adjustments:
+
+- **Language:** Replace `[EN/AR]` with `EN` or `AR` in the prompt
+- **Project Name:** The prompt auto-fills from the BRD; override by adding `"Project Name: [Your Name]"`
+- **Additional Columns:** Not recommended — but you can add `"Add a Priority column"` to the prompt if needed
+- **Status Values:** Default is "Untested" — change by adding `"Set initial status to 'Not Started'"`
+- **Test Case Style:** Default is concise grouping — add `"List every field individually"` if verbose coverage is needed
+- **Both languages:** Run twice — once with `EN`, once with `AR` — to produce both versions
+
+---
+
+## Quality Checklist
+
+After generating the test case workbook, verify the following before delivering:
+
+| Check | What to Verify |
+|-------|---------------|
+| **Every BRD module has a sheet** | No missing sheets for modules that exist in the BRD |
+| **No orphan sheets** | No sheet exists for a module NOT in the BRD |
+| **No invented test cases** | No TC references a field or behavior not described in the BRD |
+| **Total/Summary counts match** | Untested count and Total match actual TC rows per sheet |
+| **All statuses are "Untested"** | No TC was accidentally pre-marked as Passed/Failed |
+| **Column format matches** | Test Case ID \| Test Case Summary \| Status — no extra columns |
+| **Language matches selection** | EN = all English text, AR = all Arabic text — no mixed-language |
+| **Text direction matches selection** | EN = LTR left-aligned, AR = RTL right-aligned throughout |
+| **Performance thresholds match BRD** | Achievement ranges match the client's specified levels |
+| **Parent-child linkage TCs exist** | Objectives, KPIs with multiple levels have linkage verification TCs |
+
+---
+
+## Common Update Scenarios
+
+These are the most frequent changes across different client BRDs:
+
+| Scenario | What to Do |
+|----------|-----------|
+| New module added to BRD | Re-run with updated BRD — new sheet auto-created |
+| Module removed from scope | Re-run — orphan sheet auto-removed |
+| Field added to existing module | Re-run — test cases updated to reflect new fields |
+| Client changes performance thresholds | Re-run — threshold test cases updated |
+| Need both EN and AR versions | Run twice — once with `EN`, once with `AR` |
+| Objectives expanded from 2 to 3 levels | Re-run — Level 3 Objectives sheet auto-added |
+| Key Results module added | Re-run — Key Results sheet auto-created with linkage TCs |
+
+---
+
+## Conclusion
+
+This automation eliminates the manual effort of cross-referencing S+ Configuration Manuals against test case templates. Whether you're onboarding a new GADD-style client or updating an existing engagement, attach the two files, pick your language, and get a validated test workbook in minutes.
+
+The key principle: **never change what's correct, only fix what's wrong, add what's missing, and remove what doesn't apply.** Every existing test case is preserved unless the BRD directly contradicts it.
+
+This automation is part of the BC Automations consulting toolkit. Pair it with the [S+ Notification Template from BRD](/blog/splus-notification-template-from-brd) automation for a complete deployment documentation suite.
+
+<ClaudeCTA />
