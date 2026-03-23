@@ -1,0 +1,264 @@
+---
+title: "Diwan Test Cases from BRD"
+description: "Automatically generate a complete, BRD-aligned Diwan Committee Management System UAT test case workbook by cross-referencing any Configuration Manual against an existing test case template — adding missing modules, removing obsolete ones, and preserving every existing test case."
+date: "2026-03-24"
+tags: ["Diwan", "Test Cases"]
+featured: true
+readTime: "8 min read"
+author: "Khalil Abu Mushref"
+---
+
+## Automation Name
+
+**Diwan Test Cases from BRD — Module-Aligned UAT Workbook**
+
+This automation takes a client's Diwan BRD or Configuration Manual (`.pptx/.pdf/.docx`) and cross-references it against the attached Diwan test case template (`.xlsx`) to produce an updated, client-specific UAT test case file. Instead of manually reading through the entire BRD to figure out which modules exist and then hand-editing every sheet, this prompt produces a validated, ready-to-execute test workbook in minutes.
+
+---
+
+## Prompt
+
+```
+You are a Senior QA Analyst generating a complete Diwan (Committee Management
+System) UAT test case workbook.
+
+LANGUAGE: [EN/AR]
+- If EN → All text in English, LTR alignment throughout
+- If AR → All text in Arabic, RTL alignment throughout
+  (sheet.sheet_view.rightToLeft = True)
+
+You have TWO inputs:
+1. A Configuration Manual / BRD (.pptx/.pdf/.docx) — the source of truth for what
+   modules exist and their field specifications
+2. An existing Diwan test case template (.xlsx) — the formatting reference
+
+RULES — read carefully:
+
+1. READ the Configuration Manual / BRD completely. Extract every module/component:
+   - Home Screen (dashboard cards, charts, filters)
+   - Committees (internal/external, creation, roles, members)
+   - Meetings (scheduling, invitees, agenda, voting, attendance)
+   - Team (member profiles, digital signatures)
+   - Document Library (folders, categories, file management)
+   - Circulars (announcements, publish scheduling, recipient targeting)
+   - Competitions (tenders, stages, financial tracking)
+   - Minutes & Accreditation (templates, drafts, approval workflows)
+   - Evaluation (weight setting, evaluator assignment, scoring)
+   - Any other module present in the BRD
+
+2. READ the existing .xlsx template to learn the EXACT format:
+   - Sheet structure (Project Info header, metadata rows, Total/Summary section,
+     test case table)
+   - Column layout: Test Case ID, Test Case Summary, Status
+   - Styling: fonts, colors, fills, borders, column widths, merged cells
+   - Do NOT add extra columns. Do NOT rename columns. Match it exactly.
+
+3. For EACH module found in the BRD, create one sheet with test cases that cover:
+   - Dashboard/overview cards and metric verification
+   - Form creation with all mandatory fields
+   - Mandatory field validation (system prevents saving when required fields empty)
+   - Role-based access and permissions
+   - Workflow states and status transitions
+   - Conditional field logic and dependencies
+   - Attachment handling
+   - Filtering, sorting, and list views
+   - Keep test cases CONCISE — group field checks, don't enumerate every field
+     separately
+
+4. If a module exists in the template but NOT in the BRD → REMOVE that sheet
+5. If a module exists in the BRD but NOT in the template → ADD a new sheet for it
+6. If a module exists in BOTH → keep the template structure, update test cases to
+   match BRD content
+
+7. Every test case summary starts with "Verify that..."
+
+8. Sheet metadata for each sheet:
+   - Project Name: [Client Name] Diwan
+   - Created Date: [Today's Date]
+   - Module Name: [Sheet Module Name]
+   - Prepared By: QA Team
+   - Reviewed By: QA Team
+   - Reviewed Date: [Today's Date]
+
+9. OUTPUT a single .xlsx file with:
+   - All sheets in logical order (home → committees → meetings → team →
+     documents → circulars → competitions → minutes → evaluation)
+   - Each sheet with correct Total/Summary counters (Untested count = TC count)
+   - All 3 columns preserved: Test Case ID, Test Case Summary, Status
+     (all "Untested")
+   - If [EN] → LTR alignment throughout
+   - If [AR] → RTL alignment throughout with Arabic column headers
+     (معرف حالة الاختبار, ملخص حالة الاختبار, الحالة)
+
+10. VERIFY before delivering:
+    - Every BRD module has a corresponding sheet
+    - No sheet exists for a module NOT in the BRD
+    - No test case references a field or behavior not described in the BRD
+    - Total/Summary counts match actual TC rows per sheet
+    - No extra columns added beyond the template format
+```
+
+---
+
+## Required Files
+
+Attach **both** of the following files to your Claude conversation **before** pasting the prompt:
+
+| # | File | Purpose | Notes |
+|---|------|---------|-------|
+| 1 | `Diwan_Test_Cases.xlsx` | Diwan test case template — formatting reference with sample modules | Download below — do NOT modify columns |
+| 2 | Client BRD / Config Manual | Client's Diwan system specification describing modules, fields, and workflows | Use the latest version available (.pptx / .pdf / .docx) |
+
+---
+
+## Downloadable Templates
+
+<DownloadSection>
+  <DownloadButton
+    fileName="Diwan_Test_Cases.xlsx"
+    label="Diwan Test Case Template (.xlsx)"
+    description="Ready-to-use sample with 9 modules and 93 test cases covering the full Diwan Committee Management System."
+  />
+</DownloadSection>
+
+---
+
+## Description
+
+Every Diwan deployment requires a UAT test case workbook that verifies every system module works as configured. The standard template covers the core Diwan modules — but each client may have a different subset of features enabled. Some clients use Competitions and Evaluation modules, others don't. Some have Document Library with full folder management, others have a simplified version.
+
+This automation reads the client's BRD to understand their actual system scope, then reconciles the test case workbook — keeping what's valid, fixing what's misaligned, adding what's missing, and removing what doesn't apply.
+
+### Language & Text Direction
+
+| Property | EN (English) | AR (Arabic) |
+|----------|-------------|-------------|
+| **Language** | English | Arabic |
+| **Text Direction** | LTR (Left-to-Right) | RTL (Right-to-Left) |
+| **Cell Alignment** | Left-aligned | Right-aligned |
+| **Sheet Names** | English | Arabic |
+| **Column Headers** | Test Case ID \| Test Case Summary \| Status | معرف حالة الاختبار \| ملخص حالة الاختبار \| الحالة |
+| **TC Summaries** | English ("Verify that...") | Arabic ("التحقق من أن...") |
+
+Replace `[EN/AR]` in the prompt with your desired language before running.
+
+### What Gets Generated
+
+A single `.xlsx` file with one sheet per Diwan module found in the BRD:
+
+| Sheet | Always Present | Conditional | Content |
+|-------|---------------|-------------|---------|
+| Home Screen | ✓ | | Dashboard cards, charts, filters, navigation |
+| Committees | ✓ | | Committee creation, roles (Chairman, Secretary, Vice Chairman), member management |
+| Meetings | ✓ | | Scheduling, invitees, agenda items, voting, attendance tracking |
+| Team | ✓ | | Member profiles, digital signature management |
+| Document Library | ✓ | | Folder CRUD, file uploads, category management |
+| Circulars | | If BRD has announcements module | Announcement creation, scheduling, recipient targeting |
+| Competitions | | If BRD has tenders module | Tender stages, financial tracking, bid management |
+| Minutes & Accreditation | | If BRD has templates/approval module | Template catalog, draft management, approval workflows |
+| Evaluation | | If BRD has evaluation module | Weight setting, evaluator assignment, scoring |
+
+### Template Structure (All Sheets)
+
+Every sheet follows the same structure:
+
+| Block | Rows | Content |
+|-------|------|---------|
+| Project Info | 1–4 | Project Name, Created Date, Module Name, Prepared By, Reviewed By, Reviewed Date |
+| Total / Summary | 6–13 | Passed, Failed, Blocked, Untested, In Progress, NA, Total (auto-counted) |
+| Column Headers | 15 | Test Case ID \| Test Case Summary \| Status |
+| Test Cases | 16+ | TC_1, TC_2 … TC_N with Status = "Untested" |
+
+### Key Benefits
+
+- **9 modules audited automatically** — No manual line-by-line BRD comparison needed
+- **93 test cases in the sample template** — Comprehensive coverage of all Diwan features
+- **Bilingual support (EN/AR)** — Full RTL alignment and Arabic headers for Arabic output
+- **Concise test cases** — Field checks are grouped, not enumerated individually
+- **100% template formatting preserved** — Fonts, colors, column widths unchanged
+- **< 3 min full cross-reference runtime** — Complete reconciliation in a single Claude session
+
+---
+
+## How to Use
+
+1. **Download** the Diwan Test Case Template (`.xlsx`) from above
+2. **Gather** the client's Diwan Configuration Manual / BRD
+3. **Open** a new [Claude](https://claude.ai/new) conversation
+4. **Paste** the prompt from the box above
+5. **Replace** `[EN/AR]` with your desired language:
+   - `EN` → English output, LTR alignment
+   - `AR` → Arabic output, RTL alignment
+6. **Attach** both files (template + BRD)
+7. **Send** — Claude will generate the complete test case workbook
+8. **Review** the output and download the `.xlsx` file
+9. **Spot-check** a module against the BRD before delivering
+
+---
+
+## Best Practices
+
+- **Always attach both files** — the template ensures formatting consistency, the BRD ensures content accuracy
+- **Don't modify the template columns** — the 3-column format (ID, Summary, Status) is intentional and standardized
+- **Use EN for mixed teams** — if your QA team works in both languages, EN is safer for cross-team handoffs
+- **Use AR for Arabic-first clients** — RTL alignment with Arabic headers matches government entity expectations
+- **Review Committees and Meetings sheets closely** — these are the most feature-rich modules and most likely to vary between clients
+- **Check role-based test cases** — Diwan has specific role requirements (Chairman, Secretary, Vice Chairman) that vary per deployment
+
+---
+
+## Customization Options
+
+Add any of these lines to the end of the prompt for specific adjustments:
+
+- **Language:** Replace `[EN/AR]` with `EN` or `AR` in the prompt
+- **Project Name:** The prompt auto-fills from the BRD; override by adding `"Project Name: [Your Name]"`
+- **Status Values:** Default is "Untested" — change by adding `"Set initial status to 'Not Started'"`
+- **Test Case Style:** Default is concise grouping — add `"List every field individually"` if verbose coverage is needed
+- **Both languages:** Run twice — once with `EN`, once with `AR` — to produce both versions
+- **Partial update:** `"Only update the Meetings and Committees sheets — leave all other sheets unchanged"`
+
+---
+
+## Quality Checklist
+
+After generating the test case workbook, verify the following before delivering:
+
+| Check | What to Verify |
+|-------|---------------|
+| **Every BRD module has a sheet** | No missing sheets for modules that exist in the BRD |
+| **No orphan sheets** | No sheet exists for a module NOT in the BRD |
+| **No invented test cases** | No TC references a field or behavior not described in the BRD |
+| **Total/Summary counts match** | Untested count and Total match actual TC rows per sheet |
+| **All statuses are "Untested"** | No TC was accidentally pre-marked as Passed/Failed |
+| **Column format matches** | Test Case ID \| Test Case Summary \| Status — no extra columns |
+| **Language matches selection** | EN = all English text, AR = all Arabic text — no mixed-language |
+| **Text direction matches selection** | EN = LTR left-aligned, AR = RTL right-aligned throughout |
+| **Committee roles verified** | Chairman, Secretary, Vice Chairman requirements match BRD |
+| **Workflow states verified** | Meeting statuses, approval flows match BRD definitions |
+
+---
+
+## Common Update Scenarios
+
+| Scenario | What to Do |
+|----------|-----------|
+| New module added to BRD | Re-run with updated BRD — new sheet auto-created |
+| Module removed from scope | Re-run — orphan sheet auto-removed |
+| Field added to existing module | Re-run — test cases updated to reflect new fields |
+| Competitions module not in scope | Re-run — Competitions sheet auto-removed |
+| Evaluation module added | Re-run — Evaluation sheet auto-created with weight/scoring TCs |
+| Need both EN and AR versions | Run twice — once with `EN`, once with `AR` |
+| Client adds custom committee types | Append a note to the prompt describing the custom types |
+
+---
+
+## Conclusion
+
+This automation eliminates the manual effort of cross-referencing Diwan Configuration Manuals against test case templates. Attach the two files, pick your language, and get a validated test workbook in minutes — with every module from the BRD covered and nothing invented that isn't in scope.
+
+The key principle: **never change what's correct, only fix what's wrong, add what's missing, and remove what doesn't apply.**
+
+This automation is part of the BC Automations consulting toolkit. Pair it with the [Diwan Notification Template from BRD](/blog/diwan-notification-template-from-brd) automation for a complete deployment documentation suite.
+
+<ClaudeCTA />
