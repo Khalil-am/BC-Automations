@@ -49,12 +49,15 @@ export default async function HomePage({
     return dateB - dateA;
   });
 
-  const allTags = [
-    "All",
-    ...Array.from(
-      new Set(sortedBlogs.flatMap((blog) => blog.data.tags || []))
-    ).sort(),
+  const tagPriority = ["PPlus", "SPlus", "Diwan"];
+  const uniqueTags = Array.from(
+    new Set(sortedBlogs.flatMap((blog) => blog.data.tags || []))
+  );
+  const sortedTags = [
+    ...tagPriority.filter((t) => uniqueTags.includes(t)),
+    ...uniqueTags.filter((t) => !tagPriority.includes(t)).sort(),
   ];
+  const allTags = ["All", ...sortedTags];
 
   const selectedTag = resolvedSearchParams.tag || "All";
   const filteredBlogs =
