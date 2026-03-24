@@ -1,0 +1,245 @@
+---
+title: "AI-Powered User Manual Generation"
+description: "Generate complete, branded user manuals from a source document and screen recording using Claude AI — replacing days of manual work with a 15-minute automated pipeline."
+date: "2026-03-24"
+tags: ["User Manuals", "Guide"]
+featured: true
+readTime: "10 min read"
+author: "Khalil Abu Mushref"
+---
+
+## The Problem
+
+You've just finished configuring an enterprise system for your client. Now comes the part every consultant dreads: **building the user manual**.
+
+You have:
+- A **source user manual** (PPTX/DOCX) from a previous deployment — filled with content that needs translating and rebranding
+- A **screen recording** where you walk through every module of the live system
+- A **branded template** (Word or PowerPoint) from the client
+
+Traditionally, this means **days** of:
+
+1. Manually translating slide-by-slide
+2. Pausing the video, taking screenshots, cropping them
+3. Matching each screenshot to the right section
+4. Formatting everything to look professional
+5. Ensuring RTL/LTR alignment for Arabic content
+
+**With Claude AI, this entire pipeline takes under 30 minutes.**
+
+---
+
+## What You'll Build
+
+A production-ready user manual with:
+
+- Full content translated to professional Arabic (or any language)
+- Screenshots extracted from your screen recording, matched to each section
+- Client branding (logo, colors, fonts) applied throughout
+- Proper RTL alignment for Arabic with LTR for English terms
+- Table of contents, headers, footers, page numbers
+- Image placeholders clearly labeled for future updates
+
+**Output format:** `.docx` (Word) or `.pptx` (PowerPoint) — your choice.
+
+---
+
+## When to Use Word vs PowerPoint
+
+| Criteria | Word (.docx) | PowerPoint (.pptx) |
+|----------|-------------|-------------------|
+| Best for | Text-heavy manuals, SOPs, training docs | Visual walkthroughs, presentation-style guides |
+| Page count | Unlimited, flows naturally | One section per slide, fixed layout |
+| Screenshots | Inline with text, flexible sizing | Dominates the slide, great for visual-first |
+| Table of Contents | Auto-generated, clickable | Manual, slide-based |
+| RTL Arabic support | Excellent paragraph-level control | Requires per-textbox configuration |
+| Client preference | Formal documentation delivery | Training sessions, workshops |
+| Editing by client | Easy for non-technical users | Easy drag-and-drop for images |
+
+**Rule of thumb:**
+- If the source is a PPTX and the client wants a training deck, output **PPTX**
+- If the client wants a reference document they'll print or share as PDF, output **DOCX**
+- If the content is text-heavy with 30+ pages, **DOCX** is almost always better
+
+---
+
+## The Process (Step-by-Step)
+
+### Prerequisites
+
+Upload these to Claude:
+
+1. **Source content file** — the existing user manual (.pptx or .docx) containing the raw content to translate/adapt
+2. **Branded template** — the client's template file (.docx or .pptx) with their logo, colors, fonts
+3. **Screen recording** — an .mp4 video where you walk through the live system, ideally narrating or pausing on each screen
+
+---
+
+## Phase 1: Generate the Base Manual
+
+### Prompt Template
+
+```text
+Fill this template for my client [CLIENT_NAME] with the [SYSTEM_NAME] content,
+but in Arabic.
+
+Make sure all slides/sections from the source are included and translated to Arabic.
+
+Requirements:
+1. Use the template as the base for all pages
+2. Translate ALL content from the source user manual to professional Arabic
+3. Maintain the full document structure
+4. All text must be properly aligned for Arabic (RTL for Arabic, LTR for English)
+5. Use the template's fonts as defined in the branded template
+6. Output as a single [.docx/.pptx] file
+7. Leave placeholders for each image to be inserted in the Manual
+```
+
+### What Claude Does
+
+1. **Extracts content** from the source PPTX/DOCX — every slide, every paragraph
+2. **Analyzes the template** — pulls logos, brand colors, fonts from the branded file
+3. **Generates the full document** with:
+   - Cover page with client branding
+   - Auto-generated Table of Contents
+   - All sections translated to professional Arabic
+   - Dashed-border image placeholders labeled with section names
+   - Headers with client logo, footers with page numbers
+   - Consistent styling throughout (heading hierarchy, bullet formatting, spacing)
+
+### Output at This Stage
+
+A complete `.docx` or `.pptx` file with all text content finalized and clearly labeled image placeholders where screenshots will go.
+
+---
+
+## Phase 2: Add Screenshots from Video
+
+### Prompt Template
+
+```text
+I have a user manual [Word/PPT] file. I also have a screen recording video
+where I walk through every screen of the system and name each section as I navigate.
+
+Please:
+1. Watch the video and extract/identify the relevant screenshot for each section
+2. Match each screenshot to the correct section in the attached file based on
+   the section name I say in the video and the section title
+3. For each content section that has a screenshot placeholder or empty image area:
+   - Crop the video frame to show only the relevant application screen
+   - Place the screenshot in the placeholder with proper sizing
+     * Position: centered with proper margins
+     * Add a subtle drop shadow and rounded corners
+     * Ensure the screenshot does not overlap with the text content
+4. Maintain all existing text, branding, and formatting — only add the screenshots
+5. Output the updated file with all screenshots embedded
+```
+
+### What Claude Does
+
+1. **Analyzes the video** — extracts frames at regular intervals
+2. **Identifies each screen** — recognizes the system UI, navigation elements, and section names visible on screen
+3. **Maps frames to sections** — matches each unique screen to the corresponding placeholder using:
+   - Visible page titles in the UI
+   - Sidebar navigation state (which tab is active)
+   - Content visible on screen (tables, forms, charts)
+4. **Processes each screenshot:**
+   - Crops the browser chrome/toolbar
+   - Scales to optimal document width
+   - Adds rounded corners and subtle drop shadow
+   - Adds a thin border for definition
+5. **Replaces all placeholders** with the processed screenshots
+6. **Outputs the final file** with all images embedded
+
+---
+
+## Tips for Best Results
+
+### Recording Your Screen Walkthrough
+
+- **Pause 2-3 seconds** on each screen before navigating — gives Claude cleaner frames to extract
+- **Navigate in the same order** as your manual sections — makes mapping more accurate
+- **Maximize the browser window** — more screen real estate means higher quality screenshots
+- **Close unnecessary tabs and notifications** — cleaner screenshots look more professional
+- **Use the system in the same language** as your manual (Arabic UI for Arabic manual)
+- **Keep the recording under 5 minutes** — 3-4 minutes is ideal for 15-20 unique screens
+
+### Preparing Your Source Files
+
+- **Source manual:** Any `.pptx` or `.docx` with the content structure you want to replicate
+- **Template:** Should contain the client's logo at minimum. Brand colors and fonts are a bonus.
+- **Video:** `.mp4` format, standard resolution (1080p or higher recommended)
+
+### Optimizing the Output
+
+- **First pass:** Generate with placeholders, review the text/structure, fix any issues
+- **Second pass:** Add screenshots from video, review the visual layout, adjust if needed
+- **Always specify the output format** (Word or PowerPoint) explicitly in your prompt
+- **For Arabic content:** Mention RTL alignment explicitly — Claude handles it but the reminder ensures consistency
+
+---
+
+## Scaling This Across Clients
+
+This process is fully reproducible. For each new client deployment:
+
+1. **Swap the template** — upload the new client's branded template
+2. **Swap the video** — record a new walkthrough on the client's live instance
+3. **Run the same two prompts** — Phase 1 (generate) then Phase 2 (screenshots)
+4. **Deliver in under 30 minutes**
+
+Each manual is unique to the client — their branding, their data, their system configuration — but the process is identical every time.
+
+---
+
+## Expected Results
+
+| Metric | Typical Value |
+|--------|--------------|
+| Source slides/pages processed | 50-100 |
+| Output pages generated | 30-60 |
+| Sections covered | 10-15 major sections, 30-50 subsections |
+| Screenshots extracted | 15-25 unique screens |
+| Placeholder replacement rate | 100% |
+| Languages | Arabic (primary), English (system terms) |
+| Time for base manual | ~5 minutes |
+| Time to add screenshots | ~10 minutes |
+| **Total time** | **~15 minutes** |
+
+---
+
+## Common Questions
+
+### Can I use this for PowerPoint output instead of Word?
+
+Yes. Simply specify `.pptx` in your prompt. The process is identical — Claude will generate slides instead of pages, and screenshots are placed per-slide instead of inline with text. PowerPoint is better for training decks; Word is better for reference manuals.
+
+### What if my video doesn't cover every section?
+
+Claude will replace as many placeholders as it can match. Any unmatched placeholders remain as labeled placeholders — so you can manually insert those screenshots later without losing your place.
+
+### Does it work for English manuals too?
+
+Absolutely. The Arabic/RTL handling is a bonus feature, not a requirement. The same process works for English, French, or any other language.
+
+### What video length is ideal?
+
+3-5 minutes for a system with 15-25 unique screens. Longer videos work fine — Claude extracts frames at intervals and deduplicates. But shorter, focused walkthroughs produce better screenshot quality since you spend more time on each screen.
+
+### Can I update the manual later when the system changes?
+
+Yes. Re-record the affected screens, upload the existing manual plus the new video, and ask Claude to replace only the screenshots that have changed. Your text content remains untouched.
+
+---
+
+## Summary
+
+| Step | Input | Output | Time |
+|------|-------|--------|------|
+| Phase 1: Generate | Source manual + Template | Branded manual with placeholders | ~5 min |
+| Phase 2: Screenshots | Phase 1 output + Screen recording | Final manual with embedded screenshots | ~10 min |
+| **Total** | **3 files** | **Production-ready user manual** | **~15 min** |
+
+This turns what used to be a 3-5 day manual effort into a 15-minute automated pipeline — and the output is more consistent, more professional, and more maintainable than hand-built manuals.
+
+<ClaudeCTA />
