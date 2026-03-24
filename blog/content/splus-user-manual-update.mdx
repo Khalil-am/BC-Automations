@@ -1,0 +1,351 @@
+---
+title: "S+ User Manual Update from Live System"
+description: "Automatically update and enrich existing S Plus user manuals — identify new features, add missing sections, and embed screenshots using a screen recording or live system browsing via Cowork mode."
+date: "2026-03-24"
+tags: ["SPlus", "User Manuals"]
+author: "Khalil Abu Mushref"
+---
+
+## Automation Name
+
+**S Plus User Manual Update from Live Instance**
+
+This automation takes an existing S Plus (S+) Strategy Management System user manual and updates it by comparing the live system against the current documentation. Claude identifies missing features and sections, writes new content, updates the version number, and embeds screenshots — producing an updated, versioned manual in minutes.
+
+### Two Ways to Add Screenshots
+
+You can provide screenshots to Claude in two ways:
+
+| Method | What You Do | Mode Required | Best For |
+|--------|-------------|---------------|----------|
+| **Screen Recording** (recommended) | Record a short video walkthrough of the system, upload it with the manual | Standard Claude chat or Cowork | Quick updates, no browser access needed |
+| **Live System Browsing** | Provide the instance URL and let Claude navigate the system directly | **Cowork mode only** (desktop app with browser access) | Comprehensive audits, Claude explores every page |
+
+**Tip:** If you don't have Cowork mode or prefer a faster workflow, record a 3-5 minute screen recording of the system and upload it alongside the manual. Claude will extract the relevant screenshots from the video and match them to the correct sections.
+
+---
+
+## Prompt
+
+### Option A: With Screen Recording (Works in Standard Claude Chat)
+
+```text
+────────────────────────────────────────────────────────
+CONFIGURATION (change these values per client)
+────────────────────────────────────────────────────────
+Language         : [AR]                ← EN or AR
+Version From     : [1.1]              ← current manual version
+Version To       : [1.2]              ← new version number
+Year             : [2026]
+────────────────────────────────────────────────────────
+
+I have an existing user manual (.docx) for the S+ system.
+I also have a screen recording video where I walk through
+every screen of the system and name each section as I navigate.
+
+Please:
+1. Open the attached user manual and review its current structure,
+   sections, and content
+2. Watch the video and identify every system page/feature shown
+3. Compare what is shown in the video against what is documented
+   in the manual — identify any missing features, pages, or sections
+4. For each missing feature found:
+   - Add a new section to the manual matching the existing heading
+     style and formatting
+   - Write clear, concise descriptions in the configured language
+   - Include bullet lists for sub-features where appropriate
+5. For each new section, extract the relevant screenshot from the
+   video that shows that page/feature
+6. Embed all screenshots into the document with borders matching the
+   existing screenshot style in the manual (same border color,
+   sizing, and positioning)
+7. Update the version number from [Version From] to [Version To]
+8. Preserve the existing document structure — do not reorganize or
+   remove existing content, only add what is missing
+9. Update the navigation/home page section if new menu items exist
+10. Save the final document as:
+    "RM User Manual S+ [Language] V[Version To].docx"
+
+Important:
+- Match the existing RTL/LTR text direction throughout
+- New headings must use the same Word styles (Heading1, Heading2)
+  as existing sections so the Table of Contents can be updated
+- The TOC will need a manual refresh in Word after generation
+  (right-click TOC → Update Field → Update Entire Table)
+```
+
+### Option B: With Live System Browsing (Requires Cowork Mode)
+
+```text
+────────────────────────────────────────────────────────
+CONFIGURATION (change these values per client)
+────────────────────────────────────────────────────────
+Instance URL     : [https://your-system.example.com/#/splus/strategy-map/2/18]
+Language         : [AR]                ← EN or AR
+Version From     : [1.1]              ← current manual version
+Version To       : [1.2]              ← new version number
+Year             : [2026]
+────────────────────────────────────────────────────────
+
+I have an existing user manual (.docx) for the S+ system.
+The live system is accessible at the Instance URL above.
+
+Please:
+1. Open the attached user manual and review its current structure,
+   sections, and content
+2. Navigate to the live system instance URL and systematically
+   explore every page and feature accessible from the main navigation
+3. Compare what exists in the live system against what is documented
+   in the manual — identify any missing features, pages, or sections
+4. For each missing feature found:
+   - Add a new section to the manual matching the existing heading
+     style and formatting
+   - Write clear, concise descriptions in the configured language
+   - Include bullet lists for sub-features where appropriate
+5. Take a screenshot of each new page/feature from the live system
+6. Embed all screenshots into the document with borders matching the
+   existing screenshot style in the manual (same border color,
+   sizing, and positioning)
+7. Update the version number from [Version From] to [Version To]
+8. Preserve the existing document structure — do not reorganize or
+   remove existing content, only add what is missing
+9. Update the navigation/home page section if new menu items exist
+10. Save the final document as:
+    "RM User Manual S+ [Language] V[Version To].docx"
+
+Important:
+- Match the existing RTL/LTR text direction throughout
+- New headings must use the same Word styles (Heading1, Heading2)
+  as existing sections so the Table of Contents can be updated
+- The TOC will need a manual refresh in Word after generation
+  (right-click TOC → Update Field → Update Entire Table)
+```
+
+---
+
+## Required Setup
+
+### Choose Your Mode
+
+| | Screen Recording Path | Live Browsing Path |
+|---|---|---|
+| **Where** | Standard Claude chat **or** Cowork mode | **Cowork mode only** (desktop app) |
+| **What you provide** | Manual (.docx) + screen recording video | Manual (.docx) + live instance URL |
+| **Screenshots** | Extracted from your video | Captured live by Claude from the browser |
+| **Setup needed** | None — just upload files | Open Claude desktop app, switch to Cowork mode, grant browser access, log into the system in Chrome first |
+
+### Required Inputs
+
+| # | Input | Purpose | Notes |
+|---|-------|---------|-------|
+| 1 | Existing user manual (.docx) | Current manual to be updated | Upload as attachment in the conversation |
+| 2a | Screen recording (video) | Video walkthrough of the system | **Option A:** Record 3-5 min showing each page, say section names aloud |
+| 2b | Live system URL | Instance URL for Claude to browse | **Option B (Cowork only):** Must be accessible from your browser — Claude uses your session |
+
+**Note on Cowork access:** When using Option B, Claude browses the live system through your local browser session. If you are already logged into the system in Chrome, Claude will have the same access. Make sure you are logged in before starting.
+
+---
+
+## Recording a Screen Walkthrough (Option A)
+
+If you choose the screen recording path, follow these guidelines for the best results:
+
+### How to Record
+
+1. Open the S+ system in your browser and log in
+2. Start a screen recording (any tool: OBS, Loom, Windows Game Bar, Mac Screenshot)
+3. Navigate through **every page** in the system, following the main navigation order
+4. **Say the section name out loud** as you navigate each page (e.g., "This is the Performance Dashboard", "This is the Reports page")
+5. **Pause 2-3 seconds** on each screen before moving to the next
+6. Cover all pages in order — especially any pages you suspect are missing from the manual
+7. Stop recording and save the video
+
+### Recording Tips
+
+- **Maximize the browser window** for cleaner screenshots
+- Close unnecessary tabs and notifications
+- Keep the recording **under 5 minutes** — Claude processes video efficiently
+- Resolution: **1080p or higher** for crisp screenshot extraction
+- If the system has dropdown menus, **open them on camera** so Claude can see the sub-pages
+- For filter bars or view toggles, **click through each option** to show all views
+
+### What Claude Does with the Video
+
+Claude watches the recording and:
+
+1. Identifies each system page shown in the video
+2. Matches pages to existing manual sections
+3. Finds pages that are **not documented** in the manual
+4. Extracts the relevant video frame as a screenshot for each new section
+5. Crops and embeds the screenshot with matching border style
+
+---
+
+## Live System Browsing (Option B — Cowork Mode)
+
+When using Cowork mode with a live instance URL, Claude does the exploration automatically.
+
+### How Claude Explores the System
+
+1. **Main navigation bar** — clicks each top-level menu item
+2. **Dropdown menus** — expands sub-menus to find nested pages
+3. **Dashboard pages** — identifies chart types, filter options, and data views
+4. **Detail pages** — checks for linked pages accessible from the main views
+5. **Filter bars** — documents filter and view toggle options
+
+### Cowork Setup Steps
+
+1. Open the **Claude desktop app**
+2. Switch to **Cowork mode**
+3. Grant **browser access** when prompted
+4. Select a **working folder** where the output file will be saved
+5. Open Chrome and **log into the S+ system** before starting
+6. Navigate to the main page so the system is loaded and ready
+7. Paste the **Option B prompt** with the instance URL
+
+**Tip:** For best results, open the live system in Chrome and navigate to the main page **before** starting the Cowork session. This ensures you are already logged in, the system is loaded, and Claude can start exploring immediately.
+
+---
+
+## Description
+
+S Plus (S+) is an enterprise Strategy Management System used by government entities and large organizations. As the system evolves between versions, the user manual needs to be updated to reflect new features, pages, and UI changes.
+
+This automation eliminates the manual comparison process. Whether you provide a screen recording or a live URL, Claude identifies gaps, writes new content, and embeds screenshots — all matching the existing document's formatting.
+
+### What Gets Updated
+
+| Component | What Claude Does |
+|-----------|-----------------|
+| New Sections | Identifies pages not covered in the manual and adds full sections |
+| Navigation Items | Updates the home page / navigation section if new menu entries exist |
+| Screenshots | Extracted from video or captured live — embedded with matching border style |
+| Version Number | Updates the document version from the old to the new number |
+| Descriptions | Writes clear feature descriptions in the configured language (AR or EN) |
+| Existing Content | Preserved as-is — Claude only adds, never removes |
+
+### Screenshot Style Matching
+
+Regardless of which method you use (video or live browsing), Claude analyzes the existing screenshots in the manual and replicates:
+
+- **Border color** (e.g., blue #002060 in the S+ manual)
+- **Border width** (matching the existing line weight)
+- **Image sizing** (consistent width with the document layout)
+- **Centering** (images centered in the content area)
+
+### Typical New Sections Found
+
+When updating from an earlier S+ version, Claude commonly identifies these missing areas:
+
+| Section | Description |
+|---------|-------------|
+| Performance Dashboards | Executive and KPI performance dashboard views |
+| Reports | Report generation page with export options (PDF/Word) |
+| Organization Details | Per-entity detail pages with KPI cards and charts |
+| Map View Types | Strategy map filter bar with view toggle options (List, Strategic, Board, KPI Status) |
+| Operational Plans | Operational plan descriptions linked to initiatives |
+
+---
+
+## Scaling to Other Clients
+
+To reuse this automation for a different client or system:
+
+| What to Change | Where |
+|----------------|-------|
+| Instance URL / Video | Option B: point to new system — Option A: record new walkthrough |
+| Language | Configuration block — switch AR/EN and text direction |
+| Version Numbers | Configuration block — set current and target versions |
+| Manual File | Replace with the client's existing manual |
+| System Name | If not S+, update references in the prompt (e.g., P+, Diwan) |
+
+Everything else — the exploration logic, screenshot extraction, section generation, and formatting — is handled automatically.
+
+### Works With Other Systems
+
+This automation is not limited to S+. It works with any web-based system where Claude can:
+
+- View pages via screen recording or navigate via URL (Cowork)
+- Read Arabic or English UI text
+- Extract or capture screenshots
+- Compare against an existing manual structure
+
+Examples: P+ (Program Management), Diwan (Committee Management), or any custom web application.
+
+---
+
+## Best Practices
+
+- **Choose the right path** — use a screen recording for quick updates; use Cowork with live URL for comprehensive system audits
+- **For Cowork: log into the system first** — open the system in Chrome and verify you can access all pages before starting
+- **For recordings: say section names aloud** — this helps Claude match video frames to the correct manual sections
+- **Provide the instance URL in the prompt** (Cowork path) — Claude needs the direct URL to the main page
+- **Specify the language clearly** — tell Claude whether the manual is in Arabic (AR) or English (EN) so new content matches
+- **Test with one section first** — if unsure, ask Claude to update just one section as a preview before doing the full manual
+- **Refresh the TOC in Word** — after receiving the updated file, open in Word, right-click the Table of Contents, and select "Update Field" then "Update Entire Table"
+- **Review screenshots** — verify that all captured/extracted screenshots show the correct pages and are properly sized
+- **Keep the existing manual intact** — Claude is instructed to only add content, never remove or reorganize existing sections
+
+### Customization Options
+
+Add any of these lines to the end of the prompt for specific adjustments:
+
+- **Specific sections only:** "Only check and update the Performance Dashboard and Reports sections"
+- **No screenshots:** "Do not add screenshots — only add missing text content"
+- **Different screenshot style:** "Use a black border instead of blue for new screenshots"
+- **Add operational content:** "Also add descriptions for operational plan features linked to each initiative"
+- **Different output location:** "Save the file to the Desktop/Clients/ClientName folder"
+
+---
+
+## Quality Checklist
+
+After receiving the updated manual, verify the following before client delivery:
+
+| Check | What to Verify |
+|-------|---------------|
+| Version | Version number updated correctly on the cover page |
+| New Sections | All features visible in the system have corresponding sections |
+| Screenshots | Each new section has an embedded screenshot (from video or live capture) |
+| Screenshot Style | New screenshots have the same border color and sizing as existing ones |
+| Language | All new text matches the document language (AR or EN) — no mixed languages |
+| Heading Styles | New headings use the same Word styles (Heading1, Heading2) as existing sections |
+| RTL/LTR | Text direction is consistent throughout the document |
+| Navigation | Home page / navigation section updated with new menu items |
+| TOC | Table of Contents refreshed in Word to include new sections |
+| Existing Content | No existing sections were removed or reorganized |
+| Formatting | Bullet lists, paragraph spacing, and fonts match existing content |
+| File Name | Output file follows the naming convention with correct version |
+
+---
+
+## Comparison: All Three Approaches
+
+| Aspect | Manual Generation (Template-Based) | Manual Update (Screen Recording) | Manual Update (Live Browsing) |
+|--------|-----------------------------------|--------------------------------|------------------------------|
+| **Mode** | Standard Claude chat | Standard Claude chat **or** Cowork | **Cowork mode only** |
+| **Input** | Source manual + branded template | Existing manual + screen recording video | Existing manual + live system URL |
+| **What it does** | Translates and reformats from scratch | Identifies gaps, extracts screenshots from video | Identifies gaps, captures screenshots live |
+| **Screenshots** | Placeholders (or Phase 2 with video) | Extracted from your recording | Captured directly from the live system |
+| **Use case** | New client onboarding | Quick version updates | Comprehensive system audits |
+| **Time** | ~5 minutes | ~10-15 minutes | ~15-20 minutes |
+
+---
+
+## Summary
+
+| Step | Screen Recording Path | Live Browsing Path (Cowork) |
+|------|----------------------|---------------------------|
+| **Step 1** | Upload manual + video | Upload manual, paste URL in prompt |
+| **Step 2** | Paste Option A prompt | Paste Option B prompt |
+| **Step 3** | Claude watches video, finds gaps | Claude browses system, finds gaps |
+| **Step 4** | Extracts screenshots from video frames | Captures screenshots from live pages |
+| **Step 5** | Embeds screenshots, adds new sections | Embeds screenshots, adds new sections |
+| **Time** | **~10-15 min** | **~15-20 min** |
+| **Output** | Production-ready updated manual (.docx) | Production-ready updated manual (.docx) |
+
+This turns what used to be a 2-3 day manual comparison and update effort into a 15-minute automated session — with real screenshots and consistent formatting that matches the existing document style.
+
+This automation is part of the BC Automations consulting toolkit. Use it alongside the [S+ User Manual Generation](/blog/splus-user-manual-generation) automation for a complete manual lifecycle — generate once, then update from the live system for every new version.
+
+<ClaudeCTA />
