@@ -1,0 +1,313 @@
+---
+title: "P+ User Manual Generation Automation"
+description: "Automatically translate and generate professional user manuals for the P Plus Project Management System in Arabic or English, using the client's official branded PowerPoint template."
+date: "2026-03-24"
+tags: ["PPlus", "User Manuals"]
+featured: true
+readTime: "8 min read"
+author: "Khalil Abu Mushref"
+---
+
+## Automation Name
+
+**P Plus User Manual Generation — Bilingual (AR/EN)**
+
+This automation converts a P Plus (P+) Project Management System user manual into a fully translated, professionally formatted PowerPoint presentation using the client's official branded template. Instead of manually translating 93+ slides and reformatting them one by one, this prompt produces a complete user manual in the target language in minutes — covering all system sections with consistent branding, proper text alignment, and section-by-section structure.
+
+---
+
+## Prompt
+
+```text
+Fill this template for my client [Client Name] with the P+ Project Management content,
+but in [Language: AR/EN].
+Make sure all slides from the source are included and translated to [Language: AR/EN].
+
+Requirements:
+1. Use the [Client Name] template (.pptx) as the base for all slides
+2. Translate ALL content from the P+ user manual to professional [Language: AR/EN]
+3. Maintain the full document structure:
+   - Cover slide with title: "Project Management System P+" and subtitle: "User Manual" + version
+   - Table of Contents listing all sections
+   - Section dividers (branded slides) for each major section
+   - Content slides (branded slides) for all detailed content
+   - Thank You closing slide
+4. Include ALL sections from the source manual:
+   Section 1: Introduction (version history, approval table, overview)
+   Section 2: Login Page (authentication, credentials, access)
+   Section 3: Homepage (dashboard cards, navigation, quick access)
+   Section 4: Timeline (Gantt view, task cards, milestones, levels)
+   Section 5: Portfolios (portfolio cards, overview, navigation)
+   Section 6: Programs (program creation, details, linking)
+   Section 7: Projects (project creation, project details form)
+   Section 8: Project Workspace — with ALL tabs:
+      - Summary (project overview, status indicators)
+      - Tasks (task list, creation, progress tracking)
+      - Plan (Gantt chart, WBS, scheduling)
+      - Stage Gate (phase reviews, approvals)
+      - Update Log (change history, audit trail)
+      - Team Members (roles, assignments, permissions)
+      - Stakeholders (external parties, communication)
+      - Deliverables (outputs, milestones, acceptance)
+      - Risks (risk register, assessment matrix)
+      - Risk Matrix (heat map, probability/impact)
+      - Challenges (issues, blockers, resolution)
+      - Milestones (key dates, progress tracking)
+      - PMO Operations (governance, reporting)
+      - Dependencies (cross-project links)
+      - Documents (file management, attachments)
+   Section 9: Task Center (task list, filters, calendar view, categories)
+   Section 10: Dependencies (cross-project dependency management)
+   Section 11: Admin Panel — with ALL sub-sections:
+      - Level Management (hierarchy, structure)
+      - Statuses (workflow states, transitions)
+      - Stage Gate Configuration (phase templates)
+      - Logs (system audit, activity tracking)
+      - Approvals (workflow approvals, routing)
+      - Roles (role definitions, permissions)
+      - Escalation (escalation rules, notifications)
+      - Procurement (vendor management)
+      - Users and Groups (user management, group assignments)
+      - System Lists (lookup tables, dropdowns)
+      - Settings (global configuration)
+      - Accessibility (language, display preferences)
+      - Risk Classification (risk categories, severity levels)
+5. Consolidate duplicate content across roles while preserving unique permissions/capabilities
+6. All text must be properly aligned for [Language: AR/EN] (RTL for Arabic, LTR for English)
+7. Use the template's fonts as defined in the branded template
+8. Output as a single .pptx file
+9. Leave placeholders for each image — label them with the section name
+```
+
+---
+
+## Required Files
+
+Attach **both** of the following files to your Claude conversation **before** pasting the prompt:
+
+| # | File Name | Purpose | Notes |
+|---|-----------|---------|-------|
+| 1 | Client's branded template (.pptx) | Client's branded template with slide layouts (Cover, Content, Section Divider, Thank You) | Do NOT modify — contains all client branding assets |
+| 2 | P+ User Manual Sample (.pptx) | P Plus user manual source content for translation (Arabic) | Use the latest version available — download the sample below |
+
+---
+
+## Downloadable Templates
+
+<DownloadSection>
+  <DownloadButton
+    fileName="PPlus_User_Manual_Sample.pptx"
+    label="P+ User Manual Sample (.pptx)"
+    description="P Plus Project Management System user manual — 93-slide source content in Arabic for translation and rebranding"
+  />
+</DownloadSection>
+
+---
+
+## Description
+
+P Plus (P+) is an enterprise Project Management System used by government entities and large organizations to manage portfolios, programs, projects, tasks, risks, deliverables, and PMO operations. The source user manual contains **93 slides** documenting every screen and workflow across the entire system.
+
+This automation takes the full source manual and produces a professionally structured version in the target language using the client's official PowerPoint template, ready for client delivery without any additional formatting work.
+
+### What Gets Generated
+
+A complete presentation covering all P+ modules:
+
+| Slide Type | Count | Description |
+|------------|-------|-------------|
+| Cover | 1 | Branded slide with client logo, system title, and version number |
+| Table of Contents | 1 | Branded slide listing all sections |
+| Section Dividers | ~15 | Branded slides marking each major section |
+| Content Slides | ~60 | Content slides with body text, client logo footer, and accent bar |
+| Thank You | 1 | Branded closing slide with client logo |
+
+### Full Content Mapping (Arabic to English)
+
+Every section from the source is translated and mapped:
+
+| # | Arabic Section | English Section | Slides |
+|---|---------------|-----------------|--------|
+| 1 | المقدمة | Introduction | Divider + 2 content |
+| 2 | صفحة تسجيل الدخول | Login Page | Divider + 3 content |
+| 3 | الصفحة الرئيسية | Homepage | Divider + 5 content |
+| 4 | الجدول الزمني | Timeline | Divider + 2 content |
+| 5 | المحافظ | Portfolios | Divider + 2 content |
+| 6 | البرنامج | Programs | Divider + 2 content |
+| 7 | المشروع | Projects | Divider + 2 content |
+| 8 | مساحة عمل المشروع | Project Workspace | Divider + 25 content (15 tabs) |
+| 9 | مركز المهام | Task Center | Divider + 8 content |
+| 10 | الاعتماديات | Dependencies | Divider + 2 content |
+| 11 | لوحة التحكم | Admin Panel | Divider + 20 content |
+
+### Template Slide Layouts
+
+The client template provides master layouts that Claude maps content to automatically:
+
+| Layout | Visual Style | Used For |
+|--------|-------------|----------|
+| **Cover** | Branded background, client logo, large bold title + subtitle | First slide only |
+| **Content** | White/light background, bold title, client logo footer, accent bar | All detail/content slides |
+| **Section Divider** | Branded dark background, large white bold title | Section breaks |
+| **Thank You** | Branded background, centered client logo | Last slide only |
+
+### How It Works
+
+1. **You provide** a sample P+ user manual (download above) — this is your source content
+2. **You provide** the client's empty branded template (.pptx) with their logo, colors, and fonts
+3. **Claude reads** the source manual and extracts all content (93 slides worth)
+4. **Claude maps** each section into the client's template layouts
+5. **Claude translates** all content to the target language (Arabic or English)
+6. **Claude outputs** a single `.pptx` file with all content, properly formatted and branded
+7. **Image placeholders** are left labeled with section names — ready for the next step
+
+### Key Benefits
+
+- **93 slides processed** — Every screen, workflow, and feature documented
+- **Full bilingual translation (AR to EN or EN to AR)** — Professional business translation, not machine-translated
+- **Brand-consistent output** — Uses the client's official template with correct logo, colors, and fonts
+- **RTL/LTR conversion** — Text alignment automatically adjusted based on target language
+- **Minutes not days** — Complete manual generated in a single Claude session (~5 minutes)
+- **Version-agnostic** — Works with any version of the P+ manual
+- **15 Project Workspace tabs covered** — Summary, Tasks, Plan, Stage Gate, Update Log, Team Members, Stakeholders, Deliverables, Risks, Risk Matrix, Challenges, Milestones, PMO Operations, Dependencies, Documents
+
+### How to Use
+
+1. Open [Claude](https://claude.ai/new) (web or desktop app)
+2. Click the attachment button and upload **both files** (client template + P+ source manual)
+3. Copy and paste the prompt from the box above
+4. Press Enter and wait for Claude to process (~3-5 minutes for the full manual)
+5. Download the generated `.pptx` file
+6. Open in PowerPoint — all content is there with image placeholders
+7. Proceed to the next step: adding screenshots with a video recording
+
+---
+
+## Adding Screenshots with Video
+
+Once you have the base manual with all text content and placeholders, the next step is to add actual system screenshots using a screen recording.
+
+### Step 1: Record a Screen Walkthrough
+
+Record a short video (3-5 minutes) of the P+ system screens. As you navigate each screen, **say the name of the section out loud** (e.g., "This is the Login Page", "This is the Project Workspace — Tasks tab", etc.). Cover all sections in order:
+
+1. Login Page
+2. Homepage (dashboard cards, navigation)
+3. Timeline (Gantt view, task cards)
+4. Portfolios (portfolio cards)
+5. Programs (program list, details)
+6. Projects (project list, creation form)
+7. Project Workspace — navigate through all 15 tabs:
+   - Summary, Tasks, Plan, Stage Gate, Update Log
+   - Team Members, Stakeholders, Deliverables
+   - Risks, Risk Matrix, Challenges, Milestones
+   - PMO Operations, Dependencies, Documents
+8. Task Center (task list, calendar, categories)
+9. Dependencies (cross-project view)
+10. Admin Panel — navigate through key sub-sections
+
+**Tips for recording:**
+- Pause 2-3 seconds on each screen before navigating
+- Maximize the browser window for cleaner screenshots
+- Close unnecessary tabs and notifications
+- Use the system in the same language as your manual
+
+### Step 2: Re-prompt Claude with the Video
+
+Upload the video to Claude along with the generated `.pptx` file, and use the following prompt:
+
+```text
+I have a user manual PowerPoint (.pptx) for the P+ Project Management System.
+I also have a screen recording video where I walk through every screen of the system
+and name each section as I navigate.
+
+Please:
+1. Watch the video and extract/identify the relevant screenshot for each section
+2. Match each screenshot to the correct slide in the attached .pptx file based on
+   the section name I say in the video and the slide title
+3. For each content slide that has a screenshot placeholder or empty image area:
+   - Crop the video frame to show only the relevant application screen
+   - Remove any browser chrome, taskbar, or desktop elements
+   - Place the screenshot in the slide with proper sizing and alignment:
+     * Position: right-aligned on the slide for LTR, left-aligned for RTL
+     * Size: approximately 45-50% of the slide width
+     * Add a subtle drop shadow and 4px rounded corners
+     * Ensure the screenshot does not overlap with the text content
+4. Maintain all existing text, branding, and formatting — only add the screenshots
+5. Output the updated .pptx file with all screenshots embedded
+
+Sections to match (in order):
+- Login Page
+- Homepage
+- Timeline
+- Portfolios
+- Programs
+- Projects
+- Project Workspace (Summary, Tasks, Plan, Stage Gate, Update Log,
+  Team Members, Stakeholders, Deliverables, Risks, Risk Matrix,
+  Challenges, Milestones, PMO Operations, Dependencies, Documents)
+- Task Center
+- Dependencies
+- Admin Panel (Level Management, Statuses, Stage Gate Config, Logs,
+  Approvals, Roles, Escalation, Procurement, Users & Groups,
+  System Lists, Settings, Accessibility, Risk Classification)
+```
+
+### Step 3: Review and Deliver
+
+Open the updated file in PowerPoint, verify all screenshots are correctly placed and aligned, then deliver to the client.
+
+---
+
+## Best Practices
+
+- Always use the **latest version** of both files — if the client releases a new P+ version, update the source manual first
+- Add actual **P+ system screenshots** using the video workflow above for maximum impact
+- Update the **approval table** with real names and signatures before client delivery
+- Verify the **version number** on the cover matches the latest P+ release
+- For a different client, provide their branded template file and replace `[Client Name]` in the prompt
+- If you need the full 93-slide version without consolidation, add to the prompt: *"Do not consolidate. Keep all slides from the source, even if content repeats across roles."*
+
+### Customization Options
+
+Add any of these lines to the end of the prompt for specific adjustments:
+
+- **Different language:** "Translate to Arabic" or "Translate to English"
+- **Different client:** "This is for [Client Name] — use their branding from the attached template"
+- **Add screenshot placeholders:** "Include [SCREENSHOT] markers on each content slide"
+- **Partial generation:** "Only generate the Project Workspace section (Section 8)"
+- **No consolidation:** "Do not consolidate. Keep all slides even if duplicated across roles."
+- **Word output:** "Output as .docx instead of .pptx — use a Word document layout"
+
+---
+
+## Quality Checklist
+
+After generating the manual, verify the following before client delivery:
+
+| Check | What to Verify |
+|-------|---------------|
+| Structure | All 11 sections present with section dividers |
+| Cover | Correct system name ("P+ Project Management System") and version |
+| TOC | Table of Contents lists all sections |
+| Login | Login page with authentication steps documented |
+| Homepage | Dashboard navigation and card layout documented |
+| Project Workspace | All 15 tabs documented (Summary through Documents) |
+| Task Center | Task list, filters, calendar, and categories covered |
+| Admin Panel | All 13 sub-sections covered (Level Management through Risk Classification) |
+| Language | All text is in the target language — no mixed-language text remaining |
+| Alignment | Text direction matches the target language (RTL for Arabic, LTR for English) |
+| Branding | Client logo on cover, content slides, and thank you slide |
+| Formatting | Consistent heading hierarchy, bullet formatting, and spacing throughout |
+| Placeholders | All image placeholders clearly labeled with section names |
+| Closing | Thank You slide is the final slide |
+
+---
+
+## Conclusion
+
+The P Plus User Manual Generation Automation eliminates the most time-consuming part of the documentation delivery cycle — translating and reformatting system manuals into polished client deliverables in the target language. By standardizing the process around a reusable prompt and branded template, any team member can produce consistent, professional output in minutes rather than days. Works for any client and supports both Arabic and English output.
+
+This automation is part of the BC Automations consulting toolkit. Pair it with the [P+ Notification Template from BRD](/blog/pplus-notification-template-from-brd) automation for a complete P+ documentation suite.
+
+<ClaudeCTA />
