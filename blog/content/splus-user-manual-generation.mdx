@@ -1,0 +1,301 @@
+---
+title: "S+ User Manual Generation Automation"
+description: "Automatically translate and generate professional user manuals for the S Plus Strategy Management System in Arabic or English, using the client's official branded Word or PowerPoint template."
+date: "2026-03-21"
+tags: ["SPlus", "User Manuals"]
+featured: true
+readTime: "8 min read"
+author: "Khalil Abu Mushref"
+---
+
+## Automation Name
+
+**S Plus User Manual Generation — Bilingual (AR/EN)**
+
+This automation converts an S Plus (S+) Strategy Management System user manual into a fully translated, professionally formatted document using the client's official branded template. Instead of manually translating slides and reformatting them one by one, this prompt produces a complete user manual in the target language in minutes — covering all system sections with consistent branding, proper text alignment, and section-by-section structure.
+
+---
+
+## Prompt
+
+```text
+────────────────────────────────────────────────────────
+CONFIGURATION (change these values per client)
+────────────────────────────────────────────────────────
+Output Format   : [word]           ← word or pptx
+Language        : [AR]             ← EN or AR
+Text Direction  : [RTL]            ← LTR or RTL
+Client Name AR  : [اسم العميل]
+Client Name EN  : [Client Name]
+System Name     : [S+]
+Version         : [1.0]
+Year            : [2026]
+────────────────────────────────────────────────────────
+
+I have a branded template file and a source user manual for the S+ system.
+
+Please:
+1. Use the template as the base for all pages (header, footer, logo,
+   fonts, colors, branding)
+2. Translate ALL content from the source user manual into professional
+   Arabic (or English per config above)
+3. Maintain the full document structure — every section and subsection
+   from the source must appear in the output
+4. All text must be properly aligned for the configured text direction
+   (RTL for Arabic, LTR for English)
+5. Use the template's fonts as defined in the branded template
+6. Leave placeholders for each image to be inserted later
+   (dashed gold border, cream background, descriptive Arabic label)
+7. Include: cover page, table of contents (auto-generated), all content
+   sections, and a closing "thank you" page with the logo
+8. Output as a single .docx file (or .pptx per config above)
+```
+
+---
+
+## Required Files
+
+Attach **both** of the following files to your Claude conversation **before** pasting the prompt:
+
+| # | File Name | Purpose | Notes |
+|---|-----------|---------|-------|
+| 1 | Client's branded template (.docx or .pptx) | Client's branded template with header logo, footer, fonts, and colors | Do NOT modify — contains all client branding assets |
+| 2 | S+ Source User Manual (.pptx) | S Plus user manual source content for translation | Use the latest version available — download the sample below |
+
+**Note on format:** You can use either Word (.docx) or PowerPoint (.pptx) for both the template and source. Word is recommended for long-form manuals with proper headings and TOC; PowerPoint works well when the source is already slide-based.
+
+---
+
+## Downloadable Templates
+
+<DownloadSection>
+  <DownloadButton
+    fileName="SPlus_User_Manual_Sample.pptx"
+    label="S+ User Manual Sample (.pptx)"
+    description="S Plus Strategy Management System user manual — source content for translation and rebranding"
+  />
+  <DownloadButton
+    fileName="Branded_Template_Sample.docx"
+    label="Branded Template Sample (.docx)"
+    description="Reference branded Word template with header logo, footer, and heading styles — replace with your client's template"
+  />
+</DownloadSection>
+
+---
+
+## Description
+
+S Plus (S+) is an enterprise Strategy Management System used by government entities and large organizations to manage strategic plans, objectives, KPIs, initiatives, projects, and performance dashboards. The source user manual documents every screen and workflow across the entire system.
+
+This automation takes the full source manual and produces a professionally structured version in the target language using the client's official template, ready for client delivery without any additional formatting work.
+
+### What Gets Generated
+
+A fully branded user manual containing:
+
+| Component | Description |
+|-----------|-------------|
+| Cover Page | Client logo, bilingual title, version number, year |
+| Table of Contents | Auto-generated from heading structure |
+| All Content Sections | Every section from the source manual translated into the target language |
+| Image Placeholders | Dashed gold-bordered boxes with descriptive labels |
+| Closing Page | Client logo with closing text |
+| Header/Footer | Logo, document title, and page numbers on every page |
+
+### Full Content Mapping (Arabic to English)
+
+Every section from the source is translated and mapped:
+
+| # | Arabic Section | English Section | Content |
+|---|---------------|-----------------|---------|
+| 1 | صفحة تسجيل الدخول | Login Page | Username, password, language switcher |
+| 2 | الصفحة الرئيسية | Home Page | Sidebar menu, strategy overview, quick access |
+| 3 | الإستراتيجية | Strategy | Pillars, objectives, Mission/Vision, view types |
+| 4 | جميع مؤشرات الأداء | All KPIs | KPI cards, filters, OKR/Key Result tabs |
+| 5 | مركز المهام | Task Center | Approvals, Update KPIs, My Requests |
+| 6 | المشاريع / المبادرات | Projects / Initiatives | Active Projects, Planned Projects, detail cards |
+| 7 | التقارير | Reports | Report list, PDF/Word download |
+| 8 | لوحات الأداء | Performance Dashboards | Strategic/Operational dashboards, KPI stats |
+| 9 | الخروج من النظام | Logout | Logout via user menu |
+
+**Important:** Claude reads the actual source file and generates sections based on what's in there — not this table. The table is a typical reference. If your source has different or additional sections, they will be included automatically.
+
+### Template Structure Reference
+
+Your branded template should contain at minimum:
+
+| Element | Details |
+|---------|---------|
+| Header | Client logo (centered, with underline border) |
+| Footer | "Client Name / System Manual Title / Page X" |
+| Heading 1 | Bold, accent color, 18pt |
+| Heading 2 | Bold, lighter accent, 15pt |
+| Heading 3 | Bold, accent color, 13pt |
+| Normal | Clean body font, 12pt, RTL alignment |
+
+**Pro tip:** You can use the same template across S+, P+, and Diwan manuals for the same client. Only the source manual and the System Name config need to change.
+
+### Key Benefits
+
+- **Full bilingual translation (AR to EN or EN to AR)** — Professional business translation, not machine-translated
+- **Brand-consistent output** — Uses the client's official template with correct logo, colors, and fonts
+- **RTL/LTR conversion** — Text alignment automatically adjusted based on target language
+- **Minutes not days** — Complete manual generated in a single Claude session (~5 minutes)
+- **Version-agnostic** — Works with any version of the S+ manual
+- **Format-flexible** — Output as Word (.docx) or PowerPoint (.pptx)
+- **Image placeholders** — Clearly labeled placeholders ready for screenshot insertion
+
+### How to Use
+
+1. Open [Claude](https://claude.ai/new) (web or desktop app)
+2. Click the attachment button and upload **both files** (client template + S+ source manual)
+3. Copy and paste the prompt from the box above
+4. Update the **configuration block** at the top with your client's details
+5. Press Enter and wait for Claude to process (~3-5 minutes)
+6. Download the generated file
+7. Open in Word/PowerPoint and proceed to Phase 2 (screenshots) or deliver with placeholders
+
+---
+
+## Adding Screenshots with Video
+
+After generating the manual with placeholders, you can add real screenshots from a screen recording in a second pass. This is optional — the manual works perfectly with placeholders only.
+
+### Step 1: Record a Screen Walkthrough
+
+Record a short video (3-5 minutes) of the S+ system screens. As you navigate each screen, **say the name of the section out loud** (e.g., "This is the Login Page", "This is the Strategy section", etc.). Cover all sections in order:
+
+1. Login Page
+2. Home Page (sidebar, overview cards)
+3. Strategy (pillars, objectives, Mission/Vision)
+4. All KPIs (cards, filters, OKR tabs)
+5. Task Center (approvals, update KPIs, requests)
+6. Projects / Initiatives (active, planned, details)
+7. Reports (report list, downloads)
+8. Performance Dashboards (strategic, operational)
+9. Logout
+
+**Tips for recording:**
+- Pause 2-3 seconds on each screen before navigating
+- Maximize the browser window for cleaner screenshots
+- Close unnecessary tabs and notifications
+- Keep the recording under 5 minutes
+- Resolution: 1080p or higher for crisp screenshots
+
+### Step 2: Re-prompt Claude with the Video
+
+Upload the video to Claude along with the generated file, and use the following prompt:
+
+```text
+I have a user manual file with image placeholders.
+I also have a screen recording video where I walk through every screen
+of the S+ system and name each section as I navigate.
+
+Please:
+1. Watch the video and extract/identify the relevant screenshot for
+   each section
+2. Match each screenshot to the correct section in the attached file
+   based on the section name I say in the video and the section title
+3. For each content section that has a screenshot placeholder:
+   - Crop the video frame to show only the relevant application screen
+   - Place the screenshot in the placeholder with proper sizing
+     * Position: centered with proper margins
+     * Add a subtle drop shadow and rounded corners
+     * Ensure the screenshot does not overlap with the text content
+4. If any section names on-screen don't match the manual text, fix the
+   manual text to match what's actually shown in the system
+5. Maintain all existing text, branding, and formatting — only add
+   the screenshots and fix mismatched labels
+6. Output the updated file with all screenshots embedded
+
+Sections to match (in order):
+- Login Page
+- Home Page
+- Strategy (Pillars, Objectives, Mission/Vision, View Types)
+- All KPIs (KPI Cards, Filters, OKR/Key Result Tabs)
+- Task Center (Approvals, Update KPIs, My Requests)
+- Projects / Initiatives (Active, Planned, Detail Cards)
+- Reports (Report List, Downloads)
+- Performance Dashboards (Strategic, Operational)
+- Logout
+```
+
+### Step 3: Review and Deliver
+
+Open the updated file, verify all screenshots are correctly placed and aligned, then deliver to the client.
+
+---
+
+## Scaling to Other Clients
+
+To reuse for a different client, you only need to change:
+
+| What to Change | Where |
+|---------------|-------|
+| Client Name AR/EN | Configuration block in the prompt |
+| System Name | Configuration block (S+, P+, Diwan) |
+| Template file | Replace with the new client's branded template |
+| Source manual | Replace with the new system's source manual |
+| Language / Direction | Switch AR to EN and RTL to LTR for English output |
+
+Everything else (structure, formatting logic, placeholder generation) is handled automatically.
+
+---
+
+## Best Practices
+
+- Always use the **latest version** of both files — if the client releases a new S+ version, update the source manual first
+- **Word (.docx)** for long manuals — gives you proper headings, auto-generated TOC, page numbers, and better RTL control
+- **PowerPoint (.pptx)** for slide-based output — useful if the client expects a presentation deck
+- **Validate RTL** — open the output in Microsoft Word (not Google Docs) to confirm right-to-left text renders correctly
+- Test with a **small source first** — if your source has 100+ slides, try with the first 10 to confirm formatting
+- Keep the **template minimal** — only needs header with logo, footer with text + page number, and heading styles
+- For a different client, provide their branded template and update `[Client Name]` in the config
+
+### Customization Options
+
+Add any of these lines to the end of the prompt for specific adjustments:
+
+- **Different language:** Set `Language: [EN]` and `Text Direction: [LTR]`
+- **Different output format:** Set `Output Format: [pptx]` for PowerPoint
+- **No placeholders:** "Do not include image placeholders — text only"
+- **Partial generation:** "Only generate the Strategy and KPIs sections"
+- **No consolidation:** "Do not consolidate. Keep all slides even if duplicated."
+- **Different placeholder style:** "Use blue dashed borders instead of gold"
+
+---
+
+## Quality Checklist
+
+After generating the manual, verify the following before client delivery:
+
+| Check | What to Verify |
+|-------|---------------|
+| Cover | Correct client name (AR + EN), system name, version, and year |
+| TOC | Table of Contents matches all section headings |
+| Sections | Every section from the source manual is present — no sections dropped |
+| Language | All text is in the target language — no mixed-language text remaining |
+| Alignment | Text direction matches (RTL for Arabic, LTR for English) |
+| Header | Appears on every page with the client logo |
+| Footer | Shows document title + page number on every page |
+| Placeholders | All image placeholders have descriptive labels matching their section |
+| Branding | No leftover references to the original client or previous deployments |
+| Screenshots | (Phase 2) All screenshots embedded and matching their sections |
+| Labels | (Phase 2) Manual text corrected to match actual system screen labels |
+| Closing | Thank you / closing page present as the final page |
+
+---
+
+## Summary
+
+| Step | Input | Output | Time |
+|------|-------|--------|------|
+| Phase 1: Generate | Source manual + Branded template | Branded manual with image placeholders | ~5 min |
+| Phase 2: Screenshots | Phase 1 output + Screen recording | Final manual with embedded screenshots | ~10 min |
+| **Total** | **2-3 files** | **Production-ready user manual** | **~15 min** |
+
+This turns what used to be a 3-5 day manual effort into a 15-minute automated pipeline — and the output is more consistent, more professional, and more maintainable than hand-built manuals.
+
+This automation is part of the BC Automations consulting toolkit. Pair it with the [S+ Notification Template from BRD](/blog/splus-notification-template-from-brd) automation for a complete S+ documentation suite.
+
+<ClaudeCTA />
