@@ -1,0 +1,323 @@
+---
+title: "AI-Powered Dashboard Building with Claude Code"
+description: "Build complete executive dashboards on the MasterTeam PPlus platform using Claude Code and a knowledge repository — turning days of manual configuration into minutes of AI-driven automation."
+date: "2026-03-25"
+tags: ["PPlus", "Dashboard"]
+author: "Khalil Abu Mushref"
+---
+
+## The Problem
+
+You have a project management platform with dozens of dashboard widgets — KPI cards, donut charts, bar charts, phase gates, timelines, risk matrices — and a client asks you to replicate a working dashboard from one instance to another.
+
+Traditionally, this means:
+
+1. Logging into the source instance and manually inspecting every chart configuration
+2. Documenting each chart's data source, property keys, filters, and layout positions
+3. Logging into the target instance and discovering its unique level hierarchy and property keys
+4. Manually creating each widget through the admin UI, mapping source properties to target equivalents
+5. Debugging why half the charts show no data because property keys are instance-specific
+6. Fixing labels — "Programs" in one instance is "Departments" in another
+7. Testing every popup, filter, and drill-down interaction
+
+For a 14-chart executive dashboard, this takes **2-3 days** of meticulous manual work.
+
+With Claude Code and a structured knowledge repository, **the entire process takes under 30 minutes**.
+
+---
+
+## What You'll Build
+
+A fully functional executive dashboard replicated from a source PPlus instance to a target instance, including:
+
+- **KPI overview cards** — portfolio count, department count, project count, risks, issues, support needed
+- **SPI indicator** — average schedule performance index
+- **Performance bar charts** — progress performance with actual/planned/baseline series
+- **Financial bar charts** — budget/spent/remaining stacked by portfolio
+- **Action tracker donut** — task breakdown by category
+- **Status donuts** — portfolios and projects grouped by status
+- **Phase gates table** — project phase completion matrix
+- **Timeline views** — Gantt-style portfolio and department timelines
+- **Risk matrix** — classification heatmap
+- **All popup interactions** — clicking any chart navigates to the correct filtered module
+
+---
+
+## Prerequisites
+
+Before you start, you need:
+
+1. **Claude Code** — installed and running with the Chrome browser extension for browser automation
+2. **Admin access** to both the source and target PPlus instances
+3. **The knowledge repository** — clone the pplus-agent-corag-vectorized repo for API reference and dashboard structure documentation
+4. **A logged-in browser session** on the target instance (Claude reads the JWT token from localStorage)
+
+---
+
+## Architecture: How the Dashboard Builder Works
+
+### The PPlus Dashboard System
+
+Every PPlus v4 dashboard is stored as a single JSON configuration string in the database. This configuration contains an array of chart objects, each with:
+
+- **Grid position** — x, y, cols, rows (36-column grid)
+- **Service config** — data source selection, source links, chart type, query with series definitions
+- **Client config** — visual settings, chart handler function, component name, title, colors, popup behavior
+
+### The Save Mechanism
+
+This is the most critical discovery. The dashboard is saved via a specific endpoint:
+
+```text
+POST /api/Dashboards/Charts/Link
+```
+
+With the body:
+
+```json
+{
+  "DashboardId": "5",
+  "configration": "{\"charts\":[...]}"
+}
+```
+
+**Key gotchas:**
+
+- DashboardId must be a **string**, not a number
+- configration is **double-serialized** — the charts array is JSON-stringified inside the JSON body
+- The PUT /api/dashboards/id endpoint does **not** save the chart configuration
+- Only this specific POST endpoint works
+
+### Chart Type Mapping
+
+Each chart type requires a specific combination of handler function and component:
+
+| Chart Type | Service Config | Handler Function | Component |
+|---|---|---|---|
+| KPI Card | CardViewV2Chart | handleOverviewCard | cardsStatistic |
+| Donut | PieV2Chart | handleDonutChart | chart |
+| Bar Chart | BarV2Chart | handleBarChart | chart |
+| Stacked Bar | StackBarV2Chart | handleBarChart | chart |
+| Table | TableView | handleTableView | phaseGateTable |
+| Timeline | TimelineChart | handleTimelineMultiViewChart | timelineMultiViewChart |
+| Gauge | GaugeV2Chart | handleGaugeChart | chart |
+
+Using the wrong combination causes the chart to render as an empty box with no errors — making it extremely difficult to debug without documentation.
+
+---
+
+## The Process (Step-by-Step)
+
+### Phase 1: Extract Source Dashboard Configuration
+
+Open Claude Code and navigate to the source instance. Claude uses the browser automation to:
+
+1. Read the authentication tokens from localStorage
+2. Call GET /api/dashboards/id to fetch the complete dashboard configuration
+3. Parse the charts.configration JSON string to extract all chart objects
+4. Document each chart's data sources, property keys, and layout
+
+**What Claude discovers:**
+
+```text
+Chart 0:  Header — "Executive Dashboard" (36 cols, dark blue)
+Chart 1:  SPI card — Level:1, Avg(project_actualProgress)
+Chart 2:  Portfolio count — Level:3, Count
+Chart 3:  Programs count — Level:2, Count
+Chart 4:  Projects count — Level:1, Count
+Chart 5:  Risks count — Log:4, Count
+Chart 6:  Issues count — Log:5, Count
+...
+```
+
+### Phase 2: Discover Target Instance Structure
+
+This is where most manual approaches fail. Property keys are **instance-specific**. The same "Portfolio" level might use portfolio_ in one instance and K_Portfolio_fPYxTWzhD0FmZp19_ in another.
+
+Claude discovers the target structure by:
+
+1. Calling GET /api/levels to get the level hierarchy
+2. Using POST /api/dashboards/Chart with TableView type to fetch sample records from each level
+3. Extracting the actual property keys from the returned data
+4. Building a property mapping table
+
+**Example discovery on MHC (JOSOUR):**
+
+| Level | Name | ID | Property Prefix |
+|---|---|---|---|
+| Portfolio | K_Portfolio_fPYxTWzhD0FmZp19 | 3 | K_Portfolio_fPYxTWzhD0FmZp19_ |
+| Department | K_Program_uK0V04UuJHSzk_ul | 2 | K_Program_uK0V04UuJHSzk_ul_ |
+| Project | Project | 1 | project_ |
+
+### Phase 3: Build Charts One by One
+
+Claude constructs each chart by:
+
+1. **Copying the source chart structure** — grid position, dimensions
+2. **Replacing property keys** — using the mapping from Phase 2
+3. **Updating module IDs** — matching the target level/log IDs
+4. **Fixing labels** — adapting terminology to the target instance
+5. **Testing each chart** — calling the Chart API to verify data returns
+
+### Phase 4: Handle Complex Charts
+
+Some charts require special handling:
+
+**Multi-Source Charts (Financial Performance)**
+
+Financial charts pull data from multiple levels through source links, connecting portfolios to departments to projects via parent-child relationships.
+
+**Action Tracker (Tasks)**
+
+Tasks live in Log modules, not Level modules. The connection requires linking the project Level to the task Log via the project ID and LevelId properties.
+
+**Timeline Multi View**
+
+Timeline charts need the timelineMultiViewChart component and date-range properties including start date, finish date, name, and status fields.
+
+### Phase 5: Save and Verify
+
+After building all charts, Claude:
+
+1. **Saves the configuration** via POST /api/Dashboards/Charts/Link
+2. **Navigates to the user-facing URL** (/remote3/id)
+3. **Takes screenshots** of each section to verify rendering
+4. **Tests popup interactions** by clicking chart elements
+5. **Fixes any issues** — empty charts, wrong labels, missing data
+
+---
+
+## Common Issues and How Claude Handles Them
+
+### Property Key Mismatch
+
+**Symptom:** Chart renders but shows no data or wrong values.
+
+**How Claude fixes it:** Fetches a TableView of the target module to see actual property keys, then updates the chart configuration with correct keys.
+
+### Label Mismatch
+
+**Symptom:** Cards show "Programs" when the instance uses "Departments."
+
+**How Claude fixes it:** Scans all chart configurations for terminology mismatches and updates both English (title.en) and Arabic (title.ar) labels.
+
+### Module ID Mismatch
+
+**Symptom:** Risk or Issue charts show 0 when data exists.
+
+**How Claude fixes it:** Tests each Log module ID (0-10) with a simple Count query to find which contains the target data, then updates the chart selection.
+
+### Timeline Not Fetching Data
+
+**Symptom:** Timeline chart renders but shows no bars.
+
+**How Claude fixes it:** Verifies the Level moduleId matches the portfolio/department level, confirms the date property keys exist (_startDate, _finishDate), and updates the query accordingly.
+
+### Phase Gates Table Empty
+
+**Symptom:** Phase gates table shows row numbers but no data.
+
+**How Claude fixes it:** Ensures the lookupProperty is set to Phase_LevelId and the selectedProperties include project_allPhasesCompleted.
+
+---
+
+## Best Practices
+
+1. **Always start with the knowledge repo** — Clone the pplus-agent-corag-vectorized repo and tell Claude to reference it. The documentation dramatically reduces trial-and-error.
+2. **Use the SKILL.md file** — The repository includes a comprehensive SKILL.md that Claude can reference for chart type mappings, API endpoints, and configuration patterns.
+3. **Build one chart at a time** — Don't try to replicate all 14+ charts in a single save. Build and test incrementally.
+4. **Test with the Chart API first** — Before committing a chart to the dashboard, use POST /api/dashboards/Chart to verify the query returns data.
+5. **Check both admin and user views** — The admin view (/manageDashboardPage3/id) shows the builder interface. The user view (/remote3/id) shows the final rendered dashboard.
+6. **Save property discoveries** — Push any new property mappings back to the repo so future dashboard builds are faster.
+
+---
+
+## Scaling This Across Clients
+
+Once you've replicated a dashboard for one client, the process becomes even faster for subsequent clients:
+
+1. **The knowledge base grows** — Each new instance adds property mappings to the repo
+2. **Claude learns patterns** — Similar instances (same PPlus version) share common structures
+3. **Templates emerge** — Standard executive dashboards become reusable starting points
+4. **Verification is automated** — Claude can screenshot and verify all charts without manual checking
+
+---
+
+## The Knowledge Repository
+
+The pplus-agent-corag-vectorized repository is structured as a RAG (Retrieval-Augmented Generation) knowledge base for AI agents:
+
+```text
+knowledge/
+  api-reference/
+    dashboards-api.md              # Core dashboard API endpoints
+    dashboard-replication-guide.md  # Save mechanism and chart type mapping
+    mhc-dashboard-config.md        # MHC instance reference
+    cruise-to-mhc-mapping.md       # Cross-instance property mapping
+    dashboard-building-with-claude.md  # End-to-end process guide
+  architecture/
+    system-overview.md             # PPlus v4 architecture
+    data-flow.md                   # Data flow between modules
+  frontend/
+    dashboard-component.md         # Dashboard component reference
+    executive-dashboard-widgets.md # Widget type documentation
+```
+
+Each file follows a structured format with YAML frontmatter, making it ideal for AI agent consumption. The more you use it and contribute back, the more powerful the automation becomes.
+
+---
+
+## Expected Results
+
+After following this guide with Claude Code:
+
+- **14+ chart executive dashboard** fully replicated and functional
+- **All KPI cards** showing correct counts from the target instance
+- **All charts** rendering with target-specific data
+- **All labels** matching the target instance terminology
+- **All popups** navigating to correct filtered modules
+- **All timelines** displaying project/portfolio schedules
+- **Phase gates** showing project phase completion status
+- **Risk matrices** displaying classification heatmaps
+
+What used to take 2-3 days of careful manual configuration now takes less than 30 minutes of AI-assisted automation — and the results are more accurate because every property key is programmatically verified.
+
+---
+
+## Quality Checklist
+
+After building the dashboard, verify the following:
+
+| Check | What to Verify |
+|-------|---------------|
+| Chart count | All source charts have been replicated |
+| KPI cards | Each card shows correct count from the target instance |
+| Bar charts | Correct series data with proper labels |
+| Donut charts | Correct grouping and color mapping |
+| Phase gates | Table populated with project phase data |
+| Timelines | All portfolio/department bars visible with correct dates |
+| Risk matrix | Heatmap cells populated with correct classification data |
+| Popups | Clicking any chart navigates to the correct filtered module |
+| Labels | All English and Arabic labels match target terminology |
+| Layout | Charts positioned correctly in the 36-column grid |
+| Responsiveness | Dashboard renders correctly at different screen widths |
+| Admin view | Dashboard editable in the admin interface |
+
+---
+
+## Summary
+
+| Step | What Happens | Time |
+|------|-------------|------|
+| Phase 1: Extract | Claude reads the source dashboard configuration | ~2 min |
+| Phase 2: Discover | Claude maps the target instance's property keys | ~5 min |
+| Phase 3: Build | Claude constructs each chart with correct mappings | ~15 min |
+| Phase 4: Complex | Claude handles multi-source charts and special types | ~5 min |
+| Phase 5: Verify | Claude saves, screenshots, and tests all interactions | ~3 min |
+| **Total** | **Production-ready executive dashboard** | **~30 min** |
+
+The combination of Claude Code's browser automation capabilities and a structured knowledge repository transforms dashboard building from a tedious, error-prone manual process into a fast, reliable automated workflow.
+
+Every dashboard you build adds to the knowledge base, creating a compounding advantage that scales across all your PPlus client deployments.
+
+<ClaudeCTA />
