@@ -54,6 +54,230 @@ Before you start, you need:
 
 ---
 
+## Prompt
+
+Copy and paste the following prompt into Claude Code. Make sure you have the knowledge repository cloned and a logged-in browser session on the target instance before running.
+
+```text
+────────────────────────────────────────────────────────
+CONFIGURATION (change these values per engagement)
+────────────────────────────────────────────────────────
+Knowledge Repo   : https://github.com/Khalil-am/pplus-agent-corag-vectorized
+Source Instance   : [https://source-instance.example.com]
+Target Instance   : [https://target-instance.example.com]
+Source Dashboard ID : [5]           ← the dashboard ID to replicate
+Target Dashboard ID : [5]           ← the dashboard ID to save to on target
+Source Instance Name : [Cruise]     ← human-readable name for reference
+Target Instance Name : [MHC JOSOUR] ← human-readable name for reference
+Language          : [AR/EN]         ← bilingual labels (Arabic + English)
+────────────────────────────────────────────────────────
+
+I need you to replicate an executive dashboard from one PPlus v4 instance
+to another. The source and target instances have different property keys,
+level names, and module IDs — so this is NOT a simple copy-paste.
+
+IMPORTANT: Before you begin, read the knowledge repository at:
+https://github.com/Khalil-am/pplus-agent-corag-vectorized
+
+Specifically read these files in order:
+1. knowledge/api-reference/dashboards-api.md — for all API endpoints
+2. knowledge/api-reference/dashboard-replication-guide.md — for the save
+   mechanism, chart type mappings, and configuration patterns
+3. knowledge/api-reference/dashboard-building-with-claude.md — for the
+   end-to-end process and common pitfalls
+4. knowledge/frontend/executive-dashboard-widgets.md — for widget type
+   documentation and handler function mappings
+
+PHASE 1 — EXTRACT SOURCE DASHBOARD
+───────────────────────────────────
+1. Navigate to the source instance: [Source Instance URL]
+2. Open the browser DevTools or use localStorage to read the JWT auth token
+3. Call GET /api/dashboards/[Source Dashboard ID] with the auth token
+4. Parse the response — the dashboard configuration is in the "configration"
+   field (note: misspelled in the API, this is intentional)
+5. The configration field contains a JSON string. Parse it to get the
+   charts array
+6. For EACH chart in the array, document:
+   - Chart index and title (clientConfig.title.en / title.ar)
+   - Chart type (serviceConfig.chartType)
+   - Handler function (clientConfig.fuctionName — note: misspelled, intentional)
+   - Component name (clientConfig.componentName)
+   - Grid position (x, y, cols, rows)
+   - Data sources (serviceConfig.selection — moduleType, moduleId)
+   - Source links (serviceConfig.sourceLinks — for multi-source charts)
+   - Query series (serviceConfig.query.series — valueProperty, aggregateFunction,
+     groupByProperties)
+   - Popup configuration (clientConfig.popUpModule, popUpModuleId)
+   - Colors and icons (clientConfig.color, clientConfig.icon)
+7. Save this as a structured reference — you will use it to build the
+   target dashboard
+
+PHASE 2 — DISCOVER TARGET INSTANCE STRUCTURE
+─────────────────────────────────────────────
+1. Navigate to the target instance: [Target Instance URL]
+2. Read the JWT auth token from localStorage
+3. Call GET /api/levels to discover the level hierarchy
+4. For EACH level returned, note:
+   - Level ID (the numeric ID used in moduleId)
+   - Level Name (the internal key like "K_Portfolio_fPYxTWzhD0FmZp19")
+   - Level Display Name (the human-readable name)
+5. For EACH level, call POST /api/dashboards/Chart with a TableView query
+   to fetch sample records:
+   {
+     "chartType": "TableView",
+     "selection": [{"id": 1, "moduleType": "Level", "moduleId": "[LEVEL_ID]"}],
+     "query": {"series": [{"valueProperty": "*"}]}
+   }
+6. From the returned records, extract ALL property keys and their prefixes
+   Example: if Level 3 returns records with keys starting with
+   "K_Portfolio_fPYxTWzhD0FmZp19_", that is the property prefix for Level 3
+7. Build a COMPLETE property mapping table:
+   Source Property Key → Target Property Key
+   Example:
+     portfolio_Name → K_Portfolio_fPYxTWzhD0FmZp19_Name
+     portfolio_status → K_Portfolio_fPYxTWzhD0FmZp19_status
+     portfolio_Id → K_Portfolio_fPYxTWzhD0FmZp19_Id
+     program_Name → K_Program_uK0V04UuJHSzk_ul_Name
+     project_Name → project_Name (sometimes unchanged)
+8. Also discover Log modules (Risks, Issues, Tasks, etc.):
+   - Test Log module IDs 0 through 10 with Count queries
+   - Identify which Log ID contains Risks, Issues, Tasks, etc.
+   - Map source Log IDs to target Log IDs
+
+PHASE 3 — BUILD EACH CHART
+───────────────────────────
+For EACH chart from the source dashboard, construct the target version:
+
+1. COPY the grid position (x, y, cols, rows) exactly from the source
+2. KEEP the same chartType, fuctionName, componentName, and chartTypeId
+3. REPLACE all property keys using the mapping table from Phase 2:
+   - valueProperty in each series
+   - groupByProperties in each series
+   - extraProperties if present
+   - source1LinkProperty and source2LinkProperty in sourceLinks
+   - lookupProperty if present (for phase gates)
+4. REPLACE all moduleId values:
+   - Level moduleIds: map source level IDs to target level IDs
+   - Log moduleIds: map source log IDs to target log IDs
+5. UPDATE labels if terminology differs:
+   - If source says "Programs" but target uses "Departments", update
+     both title.en and title.ar
+   - Check popUpModule and popUpModuleId match the target structure
+6. PRESERVE all visual configuration:
+   - Colors (clientConfig.color)
+   - Icons (clientConfig.icon)
+   - Chart dimensions and styling
+7. GENERATE new unique IDs:
+   - Each chart needs a unique dashboardId in serviceConfig
+   - Each series needs a unique key
+   - Use UUID v4 format or similar unique strings
+8. TEST each chart BEFORE adding it to the final configuration:
+   - Call POST /api/dashboards/Chart with the chart's serviceConfig
+   - Verify the response contains data (not empty arrays)
+   - If no data returns, check:
+     a. Is the moduleId correct for the target?
+     b. Are the property keys valid?
+     c. Are the sourceLinks connecting the right levels?
+     d. Does the aggregateFunction match an existing property type?
+
+PHASE 4 — HANDLE SPECIAL CHART TYPES
+─────────────────────────────────────
+Some charts need extra attention:
+
+OVERVIEW CARDS (CardViewV2Chart):
+- Must use fuctionName: "handleOverviewCard"
+- Must use componentName: "cardsStatistic"
+- The popUpModuleId must match the target level/log ID
+- Count queries need the _Id property (e.g., K_Portfolio_..._Id)
+
+DONUT CHARTS (PieV2Chart):
+- Must use fuctionName: "handleDonutChart"
+- groupByProperties must reference a valid property in the target
+- Status grouping: use the _status property for the correct level
+
+BAR CHARTS (BarV2Chart / StackBarV2Chart):
+- Multi-series charts need each series correctly mapped
+- Financial charts: budget, spent, remaining properties may have
+  different names per instance
+- groupByProperties determine the X-axis labels
+
+TIMELINE CHARTS (TimelineChart):
+- Must use componentName: "timelineMultiViewChart"
+- Must use fuctionName: "handleTimelineMultiViewChart"
+- Requires _startDate, _finishDate, _Name, _status in extraProperties
+- The moduleId must point to the correct level (portfolio or department)
+
+PHASE GATES TABLE (TableView):
+- Must use componentName: "phaseGateTable"
+- Must use fuctionName: "handleTableView"
+- lookupProperty should be "Phase_LevelId"
+- selectedProperties must include "project_allPhasesCompleted"
+
+MULTI-SOURCE CHARTS:
+- Financial performance, action trackers, and some bar charts pull from
+  multiple levels/logs
+- Each source in the selection array needs the correct moduleId
+- sourceLinks connect sources via parent-child relationships:
+  source1LinkProperty: the parent's _Id property
+  source2LinkProperty: "parentLevelId" (for level-to-level links)
+  or "LevelId" (for level-to-log links)
+
+PHASE 5 — ASSEMBLE AND SAVE
+────────────────────────────
+1. Combine ALL chart objects into a single charts array
+2. Wrap in the configuration structure:
+   {"charts": [chart0, chart1, chart2, ...]}
+3. JSON-stringify the entire object to create the configration string
+4. Save via POST /api/Dashboards/Charts/Link with body:
+   {
+     "DashboardId": "[Target Dashboard ID]",  ← MUST be a string
+     "configration": "[double-serialized JSON string]"
+   }
+   CRITICAL: DashboardId must be a STRING (e.g., "5" not 5)
+   CRITICAL: configration is the JSON.stringify() of the charts object
+   CRITICAL: Do NOT use PUT /api/dashboards/{id} — it does NOT save charts
+5. Navigate to the user-facing URL to verify:
+   [Target Instance URL]/#/en/remote3/[Target Dashboard ID]
+6. Take a screenshot of the full dashboard
+7. Click on each chart to verify popup navigation works
+8. If any chart shows no data or wrong data:
+   - Go back to Phase 3 for that specific chart
+   - Re-check property keys and module IDs
+   - Fix and re-save the entire configuration
+
+PHASE 6 — VERIFY AND DOCUMENT
+──────────────────────────────
+After the dashboard is working:
+1. Screenshot the complete dashboard from the user view
+2. List all charts with their status (working / needs attention)
+3. Document any property mappings that were discovered
+4. Note any terminology differences between source and target
+5. If possible, push the new property mappings back to the knowledge
+   repository for future use
+
+IMPORTANT REMINDERS:
+- The API field is "configration" (misspelled) — do NOT correct it
+- The API field is "fuctionName" (misspelled) — do NOT correct it
+- DashboardId in the save endpoint MUST be a string
+- Always test individual charts before saving the full configuration
+- If a chart returns empty data, the issue is ALWAYS property keys or
+  module IDs — never assume the data doesn't exist
+- The 36-column grid means x + cols should not exceed 36
+- Header charts typically span the full width: x:0, cols:36, rows:1
+```
+
+---
+
+## Required Files
+
+| # | Resource | Purpose | Notes |
+|---|----------|---------|-------|
+| 1 | [Knowledge Repository](https://github.com/Khalil-am/pplus-agent-corag-vectorized) | API reference, chart type mappings, configuration patterns | Clone locally or let Claude read directly from GitHub |
+| 2 | Source instance access | Dashboard to replicate | Must have admin access and be logged in |
+| 3 | Target instance access | Where the dashboard will be created | Must have admin access and be logged in |
+
+---
+
 ## Architecture: How the Dashboard Builder Works
 
 ### The PPlus Dashboard System
