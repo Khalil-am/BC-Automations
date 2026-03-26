@@ -1,0 +1,261 @@
+---
+title: "[BETA] AI-Powered Group Permissions Automation for PPlus"
+description: "Automate user group permission mapping on PPlus instances using Claude Code, the PPlus Knowledge MCP, and an Excel accessibility matrix — turning hours of manual checkbox toggling into seconds of API-driven automation."
+date: "2026-03-26"
+tags: ["PPlus", "MCP"]
+author: "Khalil Abu Mushref"
+---
+
+## Overview
+
+Configuring user group permissions in PPlus is one of the most tedious admin tasks. Each instance can have **14+ user groups**, each with **100-150 individual permissions** spread across multiple levels (Portfolio, Program, Project). Doing this manually through the UI means clicking through hundreds of toggle switches one by one.
+
+This automation uses **Claude Code** with the **PPlus Knowledge MCP** to read an Excel accessibility matrix and apply all permissions to the correct groups via the PPlus API — in seconds, not hours.
+
+### What You Need
+
+| Requirement | Description |
+|---|---|
+| **Claude Code** | Anthropic's CLI agent — [claude.ai/claude-code](https://claude.ai/claude-code) |
+| **PPlus Knowledge MCP** | MCP server that gives Claude access to PPlus API knowledge |
+| **Knowledge Repository** | The PPlus knowledge base with API documentation |
+| **Excel Accessibility Matrix** | Your `.xlsx` file mapping roles to permissions |
+| **PPlus Instance** | The target instance URL + admin credentials |
+
+---
+
+## Setup
+
+### Step 1: Install the PPlus Knowledge MCP
+
+```bash
+git clone https://github.com/Khalil-am/pplus-knowledge-mcp.git
+cd pplus-knowledge-mcp
+npm install && npm run build
+```
+
+### Step 2: Clone the Knowledge Base
+
+```bash
+git clone https://github.com/Khalil-am/pplus-agent-corag-vectorized.git
+```
+
+### Step 3: Configure Claude Code
+
+Create or edit `~/.claude/.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "pplus-knowledge": {
+      "command": "node",
+      "args": ["/full/path/to/pplus-knowledge-mcp/dist/index.js"],
+      "env": {
+        "PPLUS_KNOWLEDGE_PATH": "/full/path/to/pplus-agent-corag-vectorized/knowledge"
+      }
+    }
+  }
+}
+```
+
+Replace `/full/path/to/` with your actual directory paths.
+
+### Step 4: Prepare Your Excel Accessibility Matrix
+
+Your `.xlsx` file should have this structure:
+
+- **One sheet per level type** (e.g., `Portfolio`, `Program`, `Project`)
+- **Row 1**: Header description
+- **Row 2**: Level name
+- **Row 3**: Column headers — first column is module name, remaining columns are role/group names
+- **Data rows**: Action names in column A, checkmarks in role columns where permission is granted
+
+Example layout:
+
+| | Admin | Project Manager | Portfolio Manager | ... |
+|---|---|---|---|---|
+| **Tasks** | | | | |
+| Add | x | | x | |
+| Delete | x | | | |
+| Update | x | x | x | |
+| **Milestones** | | | | |
+| Add | x | | x | |
+| ... | | | | |
+
+---
+
+## The Prompt
+
+Copy and paste this prompt into Claude Code to run the automation. Replace the three placeholders with your actual values:
+
+````
+I need you to automate PPlus user group permissions using an Excel accessibility matrix.
+
+**Inputs:**
+- Excel file: `{{PATH_TO_YOUR_EXCEL_FILE}}`
+- Target instance: `{{YOUR_INSTANCE_URL}}` (e.g., https://g-pmo.masterteam.sa)
+- Knowledge repo: https://github.com/Khalil-am/pplus-agent-corag-vectorized
+
+**What to do:**
+
+1. **Read the Excel file** using pandas/openpyxl. Each sheet represents a level type (Portfolio, Program, Project). Row 3 contains role names as column headers. Below that, module headers (no checkmarks) alternate with action rows (with checkmarks). Parse this into a structured mapping: `{level -> module -> action -> [role names]}`.
+
+2. **Connect to the PPlus instance** via the browser (Chrome MCP). Navigate to the admin groups page at `{{YOUR_INSTANCE_URL}}/admin/user-group/main/groups`. Log in if needed.
+
+3. **Extract the auth token** from `localStorage.getItem('currentUser')` — the token is at `JSON.parse(currentUser).data.token`.
+
+4. **Fetch all groups** via `GET /service/api/identity/Groups` with Bearer token. Map each group name from the Excel to its numeric group ID.
+
+5. **Fetch the permission structure** via `GET /service/api/identity/Groups/{groupId}/Permissions` for any group. This returns the full permission tree with claim IDs:
+   ```
+   data[] -> levelName -> logs[] -> name (module) -> actions[] -> { id (claimId), name, isSelected }
+   ```
+
+6. **Build the claim mapping**: For each Excel entry (level + module + action + roles), find the matching `claimId` from the API permission structure. Use fuzzy matching for action names that may differ slightly (e.g., trailing spaces, "Update Milestone Progress" vs "Update Milestone Progress ").
+
+7. **Apply permissions for each group**: For each group ID, determine which claimIds should be enabled (from Excel) and which should be disabled (not in Excel). Send individual PUT requests:
+   ```
+   PUT /service/api/identity/Groups/{groupId}/Permissions
+   Content-Type: application/json
+   Authorization: Bearer {token}
+   Body: {"claimId": <id>, "isSelected": true/false}
+   ```
+   Each PUT updates ONE permission. Loop through all permissions for all groups.
+
+8. **Verify**: After all updates, re-fetch permissions for each group and confirm the actual state matches the desired state from the Excel. Report any mismatches.
+
+**Key API details (from the knowledge base):**
+- Base URL pattern: `/service/api/` (not `/api/`)
+- Auth: Bearer token from localStorage `currentUser.data.token`
+- Groups endpoint: `GET /service/api/identity/Groups`
+- Permissions endpoint: `GET|PUT /service/api/identity/Groups/{id}/Permissions`
+- PUT payload: `{"claimId": <number>, "isSelected": <boolean>}` — one permission per call
+- The permission tree has 4 levels: Portfolio, Program, Project, and optionally Strategic Project or Department
+
+**Important notes:**
+- Do NOT send arrays or the full permission tree as PUT body — it will return 500
+- Each permission must be updated individually via separate PUT calls
+- The API level name may have trailing spaces (e.g., "Project " vs "Project") — trim when matching
+- Some modules in the Excel may not exist on the target instance — skip them gracefully
+- Always disable permissions NOT in the Excel matrix (clean slate per group)
+````
+
+---
+
+## How It Works Under the Hood
+
+### The API Discovery Process
+
+The PPlus Knowledge MCP provides Claude with documentation about the Identity API endpoints. When Claude encounters the permission management task, it:
+
+1. **Queries the MCP** for group and permission API endpoints
+2. **Discovers the auth pattern** — Bearer token stored in localStorage after login
+3. **Maps the API structure** — the three-tier hierarchy of Level > Module > Action
+4. **Identifies the PUT format** — the critical `{"claimId", "isSelected"}` payload that must be sent one permission at a time
+
+### The Permission Matching Pipeline
+
+```
+Excel Sheet                    API Response
+-----------                    ------------
+Level: "Portfolio"       -->   levelName: "Portfolio"
+Module: "Tasks"          -->   logs[].name: "Tasks"
+Action: "Add"            -->   actions[].name: "Add"
+Roles: ["Admin", ...]         actions[].id: 785  <-- claimId
+
+For each role in Excel:
+  groupNameToId["Admin"] = 1
+  PUT /Groups/1/Permissions { claimId: 785, isSelected: true }
+```
+
+### What Gets Automated
+
+| Manual Step | Automated Equivalent |
+|---|---|
+| Open each group's permission modal | `GET /service/api/identity/Groups/{id}/Permissions` |
+| Expand each level section | Parsed from API response `data[].levelName` |
+| Expand each module section | Parsed from `data[].logs[].name` |
+| Toggle each permission switch | `PUT` with `{"claimId": id, "isSelected": true/false}` |
+| Repeat for 14 groups x 4 levels x ~35 actions | Automated loop — ~500 API calls in seconds |
+
+---
+
+## Example Output
+
+When you run the prompt, Claude will produce output like this:
+
+```
+Summary:
+- Total permissions mapped from Excel: 125
+- Skipped (not on instance): 4
+- Total API updates: 315
+- Success: 315, Failed: 0
+
+Group Results:
+  Admin:                    124 permissions enabled
+  Technical Project Manager: 23 permissions enabled
+  Portfolio Manager:         42 permissions enabled
+  Program Owner:             31 permissions enabled
+  Program Manager:           31 permissions enabled
+  Director of Supervision:   62 permissions enabled
+  Director General:          49 permissions enabled
+  Quality & Compliance:       8 permissions enabled
+
+Verification: 0 mismatches across all groups
+```
+
+---
+
+## Supported Modules
+
+The automation handles all standard PPlus workspace modules:
+
+| Module | Actions |
+|---|---|
+| Tasks | Add, Delete, Update, Update Progress Task, Import from MPP |
+| Deliverables | Add, Delete, Update, Update Progress, Update Weight |
+| Milestones | Add, Delete, Update, Update Weight, Update Progress |
+| Risks | Add, Update, Delete, Close, Transfer to Issue |
+| Issues | Add, Delete, Update, Close |
+| Stakeholders | Add, Update, Delete |
+| Charters | Add |
+| Closure | Add |
+| Change Request | Add |
+| Progress Update | Add, Delete |
+| Phase Gate | Phase-specific gates + Update Item |
+| Change Status Request | Add |
+| Cancel Request | Add |
+| Deliverable Acceptance | Add |
+| Others | Update/Delete Level, Documents, Folders, Team Members, Escalation, Financial, Baseline |
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+| Issue | Solution |
+|---|---|
+| **401 Unauthorized** | Token expired — re-login on the browser tab and re-extract from localStorage |
+| **500 on PUT** | Wrong payload format — must be `{"claimId": N, "isSelected": bool}`, not an array |
+| **Module not found** | Some modules exist on one instance but not another — these are skipped automatically |
+| **Group name mismatch** | Excel role names must match PPlus group names exactly (case-sensitive) |
+| **Trailing spaces in level names** | The API may return "Project " with a space — always trim when matching |
+
+### Verifying Results
+
+After the automation completes, you can verify in two ways:
+
+1. **Via the UI**: Go to Users & Groups > Groups tab, click the link icon on any group, expand the levels and check the toggles
+2. **Via the API**: Run `GET /service/api/identity/Groups/{id}/Permissions` and check `isSelected` values
+
+---
+
+## Resources
+
+| Resource | Link |
+|---|---|
+| **PPlus Knowledge MCP** | [github.com/Khalil-am/pplus-knowledge-mcp](https://github.com/Khalil-am/pplus-knowledge-mcp) |
+| **Knowledge Repository** | [github.com/Khalil-am/pplus-agent-corag-vectorized](https://github.com/Khalil-am/pplus-agent-corag-vectorized) |
+| **Claude Code** | [claude.ai/claude-code](https://claude.ai/claude-code) |
+| **API Documentation** | See `knowledge/api-reference/group-permissions-api.md` in the knowledge repo |
