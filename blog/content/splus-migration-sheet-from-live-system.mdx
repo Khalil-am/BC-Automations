@@ -1,0 +1,354 @@
+---
+title: "S+ Migration Sheet Generation from Live System"
+description: "Navigate any live S+ Strategy Management planner, inspect every creation form for each component type, and generate a ready-to-use migration Excel workbook — with all fields documented, quarterly targets for 3 years, and sample data matching the exact system structure."
+date: "2026-03-29"
+tags: ["SPlus", "Migration Sheet"]
+author: "Khalil Abu Mushref"
+---
+
+## Automation Name
+
+**S+ Migration Sheet — Live System Extraction to Excel**
+
+This automation navigates a client's live S+ (Strategy Management) planner page, inspects the creation forms for every component type in the strategy model hierarchy, and generates a structured migration Excel workbook. The output matches the exact fields found in the system's creation dialogs — ready for the client to fill in their data and import into the system.
+
+Instead of manually documenting form fields or guessing what the system expects, this pulls directly from the actual creation forms — ensuring zero drift between the migration template and what the system accepts.
+
+---
+
+## How It Works
+
+| Step | What Happens |
+|------|-------------|
+| 1 | Claude navigates to the client's S+ Strategy Builder template page to identify the strategy model hierarchy (e.g., Objectives → Initiatives → KPIs) |
+| 2 | Navigates to the planner page and identifies all component types in the plan |
+| 3 | For each component type, opens the creation form (via "+" buttons or "Add" buttons) |
+| 4 | Captures every field from the creation dialog — including Details, Tracking, and Attachments tabs |
+| 5 | Identifies parent-child relationships between components (what "Contributes to" which parent) |
+| 6 | Generates an Excel workbook with one sheet per component type, all fields as columns, quarterly target columns for 3 years, and sample data |
+
+---
+
+## The Prompt
+
+Use this prompt in a **Claude Code** session with browser access (Claude in Chrome / Cowork). Replace the placeholder values with the client's actual URLs. Attach the **S+ SMO Migration Template (.xlsx)** so Claude matches its exact format.
+
+```text
+@{{path-to-template}}/SPlus_SMO_Migration_Template.xlsx
+
+Using the attached migration sheet as a FORMAT REFERENCE, go through the
+following S+ Strategy Management instance and create a migration sheet for
+importing data INTO this system.
+
+STRATEGY BUILDER URL (to see the model hierarchy):
+{{TEMPLATE_URL}}
+Example: https://clientname.masterteam.sa/template/14
+
+PLANNER URL (to see existing data and access creation forms):
+{{PLANNER_URL}}
+Example: https://clientname.masterteam.sa/planner/12
+
+Follow these steps exactly:
+
+1. DISCOVER THE STRATEGY MODEL HIERARCHY
+   a. Navigate to the Strategy Builder URL (template page).
+   b. On the "Strategy Model" tab, identify ALL component types in the
+      "Plan Details" section of the model diagram.
+   c. Record the hierarchy — which component is the parent of which.
+      Example: Strategic Objectives → Enabler Initiatives → KPI
+   d. Note: The left sidebar shows all available component categories
+      (Principle, Focus Area, Objective, Performance Indicator, Initiative,
+      Division, Key Result) — but only the ones visible in the Plan Details
+      diagram are active for this plan.
+
+2. NAVIGATE TO THE PLANNER AND INSPECT EVERY CREATION FORM
+   a. Navigate to the Planner URL.
+   b. For the TOP-LEVEL component (e.g., Strategic Objectives):
+      - Click the "+ Add [Component Name]" button at the top of the plan.
+      - A creation dialog will open. Capture EVERY field:
+        * Left side: English Name, Arabic Name, any Collaborators fields
+        * Right side "Details" tab: all detail fields (code, dates, etc.)
+        * Right side "Tracking" tab: Source, Baseline, Start Date,
+          Frequency, Number of Years, Reporting buffer, Target Values
+        * Right side "Attachments" tab: note its existence
+        * "Contributes to" section: the parent relationship dropdown
+      - Record which fields are required (marked with *).
+      - Close the dialog (Cancel — do NOT save).
+
+   c. For CHILD components (e.g., Enabler Initiatives under Objectives):
+      - First expand an existing parent by clicking its chevron (▼) icon.
+      - Click the "+" icon on the parent row — a dropdown menu appears
+        showing the child component type name.
+      - Click the child type name to open its creation form.
+      - If clicking "+" opens the edit form of the parent instead, close it
+        and try the "+" button precisely (it's the leftmost icon in the
+        button group: +, pencil, trash, chevron).
+      - Capture ALL fields from the creation dialog exactly as in step 2b.
+      - If no creation form appears, click the pencil (edit) icon on an
+        existing child item to see the edit form — it has the same fields.
+
+   d. For GRANDCHILD components (e.g., KPI under Initiatives):
+      - Expand an initiative to see its children.
+      - Click the "+" on the initiative row → click the child type (e.g., "KPI").
+      - Capture ALL fields from this creation form.
+      - Pay special attention to the Tracking tab — this is where Frequency,
+        Number of Years, Baseline, and Target Values are configured.
+
+   e. If a component type has no existing items and the "+" button does not
+      produce a form, use the "Add" button for that component type or check
+      the Strategy Builder for its field configuration.
+
+3. GENERATE THE MIGRATION EXCEL WORKBOOK
+
+   CRITICAL REQUIREMENTS:
+   - Match the EXACT format of the attached reference template.
+   - Create ONE sheet per component type, named after the component.
+   - Column headers must match the exact field labels from the creation forms.
+   - Required fields should have " *" appended to the column header.
+   - Add a "Contributes to ([Parent Name]) *" column showing the parent
+     relationship for child components.
+
+   FOR KPI / PERFORMANCE INDICATOR SHEETS:
+   - Include ALL fields from both the Details tab AND the Tracking tab.
+   - Set Frequency to "Quarter" and Number of Years to "3".
+   - Add 12 quarterly target columns: Target Q1 2026, Target Q2 2026,
+     Target Q3 2026, Target Q4 2026, Target Q1 2027, Target Q2 2027,
+     Target Q3 2027, Target Q4 2027, Target Q1 2028, Target Q2 2028,
+     Target Q3 2028, Target Q4 2028.
+   - These target columns come AFTER all the standard KPI fields.
+
+   SAMPLE DATA:
+   - Include 3-5 sample rows per sheet with realistic data (in blue font).
+   - Sample KPI targets should show a logical progression across quarters.
+   - Use "Admin" as the default Owner/Champion in samples.
+   - Use realistic Arabic names alongside English names.
+
+   FORMATTING:
+   - Headers: dark navy fill (#2B3A67) with white bold text, centered.
+   - Data cells: thin borders, text wrapping enabled.
+   - Sample data in blue font to distinguish from headers.
+   - Column widths auto-sized to fit content.
+
+   INSTRUCTIONS SHEET:
+   - Add an "Instructions" sheet (red tab color) with:
+     * Overview of the migration process
+     * Field-by-field descriptions for every column in every sheet
+     * Which fields are required vs. optional
+     * Allowed values for dropdown fields (Unit of Measure, Polarity,
+       Frequency, Accumulative method, Source, etc.)
+     * The quarterly target structure explanation
+
+4. SAVE the final Excel file to the Downloads folder.
+
+5. IMPORTANT NOTES:
+   - You are creating a template for IMPORTING data INTO this system.
+   - The fields must match what the system's creation forms accept.
+   - Do NOT invent fields — only include fields visible in the creation dialogs.
+   - If a form has tabs (Details, Tracking, Attachments), check ALL tabs.
+   - The "Contributes to" field links child to parent — always include it.
+```
+
+### URL Pattern Reference
+
+```text
+Strategy Builder: https://{client-subdomain}.masterteam.sa/template/{template-id}
+Planner:          https://{client-subdomain}.masterteam.sa/planner/{plan-id}
+```
+
+| URL Part | Description | Example |
+|----------|-------------|---------|
+| `{client-subdomain}` | Client-specific subdomain | `dgasplus`, `g-smo`, `scfhs` |
+| `{template-id}` | Strategy template number (from Strategy Builder tabs) | `3`, `14` |
+| `{plan-id}` | Planner ID (from planner page URL) | `2`, `12` |
+
+---
+
+## Required Files
+
+| # | File | Purpose | Required? |
+|---|------|---------|-----------|
+| 1 | `SPlus_SMO_Migration_Template.xlsx` | Reference template so the output Excel matches the expected column structure and format | **Yes** |
+| 2 | Client's S+ Strategy Builder URL | To discover the component hierarchy | **Yes** |
+| 3 | Client's S+ Planner URL | To access creation forms and capture all fields | **Yes** |
+
+---
+
+## Downloadable Templates
+
+<DownloadSection>
+  <DownloadButton
+    fileName="SPlus_SMO_Migration_Template.xlsx"
+    label="S+ SMO Migration Template (.xlsx)"
+    description="Standard migration template with sheets for Strategy Plan, Objectives, Initiatives, Strategic KPIs, Operational KPIs, Divisions, Departments. Use this as the format reference for the extraction."
+  />
+</DownloadSection>
+
+---
+
+## What Gets Extracted
+
+The automation extracts directly from the live system creation forms — not from documentation or assumptions. It captures:
+
+| Data Point | How It's Captured |
+|------------|-------------------|
+| **Component hierarchy** | From the Strategy Builder model diagram (Plan Details section) |
+| **Component types** | Each box in the model diagram = one sheet in the migration workbook |
+| **Creation form fields** | By opening "Add" / "+" dialogs and inspecting every field |
+| **Field labels** | Exact labels as shown in the creation form (English Name, Arabic Name, etc.) |
+| **Required fields** | Fields marked with a red asterisk (*) in the creation form |
+| **Dropdown options** | Options available in Select dropdowns (Unit of Measure, Polarity, etc.) |
+| **Parent relationships** | The "Contributes to" section in each creation form |
+| **Tracking configuration** | Source, Baseline, Start Date, Frequency, Number of Years, Reporting buffer |
+| **Target value structure** | Generated based on Frequency (Quarter) × Number of Years (3) = 12 columns |
+
+---
+
+## Output Format — Excel Structure
+
+The generated Excel contains one sheet per component type, plus an Instructions sheet.
+
+### Example: Organization Health Plan (3 Components)
+
+| Sheet | Fields | Parent Relationship |
+|-------|--------|-------------------|
+| **Strategic Objectives** | English Name, Arabic Name, Code | Top-level (no parent) |
+| **Enabler Initiatives** | English Name, Arabic Name, Owner, Start Date, Finish Date | Contributes to → Strategic Objective |
+| **KPI** | English Name, Arabic Name, Owner, Champion, Unit of Measure, Polarity, Accumulative Method, Description EN/AR, Source, Baseline, Start Date, Frequency, Number of Years, Reporting Buffer + 12 quarterly targets | Contributes to → Enabler Initiative |
+| **Instructions** | Field-by-field guide, allowed values, target structure explanation | — |
+
+### KPI Target Columns (Quarterly × 3 Years)
+
+| Column | Period |
+|--------|--------|
+| Target Q1 2026 | January – March 2026 |
+| Target Q2 2026 | April – June 2026 |
+| Target Q3 2026 | July – September 2026 |
+| Target Q4 2026 | October – December 2026 |
+| Target Q1 2027 | January – March 2027 |
+| Target Q2 2027 | April – June 2027 |
+| Target Q3 2027 | July – September 2027 |
+| Target Q4 2027 | October – December 2027 |
+| Target Q1 2028 | January – March 2028 |
+| Target Q2 2028 | April – June 2028 |
+| Target Q3 2028 | July – September 2028 |
+| Target Q4 2028 | October – December 2028 |
+
+---
+
+## Field Reference by Component Type
+
+These are the fields typically found in S+ creation forms. The actual fields vary by client configuration — that's why the automation extracts from the live system.
+
+### Objective / Strategic Objective Fields
+
+| Field | Type | Required |
+|-------|------|----------|
+| English Name | Text | Yes |
+| Arabic Name | Text | Yes |
+| Code | Text | Yes |
+
+### Initiative / Enabler Initiative Fields
+
+| Field | Type | Required |
+|-------|------|----------|
+| English Name | Text | Yes |
+| Arabic Name | Text | Yes |
+| Owner | User Selector | Yes |
+| Start Date | Date (MM/DD/YYYY) | Yes |
+| Finish Date | Date (MM/DD/YYYY) | Yes |
+| Contributes to (Parent Objective) | Dropdown | Yes |
+
+### KPI / Performance Indicator Fields
+
+**Details Tab:**
+
+| Field | Type | Required |
+|-------|------|----------|
+| English Name | Text | Yes |
+| Arabic Name | Text | Yes |
+| Owner | User Selector | Yes |
+| Champion | User Selector | Yes |
+| Unit of Measure | Dropdown (Percentage, Number, Currency, Ratio, Days) | Yes |
+| Polarity | Dropdown (Higher is better, Lower is better) | Yes |
+| Accumulative performance calculation method | Dropdown (Cumulative, Average, Latest Value, Sum) | Yes |
+| Description In English | Text Area | No |
+| Description In Arabic | Text Area | No |
+| Contributes to (Parent Initiative) | Dropdown | Yes |
+
+**Tracking Tab:**
+
+| Field | Type | Required |
+|-------|------|----------|
+| Source | Dropdown (Manual, System, Integration) | Yes |
+| Baseline | Number | Yes |
+| Start Date | Date (MM/DD/YYYY) | Yes |
+| Frequency | Dropdown (Quarter, Month, Year, Semi-Annual) | Yes |
+| Number of Years | Number | Yes |
+| Reporting buffer in days | Number (default: 0) | Yes |
+| Target Values | One column per period (auto-generated based on Frequency × Years) | Yes |
+
+---
+
+## How to Use
+
+1. **Open Claude Code** (desktop app, CLI, or web) with browser access enabled
+2. Have the client's **S+ Strategy Builder URL** and **Planner URL** ready
+3. **Attach the S+ SMO Migration Template (.xlsx)** — this is the format reference
+4. **Paste the prompt** above — replace `{{TEMPLATE_URL}}` and `{{PLANNER_URL}}` with actual URLs, and `{{path-to-template}}` with the file path
+5. Claude navigates the Strategy Builder to discover the model hierarchy
+6. Claude navigates the Planner and opens every creation form to capture fields
+7. Claude generates an Excel workbook with one sheet per component type
+8. **Download the Excel** from the Downloads folder
+9. **Hand it to the client** — they fill in their data following the sample format
+10. **Import the completed sheet** into the S+ system
+
+---
+
+## Key Differences from Manual Approach
+
+| Aspect | Manual (Old) | Live System Extraction (This) |
+|--------|-------------|-------------------------------|
+| Source of truth | Previous migration sheets or memory | The actual live system creation forms |
+| Accuracy | Depends on consultant's familiarity | 100% — extracts what the forms actually show |
+| Drift risk | High — system may have been reconfigured | None — pulls directly from current forms |
+| Missing fields | May miss new or custom fields | Finds every field in every tab |
+| Quarterly targets | Manually computed | Auto-generated for 3 years × quarterly |
+| Speed | 2-4 hours per plan | 10-15 minutes |
+
+---
+
+## Supported Strategy Plans
+
+This automation works on **any S+ strategy plan** — not just the ones listed here. Common examples:
+
+| Plan Type | Typical Components | Example Client |
+|-----------|--------------------|----------------|
+| **DGA Strategy** | Strategic Objectives → Strategic KPI, Sectors → Operational KPI | DGA |
+| **Organization Health** | Strategic Objectives → Enabler Initiatives → KPI | DGA |
+| **SCFHS Strategy** | Pillars → Objectives → Strategic KPIs → Operational KPIs, Divisions → Departments | SCFHS |
+| **Corporate Strategy** | Themes → Objectives → Initiatives → KPIs | Various |
+
+The prompt adapts to whatever components and hierarchy the client's system has configured.
+
+---
+
+## Quality Checklist
+
+| Check | What to Verify |
+|-------|----------------|
+| All component types covered | Every box in the Strategy Builder model diagram has a corresponding sheet |
+| All fields captured | Every field from the creation form (all tabs) is a column in the sheet |
+| Required fields marked | Columns for required fields have " *" in the header |
+| Parent relationships included | Every child sheet has a "Contributes to" column |
+| Quarterly targets present | KPI sheets have 12 target columns (Q1 2026 through Q4 2028) |
+| Sample data included | 3-5 sample rows per sheet with realistic data in blue font |
+| Instructions sheet present | Field descriptions, allowed values, and structure explanation |
+| Excel formatting correct | Dark headers, borders, text wrapping, appropriate widths |
+
+---
+
+## Conclusion
+
+This automation eliminates the manual effort of documenting migration template fields for S+ Strategy Management systems. By navigating the actual system creation forms, it captures every field exactly as the system expects it — including fields that may have been added through custom configuration.
+
+The output is a ready-to-fill Excel workbook that the client can populate and hand back to the implementation team for direct system import — with quarterly targets pre-structured for 3 years.
