@@ -1,77 +1,108 @@
 ---
-title: "S+ Notification Template from BRD"
-description: "Generate a client-specific S+ Strategy Management notification template by cross-referencing any BRD against the standard notification master — adding only what the client's system structure requires while preserving the original template intact."
-date: "2026-03-22"
+title: "S+ Notification Template Extraction from Live System"
+description: "Extract all notification events directly from a live S+ Strategy Management system and generate a ready-to-use bilingual Excel template — matching the exact components, events, and structure found in the client's actual notifications page."
+date: "2026-03-29"
 tags: ["SPlus", "Notification Template"]
 author: "Khalil Abu Mushref"
 ---
 
 ## Automation Name
 
-**S+ Notification Template from BRD — Bilingual (AR/EN)**
+**S+ Notification Template — Live System Extraction to Excel**
 
-This automation takes a client's S+ Configuration Manual or BRD (.pptx/.pdf/.docx) and cross-references it against the standard S+ notification template (.xlsx) to produce an enriched, client-specific notification file. Unlike the P+ approach (which removes unneeded rows), S+ templates are **additive** — the base template covers core events, and the BRD determines what additional events to add based on the client's strategy hierarchy, KPI levels, performance thresholds, and component structure.
-
----
-
-## How It Works — 3-Step Workflow
-
-| Step | Name | Type | Description |
-|------|------|------|-------------|
-| 1 | Cowork Extraction | Optional | Extract all notification events from the client's live S+ system via Claude Cowork (browser agent) |
-| 2 | BRD + Template Cross-Reference | Required | Upload the S+ Notification Template and the client's BRD — Claude reads the BRD and adds matching notification events |
-| 3 | Merge Cowork Results | Optional | If Step 1 was run, Claude validates the BRD-derived notifications against the live system extraction |
+This automation navigates a client's live S+ (Strategy Management) notifications page, extracts every component and event from the system UI, and generates a bilingual (AR/EN) Excel template ready for the team to enter notification content into the system. Instead of working from a BRD document, this pulls directly from what the system actually has — ensuring zero drift between documentation and reality.
 
 ---
 
-## Step 1 — Cowork Extraction Prompt
+## How It Works
 
-Use this prompt in a **Claude Cowork** session (browser agent) to extract all notification events from a live S+ instance. Replace `{{URL}}` with the client's actual notifications page URL.
+| Step | What Happens |
+|------|-------------|
+| 1 | Claude navigates to the client's S+ notifications URL in the browser |
+| 2 | Identifies all components in the left sidebar (e.g., Strategic Objectives, KPI, Enabler Initiatives) |
+| 3 | For each component, opens the event dropdown and captures every event option |
+| 4 | Records the existing template configuration (name, channel, receivers, body) |
+| 5 | Generates an Excel file matching the standard notification template format with bilingual content for every event found |
+
+---
+
+## The Prompt
+
+Use this prompt in a **Claude Code** session with browser access (Claude in Chrome / Cowork). Replace `{{URL}}` with the client's actual notifications page URL, and attach the **S+ Notification Master Template (.xlsx)** so Claude matches its exact format.
 
 ```text
-Go to the following URL and extract ALL notification events for every component listed in the left sidebar:
+@{{path-to-template}}/SPlus_Notifications_Template.xlsx
+
+Go to the following URL and extract ALL notification events for every component
+listed in the left sidebar:
 
 {{URL}}
 
 Follow these steps exactly:
 
 1. Navigate to the URL and identify all components listed in the left sidebar
-   (e.g., Objective L1, Objective L2, KPI L1, Initiative, Track, Project, Key Result, etc.).
+   (e.g., Objective L1, Objective L2, KPI L1, Initiative, Track, Project,
+   Key Result, etc.).
 
 2. For each component in the sidebar, click on it, then:
    a. Open the event dropdown (top-right "Select Event" combobox).
    b. Scroll through the entire dropdown to capture every single event option
       — do NOT assume events are the same across components.
    c. Record the exact event name as it appears in the dropdown.
-   d. Check the existing template tab(s) below the dropdown — record the template
-      name, channel, and any receivers already configured.
-   e. Read the template body (the rich text editor content) and extract all template
-      variables/properties used (anything in double curly braces like {{variableName}}).
+   d. Check the existing template tab(s) below the dropdown — record the
+      template name, channel, and any receivers already configured.
+   e. Read the template body (the rich text editor content) and extract all
+      template variables/properties used (anything in double curly braces
+      like {{variableName}}).
 
 3. Do NOT skip any component. Even if a component shows "No available options,"
    document that explicitly.
 
-4. Use read_page with the listbox ref_id to get the full list of dropdown options
-   when they are too long to fit on screen — visual screenshots alone may miss items.
+4. Use read_page with the listbox ref_id to get the full list of dropdown
+   options when they are too long to fit on screen — visual screenshots alone
+   may miss items.
 
-5. Output Format — Compile everything into a single Markdown file saved to the
-   outputs folder with this structure:
+5. After extracting all events from every component, generate an Excel (.xlsx)
+   file that matches the EXACT format of the attached S+ Notification Master
+   Template:
 
-   ## For each component:
-   - Component name and description
-   - Table of ALL events (# | Event Name | Existing Template Name)
-   - Template variables observed (variable name + description)
+   EXCEL FORMAT REQUIREMENTS:
+   - Use the same column structure as the attached template:
+     Column A: Component (exact component name from the sidebar)
+     Column B: Event (exact event name from the dropdown)
+     Column C: Subject (bilingual Arabic / English notification subject)
+     Column D: Email Body English (full English email template with variables)
+     Column E: Email Body Arabic (full Arabic email template with variables)
+     Column F: Notification Centre Body English (short in-app notification)
+     Column G: Notification Centre Body Arabic (short in-app notification)
 
-   ## At the end, include:
-   - Summary of ALL unique event types grouped by category
-   - Common template variables table (variable | description)
-   - Notification channel used (Email, SMS, etc.)
-   - Configured receivers (Owner, Champion, etc.)
+   - Create separate sheets matching the attached template structure
+     (e.g., Objectives, KPIs, Initiatives, Key Results, Variables Reference)
+
+   - Populate all bilingual content (Subject, Email Body EN/AR,
+     Notification Centre EN/AR) following the same patterns as the attached
+     template — use the same greeting format, variable placement, and
+     sign-off style
+
+   - Include all template variables in double curly braces:
+     {{receiver}}, {{Name_en}}, {{Name_ar}}, {{userCausedEvent}}, {{webUrl}},
+     {{Frequency}}, {{owner_126}}, {{finishDate_131}}, etc.
+
+   - Include a Variables Reference sheet listing every template variable
+     with English description, Arabic description, and which components use it
+
+   - Apply professional formatting: headers with dark fill + white text,
+     borders on all cells, text wrapping enabled, appropriate column widths
+
+   - If an event exists in the system dropdown but has NO template configured
+     yet (empty body, no receivers), still include it in the Excel with full
+     bilingual content so the team can enter it
 
 6. Be thorough. Check every component, every event, every template.
-   Do not assume components share the same events — verify each one individually.
+   Do not assume components share the same events — verify each one
+   individually.
 
-Make sure to save the final output as a Markdown file in the outputs folder.
+7. Save the final Excel file to the outputs folder.
 ```
 
 ### URL Pattern Reference
@@ -82,80 +113,11 @@ https://{client-subdomain}.masterteam.sa/template/{template-id}/notifications/{c
 
 | URL Part | Description | Example |
 |----------|-------------|---------|
-| `{client-subdomain}` | Client-specific subdomain | `g-smo`, `client-abc` |
-| `{template-id}` | Strategy template number | `8`, `12` |
-| `{component-id}` | Notification component ID | `122` = Objective L1 |
-| `{event-id}` | Specific event ID (optional) | `1921` |
-| `{active-index}` | Active template tab index (optional) | `0` |
-
----
-
-## Step 2 — BRD Cross-Reference Prompt
-
-This is the **core prompt**. Upload the S+ Notification Template and the client's BRD, then paste this. If you have Cowork extraction results from Step 1, add those as a third attachment.
-
-```text
-I have the following files:
-
-1. An S+ Notification Template (.xlsx) — the standard bilingual notification template
-   with 5 sheets: Objectives, KPIs, Initiatives & Tracks, Key Results, Variables Reference
-2. A client BRD / Configuration Manual — describing the client's actual S+ strategy
-   management system structure, components, hierarchy, and performance levels
-3. (Optional) Cowork extraction results — a Markdown file with all notification events
-   extracted from the client's live S+ system
-
-Please cross-reference the BRD against the notification template and produce an
-updated notification template that matches the client's actual system scope.
-
-Requirements:
-1. READ the BRD thoroughly — identify every strategy component, hierarchy level,
-   KPI structure, performance threshold, and role that exists in the client's system
-2. READ the notification template — understand every notification row across all sheets
-3. CROSS-REFERENCE each BRD component against the template:
-   - If the template already has the notification for a BRD component → KEEP as-is
-   - If the BRD defines a component/event not in the template → ADD a new row
-     following the exact same bilingual pattern and template variable conventions
-   - Do NOT remove any existing rows from the template — only ADD when needed
-4. PRESERVE the exact structure, formatting, column order, and bilingual content
-   of the original template — do not restructure or restyle anything
-5. PRESERVE all sheet names exactly as they are
-6. If Cowork results are provided, validate that every event extracted from the live
-   system has a corresponding notification row in the output template
-
-Cross-reference checklist (map each BRD section to notification events):
-
-OBJECTIVES SHEET — Check if the BRD has:
-  - Objective Level 1 (created, updated, deleted)
-  - Objective Level 2 (created, updated, deleted)
-  - Objective Level 3 (created, updated, deleted)
-  - OKR Objectives (created, updated)
-
-KPIs SHEET — Check if the BRD has:
-  - KPI Level 1 with Owner/Champion roles and frequency
-  - KPI Level 2 with Owner/Champion roles and frequency
-  - KPI Level 3 with Owner/Champion roles and frequency
-  - Performance measurement (created, updated, measures updated, measure opened,
-    measure value updated, daily lock reminder, one day before lock, locked, unlocked)
-  - Performance thresholds / status changes (fully achieved, partially, not achieved)
-  - KPI deletion events
-
-INITIATIVES & TRACKS SHEET — Check if the BRD has:
-  - Initiatives (added, updated, deleted)
-  - Initiative Action Items (created, updated, deleted, progress updated)
-  - Tracks (added, updated, deleted)
-  - Track Action Items (created, updated, deleted, progress updated)
-  - Projects (linked from P+ or standalone)
-
-KEY RESULTS SHEET — Check if the BRD has:
-  - Key Results (same measure lifecycle as KPIs)
-  - Corrective Actions Plans (created, updated, deleted)
-  - Performance status changes for Key Results
-
-VARIABLES REFERENCE SHEET — Update with any new template variables introduced
-
-After completing the cross-reference, list what was ADDED and why (with BRD slide/section
-reference), then output the updated .xlsx file.
-```
+| `{client-subdomain}` | Client-specific subdomain | `dgasplus`, `g-smo` |
+| `{template-id}` | Strategy template number | `3`, `14` |
+| `{component-id}` | Notification component ID | `1155` = Strategic Objectives |
+| `{event-id}` | Specific event ID (auto-populated) | `2959` |
+| `{active-index}` | Active template tab index | `0` |
 
 ---
 
@@ -163,9 +125,8 @@ reference), then output the updated .xlsx file.
 
 | # | File | Purpose | Required? |
 |---|------|---------|-----------|
-| 1 | `SPlus_Notifications_Template.xlsx` | Standard S+ bilingual notification template with 5 sheets | **Yes** |
-| 2 | Client BRD / Config Manual | Client's S+ system specification (.pptx / .pdf / .docx) | **Yes** |
-| 3 | Cowork Extraction (.md) | Live system event extraction from Step 1 | Optional |
+| 1 | `SPlus_Notifications_Template.xlsx` | Reference template so the output Excel matches the exact column structure and bilingual content patterns | **Yes** |
+| 2 | Client's S+ Notifications URL | The live system URL for the notifications page | **Yes** |
 
 ---
 
@@ -175,111 +136,127 @@ reference), then output the updated .xlsx file.
   <DownloadButton
     fileName="SPlus_Notifications_Template.xlsx"
     label="S+ Notification Master Template (.xlsx)"
-    description="Standard bilingual notification template with 5 sheets: Objectives, KPIs, Initiatives & Tracks, Key Results, Variables Reference. Contains 59 base notification events."
+    description="Standard bilingual notification template with sheets for Objectives, KPIs, Initiatives, Key Results, and Variables Reference. Use this as the format reference for the extraction."
   />
 </DownloadSection>
 
 ---
 
-## Description
+## What Gets Extracted
 
-Every S+ (Strategy Management) system deployment requires a notification template that defines what email and notification centre alerts are sent for each strategic component lifecycle event. The standard template provides a comprehensive base covering Objectives (3 levels), KPIs (3 levels), Key Results, Initiatives, Tracks, and Projects — but each client's BRD may define additional components, performance thresholds, or roles that require new notification events.
+The automation extracts directly from the live system UI — not from a BRD or any document. It captures:
 
-Unlike P+ notifications (which are subtractive — you remove rows for features the client doesn't use), S+ notifications are **additive**. The base template covers core CRUD and measure lifecycle events. The BRD analysis adds client-specific events like performance status changes, deletion notifications, and corrective action plan events based on what the client's system actually defines.
+| Data Point | How It's Captured |
+|------------|-------------------|
+| **Components** | All items in the left sidebar (e.g., Strategic Objectives, Enabler Initiatives, KPI) |
+| **Events per component** | Every option in the "Select Event" dropdown — scrolled fully to capture all |
+| **Template name** | The tab label below the dropdown (e.g., "Default") |
+| **Channel** | The configured channel (Email, SMS, etc.) |
+| **Receivers** | Configured receiver roles (Owner, Champion, etc.) |
+| **Template body** | The rich text content in the editor |
+| **Template variables** | Any `{{variableName}}` tokens found in the body |
+| **Unconfigured events** | Events that exist in the dropdown but have no template set up yet |
 
-### What Gets Generated
+---
 
-| Sheet | Base Template | After BRD Enrichment | Content |
-|-------|--------------|---------------------|---------|
-| **Objectives** | 8 rows | 8–11 rows | Objective create / update / delete for L1, L2, L3, OKR |
-| **KPIs** | 27 rows | 27–33 rows | KPI lifecycle: create, update, measures, lock/unlock, status change, delete |
-| **Initiatives & Tracks** | 13 rows | 13–15 rows | Initiative & Track CRUD + Action Item lifecycle |
-| **Key Results** | 11 rows | 11–14 rows | Key Result lifecycle + Corrective Actions Plans |
-| **Variables Reference** | 12 rows | 12–14 rows | All template variables with descriptions |
+## Output Format — Excel Structure
 
-### Template Structure (All Sheets)
+The generated Excel matches the standard S+ notification template format exactly:
 
-| Column | Content |
-|--------|---------|
-| A — Component | Component name (e.g., KPI L1, Objective L2, Initiative) |
-| B — Event | Event trigger name from the system dropdown |
-| C — Subject | Bilingual email subject (Arabic / English) |
-| D — Email Body English | Full English email template with variables |
-| E — Email Body Arabic | Full Arabic email template with variables |
-| F — Notification Centre English | Short English in-app notification |
-| G — Notification Centre Arabic | Short Arabic in-app notification |
+### Sheet Structure
 
-### Notification Categories Mapped to BRD Sections
+| Sheet | Content | Example Components |
+|-------|---------|-------------------|
+| **Objectives** | Objective create/update events | Strategic Objective, Objective L1/L2/L3, OKR Objective |
+| **KPIs** | Full KPI lifecycle events | KPI L1/L2/L3 — created, updated, measures, lock/unlock, corrective actions |
+| **Initiatives** | Initiative and Action Item events | Initiative — added, updated, action items CRUD |
+| **Key Results** | Key Result lifecycle + corrective actions | Key Result — measures, lock/unlock, corrective action plans |
+| **Variables Reference** | All template variables with bilingual descriptions | `{{receiver}}`, `{{Name_en}}`, `{{webUrl}}`, etc. |
 
-| Notification Category | What to Look For in BRD | Common BRD Section Names |
-|----------------------|------------------------|-------------------------|
-| Objectives L1/L2/L3 | Strategic hierarchy, objective levels, Admin/Business Admin roles | Objectives, System Structure |
-| KPIs L1/L2/L3 | Performance indicators, Owner/Champion, frequency, polarity | KPIs, Performance Indicators |
-| Key Results | Key results, OKR structure, corrective actions | Key Results |
-| Performance Thresholds | Status ranges (99%+, 85-99%, below 85%) | Performance Levels |
-| Initiatives | Initiative creation, Owner field, start/end dates | Initiatives |
-| Tracks | Track structure linking initiatives to projects | Tracks |
-| Projects | Projects linked from P+, contribution mapping | Projects |
-| Action Items | Action item CRUD and progress tracking | Action Items |
-| Corrective Actions | Corrective action plans for underperforming KRs | Corrective Actions |
+### Column Structure (All Sheets)
 
-### Key Benefits
+| Column | Content | Example |
+|--------|---------|---------|
+| A — Component | Component name from the system sidebar | `KPI`, `Strategic Objective`, `Initiative` |
+| B — Event | Exact event name from the system dropdown | `When Performance Indicator Created` |
+| C — Subject | Bilingual subject line (Arabic / English) | `إشعار إنشاء مؤشر أداء / Performance Indicator Creation Notification` |
+| D — Email Body EN | Full English email with template variables | `Dear {{receiver}}, A new Performance Indicator "{{Name_en}}" has been created...` |
+| E — Email Body AR | Full Arabic email with template variables | `عزيزي/عزيزتي {{receiver}}، تم إنشاء مؤشر أداء جديد "{{Name_ar}}"...` |
+| F — Notification Centre EN | Short English in-app notification | `Performance Indicator "{{Name_en}}" has been created.` |
+| G — Notification Centre AR | Short Arabic in-app notification | `تم إنشاء مؤشر أداء "{{Name_ar}}".` |
 
-- **59+ notification events audited automatically** — No manual BRD slide-by-slide comparison
-- **Additive, not destructive** — Original template rows are never removed, only enriched
-- **Bilingual integrity preserved** — Arabic and English content maintained in matching style
-- **Performance threshold awareness** — Automatically adds status change notifications when the BRD defines performance levels
-- **Cowork validation** — Optional live system extraction catches drift between BRD and actual system
-- **Minutes not hours** — Complete cross-reference in a single Claude session (~2-3 minutes)
-- **BRD-agnostic** — Works with any S+ client BRD regardless of format (.pptx, .pdf, .docx)
-- **Audit trail** — Claude lists every added notification with the BRD section reference
+---
+
+## Typical Events Found Per Component
+
+These are the events commonly found in S+ notification configurations. The actual events vary by client — that's why the automation extracts from the live system rather than assuming.
+
+### Objective Events
+- When Objective created
+- When Objective updated
+
+### KPI / Performance Indicator Events
+- When Performance Indicator Created
+- When Performance Indicator updated
+- When Performance Indicator Measures updated
+- When Performance Indicator Measure opened
+- When Performance Indicator Measure Value updated
+- Daily Reminder before Performance Indicator locked
+- One day before Performance Indicator locked
+- When Performance Indicator locked
+- When Performance Indicator unlocked
+- When Corrective Actions Plan Created
+- When Corrective Actions Plan updated
+
+### Initiative Events
+- When Initiative added
+- When Initiative updated
+- When Action item created
+- When Action item updated
+- When Action item deleted
+- When Action item progress updated
+
+### Track Events
+- When Track added
+- When Track updated
+- When Action item created / updated / deleted / progress updated
 
 ---
 
 ## How to Use
 
-### Option A — With Cowork Extraction (Recommended)
+1. Open **Claude Code** (desktop app, CLI, or web) with browser access enabled
+2. Have the client's S+ notifications page URL ready
+3. Attach the **S+ Notification Master Template (.xlsx)** — this is the format reference
+4. Paste the prompt above — replace `{{URL}}` with the actual URL and `{{path-to-template}}` with the file path
+5. Claude navigates the system, clicks through every component and event
+6. Claude generates an Excel file matching the template format with full bilingual content
+7. Download the Excel from the outputs folder
+8. Hand it to the configuration team — they can enter each row directly into the system
 
-1. Open **Claude Cowork** (browser agent) and navigate to the client's S+ notifications page
-2. Paste the **Step 1 Cowork Extraction Prompt** — replace `{{URL}}` with the actual URL
-3. Wait for Cowork to extract all events (~5-10 minutes depending on component count)
-4. Download the generated Markdown file
-5. Open a **new Claude chat** and attach **3 files**: notification template + client BRD + Cowork results
-6. Paste the **Step 2 BRD Cross-Reference Prompt**
-7. Review the addition summary and download the generated `.xlsx`
+---
 
-### Option B — Without Cowork (BRD Only)
+## Key Differences from BRD-Based Approach
 
-1. Open [Claude](https://claude.ai/new) (web or desktop app)
-2. Attach **2 files**: notification template + client BRD
-3. Paste the **Step 2 BRD Cross-Reference Prompt**
-4. Review the addition summary and download the generated `.xlsx`
-5. Open in Excel and verify the new rows match the BRD structure
-6. Deliver to the configuration team
+| Aspect | BRD-Based (Old) | Live System Extraction (This) |
+|--------|-----------------|-------------------------------|
+| **Source of truth** | BRD document (may be outdated) | The actual live system UI |
+| **Accuracy** | Depends on BRD completeness | 100% — extracts what actually exists |
+| **Drift risk** | High — BRD and system may differ | None — pulls directly from system |
+| **Missing events** | Only finds what the BRD documents | Finds every event including undocumented ones |
+| **Output format** | Excel (.xlsx) | Excel (.xlsx) matching the same template |
+| **Speed** | ~3 minutes | ~5-10 minutes (browser navigation) |
+| **Unconfigured events** | May miss them entirely | Explicitly captures and flags them |
 
 ---
 
 ## Best Practices
 
-- Always use the **latest version** of the client's BRD — if the BRD is outdated, notifications may be incomplete
-- **Run Cowork extraction first** when possible — it catches events that exist in the system but may not be documented in the BRD
-- **Do not edit the master template** — always start from a clean copy of `SPlus_Notifications_Template.xlsx`
-- Pay special attention to the **performance levels section** — this determines whether status change notifications are needed
-- Check if the client uses **OKR Objectives** separately from the L1/L2/L3 hierarchy
-- For clients with **corrective action plans** on Key Results, ensure the full CRUD lifecycle is covered
-- **Cross-reference Owner vs Champion roles** — some clients use both, some use only one
-
----
-
-## Customization Options
-
-Add any of these lines to the end of the prompt for specific adjustments:
-
-- **Keep OKR rows:** `"The client uses OKR in addition to the 3-level objective hierarchy — keep all OKR notification rows"`
-- **Add approval workflows:** `"The client has approval workflows for KPI measure submissions — add workflow notifications for approve/reject/return"`
-- **Custom performance levels:** `"The client uses 4 performance levels instead of 3 — add status change notifications for each threshold crossing"`
-- **Multiple BRDs:** `"I'm attaching 2 BRDs — one for the strategy hierarchy and one for KPI definitions. Cross-reference both"`
-- **Include Cowork validation:** `"I'm also attaching the Cowork extraction results — validate every system event has a matching notification row"`
+- **Always use the attached template** — this ensures the output Excel matches the exact format the team expects
+- **Check both tabs** if the client has multiple strategy templates (e.g., "DGA Strategy" and "Organization Health") — each may have different components
+- **Verify dropdown completeness** — the prompt instructs Claude to scroll through the full dropdown and use `read_page` for accuracy
+- **Events with no template** are still captured — the Excel includes full bilingual content so the team can enter them fresh
+- **Run per template** — if a client has multiple strategy templates, run the extraction once per template tab
 
 ---
 
@@ -287,55 +264,19 @@ Add any of these lines to the end of the prompt for specific adjustments:
 
 | Check | What to Verify |
 |-------|---------------|
-| **Sheet count** | All 5 sheets present: Objectives, KPIs, Initiatives & Tracks, Key Results, Variables Reference |
-| **Column structure** | Column headers unchanged on all sheets |
-| **Objective levels** | All BRD-defined levels have create/update events; delete if BRD shows Admin role |
-| **KPI levels** | All BRD-defined KPI levels have full lifecycle (9 events each minimum) |
-| **Performance status** | Status change events added if BRD defines performance thresholds |
-| **Key Results** | Full measure lifecycle + corrective action events if BRD includes them |
-| **Initiatives** | Create/update/delete + Action Item CRUD present |
-| **Tracks** | Create/update/delete + Action Item CRUD present |
-| **Projects** | Noted as "No available events" if projects are P+-managed |
-| **Variables** | All new variables documented in Variables Reference sheet |
-| **No deletions** | No original template rows were removed — only additions |
-| **Bilingual content** | Both Arabic and English text present in all new rows |
-
----
-
-## Common Addition Scenarios
-
-| Added Notification | Reason (from BRD) | Frequency |
-|---|---|---|
-| Objective L1/L2/L3 deleted | BRD defines Admin + Business Admin roles with deletion capability | Very Common |
-| KPI status changed | BRD defines performance thresholds (99%+, 85-99%, below 85%) | Very Common |
-| KPI deleted | BRD shows KPI management with Owner/Champion roles | Common |
-| Initiative/Track deleted | BRD includes initiative lifecycle with Owner role | Common |
-| Key Result status changed | BRD defines Key Result performance measurement | Common |
-| Key Result deleted | BRD shows Key Result management capabilities | Common |
-| Corrective Actions Plan deleted | BRD includes corrective action CRUD for Key Results | Occasional |
-| KPI approval workflow events | BRD defines measure submission approval cycles | Rare |
-
----
-
-## S+ vs P+ — Key Differences
-
-| Aspect | P+ Notification Template | S+ Notification Template |
-|--------|------------------------|------------------------|
-| **Approach** | Subtractive — remove unneeded rows | Additive — add BRD-specific rows |
-| **Base template** | 98 rows covering all possible modules | 59 rows covering core strategy events |
-| **Sheet structure** | 4 sheets: Level, Logs, Level WF, Log WF | 5 sheets: Objectives, KPIs, Init & Tracks, Key Results, Variables |
-| **Hierarchy** | Portfolio > Program > Project | Objective L1 > L2 > L3 > KPIs > Key Results |
-| **Workflows** | Approval cycles (add/update/delete/close) | Measure lifecycle (open > update > lock > unlock) |
-| **Unique feature** | Phase Gate notifications | Performance threshold + Corrective Actions notifications |
+| **All components covered** | Every sidebar item has been clicked and its events extracted |
+| **All events captured** | Dropdown was fully scrolled — no events missed |
+| **Excel format matches** | Same 7-column structure as the master template |
+| **Bilingual content** | Every row has both Arabic and English content |
+| **Template variables** | All `{{variableName}}` tokens are correctly placed |
+| **Unconfigured events** | Events with empty templates are included with full content |
+| **Variables Reference** | All variables documented with EN/AR descriptions |
+| **Sheet names** | Match the standard template sheet names |
 
 ---
 
 ## Conclusion
 
-The S+ Notification Template from BRD automation bridges the gap between a client's strategy management system specification and the notification configuration needed for deployment. By reading the BRD programmatically and mapping every strategy component to its notification events, it produces an enriched, client-specific template with full bilingual support — ready for system configuration.
-
-The optional Cowork extraction step adds a live system validation layer, catching configuration drift and undocumented events. Together, the three inputs (template + BRD + Cowork) produce the most accurate notification template possible.
-
-This automation is part of the BC Automations consulting toolkit. Pair it with the [P+ Notification Template from BRD](/blog/pplus-notification-template-from-brd) automation for complete P+ and S+ notification coverage.
+This automation eliminates the guesswork of building notification templates from BRD documents. By extracting directly from the client's live S+ system, it captures every component, every event — including ones that may not be documented in any BRD. The output is a ready-to-use Excel file in the exact format the configuration team expects, with full bilingual content for every notification event.
 
 <ClaudeCTA />
