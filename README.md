@@ -1,120 +1,139 @@
-# MagicUI Blog
+# BC Automations
 
-A modern, responsive blog built with Next.js 15, Fumadocs MDX, and Tailwind CSS. Beautiful interface for displaying articles, tutorials, and insights about React and modern web development.
+> **Business Consulting automation templates** — user manuals, test cases, notifications, dashboards, and more. Built by the Master Team.
 
-## ✨ Features
+Live site: [bc-automations.click](https://www.bc-automations.click)
 
-- 🎨 **Modern Design** - Clean, responsive interface
-- 📝 **MDX Support** - Write blog posts in MDX with full component support
-- 🌙 **Dark Mode** - Built-in dark/light theme toggle
-- 🏷️ **Tags & Categories** - Organize content with tags
-- ⭐ **Featured Posts** - Highlight your best articles
-- 📱 **Mobile Responsive** - Perfect on all devices
-- 🚀 **Fast Performance** - Optimized with Next.js 15
+---
 
-## 🚀 Getting Started
+## What Is This?
+
+BC Automations is a collection of **AI-powered automation templates** for business consultants working with enterprise project management platforms (PPlus, SPlus, Diwan). Each template is a tested, ready-to-use prompt that turns hours of manual work into minutes of AI-driven output.
+
+### Available Automations
+
+| Category | Platforms | What It Does |
+|---|---|---|
+| **User Manuals** | PPlus, SPlus, Diwan | Generate complete user manuals from live systems or BRDs |
+| **Test Cases** | PPlus, SPlus, Diwan | Generate UAT test case workbooks from configuration manuals |
+| **Notification Templates** | PPlus, SPlus, Diwan | Extract and generate bilingual notification templates |
+| **Dashboard Building** | PPlus | Replicate executive dashboards across instances using AI |
+| **Group Permissions** | PPlus | Automate permission mapping from Excel matrices via API |
+| **Migration Sheets** | SPlus | Generate migration workbooks from live system inspection |
+
+---
+
+## PPlus MCP Server
+
+For PPlus-specific automations (dashboards, permissions, instance configs), we maintain a **Model Context Protocol (MCP) server** that gives Claude Code 8 specialized tools for instant access to PPlus knowledge.
+
+### Related Repositories
+
+| Repository | Description |
+|---|---|
+| [MasterteamSA/PPlus-Agent](https://github.com/MasterteamSA/PPlus-Agent) | PPlus Knowledge MCP Server — 8 tools for Claude Code |
+| [MasterteamSA/pplus-knowledge](https://github.com/MasterteamSA/pplus-knowledge) | PPlus v4 Knowledge Base — 44+ structured knowledge chunks |
+
+### Quick Setup
+
+```bash
+# 1. Clone and build the MCP server
+git clone https://github.com/MasterteamSA/PPlus-Agent.git
+cd PPlus-Agent && npm install && npm run build
+
+# 2. Clone the knowledge base
+git clone https://github.com/MasterteamSA/pplus-knowledge.git
+
+# 3. Configure Claude Code (~/.mcp.json)
+# 4. Restart Claude Code
+```
+
+For the complete step-by-step setup guide (including Node.js, Git, and Claude Code installation), see:
+**[Getting Started: PPlus MCP Setup Guide](https://www.bc-automations.click/blog/getting-started-pplus-mcp)**
+
+---
+
+## Running the Website Locally
+
+### Prerequisites
+
+- Node.js 18+
+- pnpm
+
+### Development
 
 ```bash
 # Clone the repository
-git clone <repo-url>
-cd blog-template
+git clone https://github.com/MasterteamSA/BC-Automations.git
+cd BC-Automations
 
 # Install dependencies
 pnpm install
 
 # Start development server
 pnpm dev
+```
 
-# Build for production
+The site will be available at `http://localhost:3000`.
+
+### Production Build
+
+```bash
 pnpm build
+pnpm start
 ```
 
-## ✍️ Adding Blog Posts
-
-Create a new MDX file in `blog/content/` with format `your-post-title.mdx`:
-
-````mdx
----
-title: "Your Blog Post Title"
-description: "A brief description of your post"
-date: "2024-12-01"
-tags: ["React", "Next.js", "Tutorial"]
-featured: true
-readTime: "10 min read"
-author: "Your Name"
 ---
 
-Your blog post content here...
+## Adding Blog Posts
 
-## Markdown Support
+Create a new `.mdx` file in `blog/content/`:
 
-You can use all standard Markdown features plus MDX components.
+```mdx
+---
+title: "Your Post Title"
+description: "Brief description of the automation"
+date: "2026-03-30"
+tags: ["PPlus", "Dashboard", "MCP"]
+author: "Khalil Abu Mushref"
+pinned: false
+---
 
-```tsx
-// Code syntax highlighting works great!
-export default function Component() {
-  return <div>Hello World!</div>;
-}
-```
-````
-
-## 🎨 Customization
-
-### Adding New Tags/Categories
-
-Simply add them to your blog post frontmatter. The system automatically generates tag pages.
-
-### Featured Posts
-
-Set `featured: true` in your blog post frontmatter to highlight it on the homepage (you can create a dedicated feature section in the home page).
-
-### Styling
-
-The project uses Tailwind CSS with a custom design system. Modify styles in:
-
-- `app/globals.css` - Global styles
-- Individual component files - Component-specific styles
-
-### For Authors
-
-Add your author details to the `lib/authors.ts` file.
-
-```tsx
-// lib/authors.ts
-export const authors: Record<string, Author> = {
-  dillion: {
-    name: "Dillion Verma",
-    position: "Software Engineer",
-    avatar: "/authors/dillion.png",
-  },
-  arghya: {
-    name: "Arghya Das",
-    position: "Design System Engineer",
-    avatar: "/authors/arghya.png",
-  },
-  // Add your author details here
-  yourname: {
-    name: "Your Full Name",
-    position: "Your Position/Title",
-    avatar: "/authors/your-avatar.png",
-  },
-} as const;
+Your content here...
 ```
 
-Then reference your author in blog posts using the key (e.g., `author: "yourname"`).
+### Frontmatter Fields
 
-## 📖 Technologies Used
+| Field | Required | Description |
+|---|---|---|
+| `title` | Yes | Post title |
+| `description` | Yes | Short description shown on cards |
+| `date` | Yes | Publication date (YYYY-MM-DD) |
+| `tags` | No | Array of tags for filtering |
+| `author` | No | Author name (must match `lib/authors.ts`) |
+| `pinned` | No | Set to `true` to pin to top of homepage |
+| `featured` | No | Mark as featured |
+| `thumbnail` | No | Image URL for post card and OG image |
+| `readTime` | No | Estimated read time (e.g., "8 min read") |
 
-- **Next.js 15** - React framework with App Router
-- **Fumadocs MDX** - MDX processing and components
-- **Tailwind CSS** - Utility-first CSS framework
-- **TypeScript** - Type-safe JavaScript
-- **Geist Font** - Modern typography
+### Available Tags
 
-## 🤝 Contributing
+**Platform tags:** `PPlus`, `SPlus`, `Diwan`
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+**Feature tags:** `Dashboard`, `MCP`, `Getting Started`, `User Manuals`, `Test Cases`, `Notifications`, `Group Permissions`, `Migration Sheet`
 
-## 📄 License
+---
 
-This project is open source and available under the [MIT License](LICENSE).
+## Tech Stack
+
+- **Next.js 15** — React framework with App Router
+- **Fumadocs MDX** — MDX content management
+- **Tailwind CSS v4** — Styling
+- **TypeScript** — Type safety
+- **Vercel** — Hosting and deployment
+
+---
+
+## License
+
+Internal — (c) 2026 Master Team. All rights reserved.
