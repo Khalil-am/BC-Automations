@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { BlogCard } from "@/components/blog-card";
 import { TagFilter } from "@/components/tag-filter";
 import { FlickeringGrid } from "@/components/magicui/flickering-grid";
+import { DeliverableCounter } from "@/components/deliverable-counter";
 
 interface BlogData {
   title: string;
@@ -97,6 +98,9 @@ export default async function HomePage({
             <p className="text-muted-foreground text-sm md:text-base lg:text-lg">
               Business Consulting automation templates — user manuals, test cases, notifications, and more.
             </p>
+          </div>
+          <div className="mt-4 p-4 rounded-lg border border-border bg-card/50 backdrop-blur-sm w-fit">
+            <DeliverableCounter />
           </div>
         </div>
         {allTags.length > 0 && (
