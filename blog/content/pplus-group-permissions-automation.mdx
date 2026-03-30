@@ -29,15 +29,15 @@ This automation uses **Claude Code** with the **PPlus Knowledge MCP** to read an
 ### Step 1: Install the PPlus Knowledge MCP
 
 ```bash
-git clone https://github.com/Khalil-am/pplus-knowledge-mcp.git
-cd pplus-knowledge-mcp
+git clone https://github.com/MasterteamSA/PPlus-Agent.git
+cd PPlus-Agent
 npm install && npm run build
 ```
 
 ### Step 2: Clone the Knowledge Base
 
 ```bash
-git clone https://github.com/Khalil-am/pplus-agent-corag-vectorized.git
+git clone https://github.com/MasterteamSA/pplus-knowledge.git
 ```
 
 ### Step 3: Configure Claude Code
@@ -49,9 +49,9 @@ Create or edit `~/.claude/.mcp.json`:
   "mcpServers": {
     "pplus-knowledge": {
       "command": "node",
-      "args": ["/full/path/to/pplus-knowledge-mcp/dist/index.js"],
+      "args": ["/full/path/to/PPlus-Agent/dist/index.js"],
       "env": {
-        "PPLUS_KNOWLEDGE_PATH": "/full/path/to/pplus-agent-corag-vectorized/knowledge"
+        "PPLUS_KNOWLEDGE_PATH": "/full/path/to/pplus-knowledge/knowledge"
       }
     }
   }
@@ -94,7 +94,7 @@ I need you to automate PPlus user group permissions using an Excel accessibility
 **Inputs:**
 - Excel file: `{{PATH_TO_YOUR_EXCEL_FILE}}`
 - Target instance: `{{YOUR_INSTANCE_URL}}` (e.g., https://g-pmo.masterteam.sa)
-- Knowledge repo: https://github.com/Khalil-am/pplus-agent-corag-vectorized
+- Knowledge repo: https://github.com/MasterteamSA/pplus-knowledge
 
 **What to do:**
 
@@ -255,7 +255,7 @@ After the automation completes, you can verify in two ways:
 
 | Resource | Link |
 |---|---|
-| **PPlus Knowledge MCP** | [github.com/Khalil-am/pplus-knowledge-mcp](https://github.com/Khalil-am/pplus-knowledge-mcp) |
-| **Knowledge Repository** | [github.com/Khalil-am/pplus-agent-corag-vectorized](https://github.com/Khalil-am/pplus-agent-corag-vectorized) |
+| **PPlus Knowledge MCP** | [github.com/MasterteamSA/PPlus-Agent](https://github.com/MasterteamSA/PPlus-Agent) |
+| **Knowledge Repository** | [github.com/MasterteamSA/pplus-knowledge](https://github.com/MasterteamSA/pplus-knowledge) |
 | **Claude Code** | [claude.ai/claude-code](https://claude.ai/claude-code) |
 | **API Documentation** | See `knowledge/api-reference/group-permissions-api.md` in the knowledge repo |

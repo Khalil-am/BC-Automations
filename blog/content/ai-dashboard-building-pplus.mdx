@@ -27,7 +27,7 @@ Both methods use the same underlying knowledge base and produce identical result
 
 ### What is the PPlus Knowledge MCP?
 
-The **pplus-knowledge-mcp** is a Model Context Protocol server that gives Claude Code 8 specialized tools for querying the PPlus v4 knowledge base. Instead of Claude reading raw markdown files, it can search, filter, cross-reference, and retrieve exactly the information it needs — instantly.
+The **PPlus-Agent** is a Model Context Protocol server that gives Claude Code 8 specialized tools for querying the PPlus v4 knowledge base. Instead of Claude reading raw markdown files, it can search, filter, cross-reference, and retrieve exactly the information it needs — instantly.
 
 ### MCP Tools Available
 
@@ -47,8 +47,8 @@ The **pplus-knowledge-mcp** is a Model Context Protocol server that gives Claude
 **Step 1: Clone the MCP server**
 
 ```bash
-git clone https://github.com/Khalil-am/pplus-knowledge-mcp.git
-cd pplus-knowledge-mcp
+git clone https://github.com/MasterteamSA/PPlus-Agent.git
+cd PPlus-Agent
 npm install
 npm run build
 ```
@@ -56,14 +56,14 @@ npm run build
 Or if you already have it locally:
 
 ```bash
-cd ~/OneDrive/Desktop/pplus-knowledge-mcp
+cd ~/OneDrive/Desktop/PPlus-Agent
 npm install && npm run build
 ```
 
 **Step 2: Clone the knowledge base** (if you haven't already)
 
 ```bash
-git clone https://github.com/Khalil-am/pplus-agent-corag-vectorized.git
+git clone https://github.com/MasterteamSA/pplus-knowledge.git
 ```
 
 **Step 3: Configure Claude Code**
@@ -75,9 +75,9 @@ Create or edit the file `~/.mcp.json` (in your home directory):
   "mcpServers": {
     "pplus-knowledge": {
       "command": "node",
-      "args": ["/full/path/to/pplus-knowledge-mcp/dist/index.js"],
+      "args": ["/full/path/to/PPlus-Agent/dist/index.js"],
       "env": {
-        "PPLUS_KNOWLEDGE_PATH": "/full/path/to/pplus-agent-corag-vectorized/knowledge"
+        "PPLUS_KNOWLEDGE_PATH": "/full/path/to/pplus-knowledge/knowledge"
       }
     }
   }
@@ -91,9 +91,9 @@ Replace the paths with your actual directories. On Windows:
   "mcpServers": {
     "pplus-knowledge": {
       "command": "node",
-      "args": ["C:\\Users\\YourName\\pplus-knowledge-mcp\\dist\\index.js"],
+      "args": ["C:\\Users\\YourName\\PPlus-Agent\\dist\\index.js"],
       "env": {
-        "PPLUS_KNOWLEDGE_PATH": "C:\\Users\\YourName\\pplus-agent-corag-vectorized\\knowledge"
+        "PPLUS_KNOWLEDGE_PATH": "C:\\Users\\YourName\\pplus-knowledge\\knowledge"
       }
     }
   }
@@ -228,7 +228,7 @@ Before you start, you need:
 
 1. **Claude Code** — installed and running with the Chrome browser extension for browser automation
 2. **Admin access** to both the source and target PPlus instances
-3. **The knowledge repository** — clone the pplus-agent-corag-vectorized repo for API reference and dashboard structure documentation
+3. **The knowledge repository** — clone the pplus-knowledge repo for API reference and dashboard structure documentation
 4. **A logged-in browser session** on the target instance (Claude reads the JWT token from localStorage)
 
 ---
@@ -241,7 +241,7 @@ Copy and paste the following prompt into Claude Code. Make sure you have the kno
 ────────────────────────────────────────────────────────
 CONFIGURATION (change these values per engagement)
 ────────────────────────────────────────────────────────
-Knowledge Repo   : https://github.com/Khalil-am/pplus-agent-corag-vectorized
+Knowledge Repo   : https://github.com/MasterteamSA/pplus-knowledge
 Source Instance   : [https://source-instance.example.com]
 Target Instance   : [https://target-instance.example.com]
 Source Dashboard ID : [5]           ← the dashboard ID to replicate
@@ -256,7 +256,7 @@ to another. The source and target instances have different property keys,
 level names, and module IDs — so this is NOT a simple copy-paste.
 
 IMPORTANT: Before you begin, read the knowledge repository at:
-https://github.com/Khalil-am/pplus-agent-corag-vectorized
+https://github.com/MasterteamSA/pplus-knowledge
 
 Specifically read these files in order:
 1. knowledge/api-reference/dashboards-api.md — for all API endpoints
@@ -451,7 +451,7 @@ IMPORTANT REMINDERS:
 
 | # | Resource | Purpose | Notes |
 |---|----------|---------|-------|
-| 1 | [Knowledge Repository](https://github.com/Khalil-am/pplus-agent-corag-vectorized) | API reference, chart type mappings, configuration patterns | Clone locally or let Claude read directly from GitHub |
+| 1 | [Knowledge Repository](https://github.com/MasterteamSA/pplus-knowledge) | API reference, chart type mappings, configuration patterns | Clone locally or let Claude read directly from GitHub |
 | 2 | Source instance access | Dashboard to replicate | Must have admin access and be logged in |
 | 3 | Target instance access | Where the dashboard will be created | Must have admin access and be logged in |
 
@@ -626,7 +626,7 @@ After building all charts, Claude:
 
 ## Best Practices
 
-1. **Always start with the knowledge repo** — Clone the pplus-agent-corag-vectorized repo and tell Claude to reference it. The documentation dramatically reduces trial-and-error.
+1. **Always start with the knowledge repo** — Clone the pplus-knowledge repo and tell Claude to reference it. The documentation dramatically reduces trial-and-error.
 2. **Use the SKILL.md file** — The repository includes a comprehensive SKILL.md that Claude can reference for chart type mappings, API endpoints, and configuration patterns.
 3. **Build one chart at a time** — Don't try to replicate all 14+ charts in a single save. Build and test incrementally.
 4. **Test with the Chart API first** — Before committing a chart to the dashboard, use POST /api/dashboards/Chart to verify the query returns data.
@@ -648,7 +648,7 @@ Once you've replicated a dashboard for one client, the process becomes even fast
 
 ## The Knowledge Repository
 
-The [pplus-agent-corag-vectorized](https://github.com/Khalil-am/pplus-agent-corag-vectorized) repository is structured as a RAG (Retrieval-Augmented Generation) knowledge base for AI agents. It contains **38 knowledge chunks across 8 categories**:
+The [pplus-knowledge](https://github.com/MasterteamSA/pplus-knowledge) repository is structured as a RAG (Retrieval-Augmented Generation) knowledge base for AI agents. It contains **38 knowledge chunks across 8 categories**:
 
 ```text
 knowledge/
@@ -756,6 +756,6 @@ Every dashboard you build adds to the knowledge base, creating a compounding adv
 
 1. **Quickest path:** Copy the manual prompt from Method B above, clone the knowledge repo, and start building
 2. **Best long-term path:** Install the MCP server (Method A) — 2 minutes of setup saves hours over repeated dashboard builds
-3. **Contribute back:** Push new property mappings and instance discoveries to the [knowledge repository](https://github.com/Khalil-am/pplus-agent-corag-vectorized) so the entire team benefits
+3. **Contribute back:** Push new property mappings and instance discoveries to the [knowledge repository](https://github.com/MasterteamSA/pplus-knowledge) so the entire team benefits
 
 <ClaudeCTA />
