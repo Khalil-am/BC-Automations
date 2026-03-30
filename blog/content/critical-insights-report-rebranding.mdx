@@ -1,6 +1,6 @@
 ---
 title: "Critical Insights Report Rebranding Automation"
-description: "Automatically extract data from a source report and rebrand it into a client's template with their color scheme, fonts, and layout — output as PPTX or DOCX, ready for delivery."
+description: "Automatically extract data from a source report and rebrand it into a client's template with their color scheme, fonts, and layout — each page styled like a presentation slide, output as a Word document ready for delivery."
 date: "2026-03-30"
 tags: ["Design", "PPlus"]
 featured: true
@@ -10,9 +10,9 @@ author: "Khalil Abu Mushref"
 
 ## Automation Name
 
-**Critical Insights Report Rebranding — Multi-Format (PPTX / DOCX)**
+**Critical Insights Report Rebranding — Slide-Style Word Document**
 
-This automation takes a data-heavy source report (Arabic or English) and rebrands it into a client's official template with their color scheme, fonts, tables, and layout. Instead of manually rebuilding every table and section in a new template, this prompt produces a fully formatted, presentation-ready report in minutes — covering all data sections with consistent client branding and professional table styling.
+This automation takes a data-heavy source report (Arabic or English) and rebrands it into a client's official template with their color scheme, fonts, tables, and layout. The output is a Word document where each page is styled like a vertical presentation slide — one section per page, with the client's logo, branded headers, and professional table formatting throughout. Instead of manually rebuilding every table and section in a new template, this prompt produces a fully formatted, delivery-ready report in minutes.
 
 ---
 
@@ -37,28 +37,31 @@ Please:
    - Font family used in headings and body text
    - Logo and background images
    - Page layout (orientation, margins, header/footer style)
-3. Create a new [FORMAT: pptx / docx] report that:
+3. Create a new .docx report where each page looks like a vertical presentation slide:
    - Uses the client template's branding (colors, fonts, logo, backgrounds)
    - Contains ALL data from the source report — no data should be missing
-   - Structures the content as:
-     a. Cover page with report title and export date
-     b. Table of contents listing all sections
-     c. Each data section with:
-        - Section title styled in client's heading format
+   - Each section on its own page (page break between sections)
+   - Structure:
+     a. Cover page with report title, export date, client logo, and background image
+     b. Table of contents page listing all sections with numbered entries
+     c. Each data section page with:
+        - Client logo in the top-right corner
+        - Section title styled with the client's primary color and an underline accent
         - Professional data tables with:
           * Client's primary color as header row background
           * White text on header rows
           * Alternating row shading for readability
           * Status indicators with colored text (red for delayed, green for active, orange for high priority)
           * Proper RTL alignment for Arabic content
-     d. Thank you / closing page with client branding
+     d. Closing page with client logo, background image, and "شكراً" (Thank You)
+   - Portrait (vertical) page orientation — like vertical slides
    - All text alignment matches the content language (RTL for Arabic, LTR for English)
 4. Run a quality check after generation:
    - Verify all sections from source are present
    - Verify all table rows match the source data count
    - Verify color scheme matches client template
    - Verify fonts are consistent throughout
-5. Output as a single .[FORMAT] file
+5. Output as a single .docx file
 ```
 
 ---
@@ -85,17 +88,12 @@ Attach **both** of the following files to your Claude conversation **before** pa
   <DownloadButton
     fileName="MHC_Report_Template.docx"
     label="Client Template Sample (.docx)"
-    description="MHC branded template with logo, navy color scheme (#070E4F), Tajawal font, and landscape layout"
-  />
-  <DownloadButton
-    fileName="Infath_MHC_Report_Output_Sample.pptx"
-    label="Output Sample — PowerPoint (.pptx)"
-    description="Example output: Infath data rebranded into MHC template — 7 slides with all tables, navy headers, and alternating row shading"
+    description="MHC branded template with logo, navy color scheme (#070E4F), Tajawal font, and background images"
   />
   <DownloadButton
     fileName="Infath_MHC_Report_Output_Sample.docx"
     label="Output Sample — Word (.docx)"
-    description="Example output: Infath data rebranded into MHC template — 7 pages with full data tables and MHC color scheme"
+    description="Example output: Infath data rebranded into MHC template — 7 vertical slide-style pages with all data tables, navy headers, and alternating row shading"
   />
 </DownloadSection>
 
@@ -105,21 +103,21 @@ Attach **both** of the following files to your Claude conversation **before** pa
 
 Organizations frequently need to rebrand data reports when delivering to different clients or stakeholders. A source report exported from a system like Infath, Oracle, or SAP contains raw data in a generic format. The client expects that same data presented in their official template with their logo, colors, and fonts.
 
-This automation handles the entire rebranding process: extracting every table, metric, and section from the source, then rebuilding it in the client's template format with professional styling.
+This automation handles the entire rebranding process: extracting every table, metric, and section from the source, then rebuilding it in the client's template format with professional styling. The output is a Word document where each page functions like a standalone presentation slide — clean, branded, and ready for print or digital delivery.
 
 ### What Gets Generated
 
-A complete report with all source data, rebranded in the client's style:
+A 7-page Word document with all source data, each page styled like a vertical slide:
 
-| Section | Content | Styling |
-|---------|---------|---------|
-| Cover Page | Report title, export date, client logo | Client's background image, primary color, branded fonts |
-| Table of Contents | Numbered list of all sections | Navy header bar, clean numbered entries |
-| Project Performance | All project rows with department, type, and % complete | Navy header row, alternating row shading, centered data |
-| Financial Performance | Budget, expenditure, planned vs actual for each project | Status column in red with colored indicators |
-| Delayed Tasks | Task name, owner, dates, completion %, status | Red status text, alternating rows for readability |
-| Challenges | Risk name, owner, due date, classification, status | Orange for high priority, green for active status |
-| Closing Page | Client logo, thank you message | Full client branding |
+| Page | Content | Styling |
+|------|---------|---------|
+| 1 — Cover | Report title, export date, client logo | Background image, large title in primary color, accent underline |
+| 2 — Table of Contents | Numbered list of all sections | Navy header bar, alternating row shading, clean entries |
+| 3 — Project Performance | All project rows with department, type, and % complete | Navy header row, alternating row shading, centered data |
+| 4 — Financial Performance | Budget, expenditure, planned vs actual for each project | Status column in red with colored indicators |
+| 5 — Delayed Tasks | Task name, owner, dates, completion %, status | Red status text, alternating rows for readability |
+| 6 — Challenges | Risk name, owner, due date, classification, status | Orange for high priority, green for active status |
+| 7 — Closing | Client logo, background image, thank you message | Full client branding, centered "شكراً" |
 
 ### Color Scheme Extraction
 
@@ -140,23 +138,24 @@ Claude automatically identifies the client's color scheme from their template:
 1. **You provide** a source report (.docx) — this is your data
 2. **You provide** the client's branded template (.docx) with their logo, colors, and fonts
 3. **Claude reads** the source report and extracts all tables, sections, and data points
-4. **Claude analyzes** the client template to identify: color hex codes, font family, logo image, background images, page layout (landscape/portrait), and margins
-5. **Claude builds** a new document mapping every source section into the client's style
+4. **Claude analyzes** the client template to identify: color hex codes, font family, logo image, background images, and margins
+5. **Claude builds** a new Word document with one section per page (vertical slide layout)
 6. **Claude applies** professional table formatting: navy header rows, white header text, alternating row shading, colored status indicators
 7. **Claude runs QA** to verify all data is present and styling is consistent
-8. **Claude outputs** a single file (.pptx or .docx) ready for delivery
+8. **Claude outputs** a single `.docx` file ready for delivery
 
 ### Key Benefits
 
 - **Zero manual formatting** — No copying tables cell-by-cell into a new template
+- **Slide-style layout** — Each page is a standalone visual section, like a vertical presentation slide
 - **Automatic color scheme matching** — Client's exact hex colors applied throughout
 - **Font consistency** — Client's font applied to every heading, table, and body text element
 - **Data integrity** — Every row from every table transferred with zero data loss
-- **Dual format output** — Choose PPTX for presentations or DOCX for printed reports
 - **RTL/LTR support** — Arabic and English content properly aligned
 - **Professional table styling** — Navy headers, alternating rows, colored status indicators
 - **Minutes not hours** — Complete rebranding in a single Claude session (~3-5 minutes)
 - **Built-in QA** — Claude verifies section count, data completeness, and styling consistency
+- **Print-ready** — Portrait orientation works for both digital review and printing
 
 ### Supported Source Formats
 
@@ -178,27 +177,26 @@ This automation works with any data-heavy report. Common source types:
 1. Open [Claude](https://claude.ai/new) (web or desktop app)
 2. Click the attachment button and upload **both files** (source report + client template)
 3. Copy and paste the prompt from the box above
-4. Replace `[FORMAT: pptx / docx]` with your preferred output format
-5. Press Enter and wait for Claude to process (~3-5 minutes)
-6. Download the generated file
-7. Open in PowerPoint or Word — all data is there with client branding applied
+4. Press Enter and wait for Claude to process (~3-5 minutes)
+5. Download the generated `.docx` file
+6. Open in Word — each page is a branded slide with all data tables
 
 ### Quick Customizations
 
 Add any of these lines to the end of the prompt:
 
-- **PowerPoint output:** "Output as .pptx — one slide per section with full-width tables"
-- **Word output:** "Output as .docx — structured as a multi-page report with headers and footers"
+- **Landscape slides:** "Use landscape page orientation instead of portrait"
 - **Specific sections only:** "Only include the Financial Performance and Challenges sections"
 - **Different language:** "Translate all content to English while keeping the client's template branding"
 - **Add charts:** "Add a summary chart on the cover page showing project status distribution"
-- **Executive summary:** "Add an executive summary slide/page before the table of contents summarizing key metrics"
+- **Executive summary:** "Add an executive summary page before the table of contents summarizing key metrics"
+- **PowerPoint output:** "Output as .pptx instead — one slide per section"
 
 ---
 
 ## Step-by-Step Example
 
-Here is the exact workflow used to create the sample outputs above:
+Here is the exact workflow used to create the sample output above:
 
 ### Step 1: Upload Files
 
@@ -216,26 +214,27 @@ I have two files:
 Move the content from the Infath report into the MHC template format.
 Make sure it looks good and is ready for development as a report.
 Ensure all content is aligned and structured with the MHC color scheme.
-Output as .pptx file. Run a QA check after you're done.
+Each page should look like a vertical presentation slide.
+Run a QA check after you're done.
 ```
 
 ### Step 3: Claude Processes
 
 Claude will:
 - Read the Infath report: extract 4 data sections (project performance, financial, tasks, challenges)
-- Read the MHC template: identify navy #070E4F, Tajawal font, logo, landscape layout
-- Build 7 slides: cover, TOC, 4 data sections, closing
+- Read the MHC template: identify navy #070E4F, Tajawal font, logo, background images
+- Build 7 pages: cover, TOC, 4 data sections, closing — each a standalone slide
 - Apply MHC branding: navy table headers, white header text, alternating row shading
 - Run QA: verify all 33+ data rows present, consistent colors, correct fonts
 
 ### Step 4: Download and Review
 
-Download the `.pptx` file. Open in PowerPoint to verify:
+Download the `.docx` file. Open in Word to verify:
 - All 4 sections present with data tables
+- Each page is a self-contained slide with logo and section title
 - MHC navy color scheme applied throughout
 - Tajawal font on all text
-- Status indicators colored appropriately
-- Logo on every slide
+- Status indicators colored appropriately (red, green, orange)
 
 ---
 
@@ -243,7 +242,6 @@ Download the `.pptx` file. Open in PowerPoint to verify:
 
 - Always use the **original source report** — do not pre-format or modify it before uploading
 - Provide the **cleanest version** of the client template — remove any sample content, leave only branding elements
-- Specify the **output format** clearly in the prompt (PPTX or DOCX)
 - For **Arabic content**, verify RTL alignment in the output — especially in tables
 - If the source has **images or charts**, mention them in the prompt so Claude preserves or recreates them
 - For **large reports** (50+ tables), consider splitting into multiple prompts by section
@@ -259,23 +257,23 @@ After generating the report, verify the following before client delivery:
 |-------|---------------|
 | Cover | Report title matches source, export date is correct, client logo present |
 | TOC | All sections listed with correct numbering |
+| Page Layout | Each section on its own page — no sections split across pages |
 | Data Tables | Every row from the source appears in the output — count rows per table |
 | Table Headers | Client's primary color as background, white text, correct column names |
 | Row Shading | Alternating row colors for readability |
 | Status Colors | Red for delayed/overdue, green for active, orange for high priority |
 | Fonts | Client's font used throughout — no mixed fonts |
 | Colors | Client's color scheme applied consistently — no leftover source colors |
-| Alignment | RTL for Arabic, LTR for English — consistent across all pages/slides |
-| Logo | Client logo on cover, section pages, and closing page |
-| Closing | Thank you / closing page with full client branding |
-| File Format | Output matches requested format (.pptx or .docx) |
+| Alignment | RTL for Arabic, LTR for English — consistent across all pages |
+| Logo | Client logo on cover, each section page, and closing page |
+| Closing | Thank you page with full client branding |
 
 ---
 
 ## Conclusion
 
-The Critical Insights Report Rebranding Automation eliminates the tedious process of manually rebuilding data reports in a client's branded template. By providing a source report and a client template, any team member can produce a fully branded, professionally styled deliverable in minutes. The automation handles color scheme extraction, font matching, table formatting, and data transfer — ensuring zero data loss and consistent branding across every page.
+The Critical Insights Report Rebranding Automation eliminates the tedious process of manually rebuilding data reports in a client's branded template. By providing a source report and a client template, any team member can produce a fully branded, professionally styled Word document in minutes — where each page is designed like a vertical presentation slide. The automation handles color scheme extraction, font matching, table formatting, and data transfer — ensuring zero data loss and consistent branding across every page.
 
-Works with any data-heavy report format and supports both PowerPoint and Word output. Download the sample files above to try it yourself.
+Works with any data-heavy report format. Download the sample files above to try it yourself.
 
 <ClaudeCTA />
