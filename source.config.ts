@@ -19,6 +19,7 @@ export const { docs, meta } = defineDocs({
       date: z.string(),
       tags: z.array(z.string()).optional(),
       featured: z.boolean().optional().default(false),
+      pinned: z.boolean().optional().default(false),
       readTime: z.string().optional(),
       author: z.string().optional(),
       thumbnail: z.string().optional(),

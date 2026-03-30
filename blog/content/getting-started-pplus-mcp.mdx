@@ -1,0 +1,413 @@
+---
+title: "Getting Started: PPlus MCP Setup Guide (From Zero to Running)"
+description: "A complete beginner-friendly guide to setting up Claude Code and the PPlus Knowledge MCP server — from downloading your first tools to running your first AI-powered query. No prior experience needed."
+date: "2026-03-30"
+tags: ["PPlus", "MCP", "Getting Started"]
+author: "Khalil Abu Mushref"
+pinned: true
+---
+
+## Who Is This Guide For?
+
+This guide is for **complete beginners** — you don't need any prior experience with Claude, MCP servers, or Git. By the end of this guide, you'll have an AI assistant that deeply understands the PPlus v4 platform and can help you build dashboards, query APIs, check instance configurations, and more — all through natural conversation.
+
+**What you'll set up:**
+
+| What | Why |
+|---|---|
+| **Node.js** | Runs the MCP server on your machine |
+| **Git** | Downloads the required code repositories |
+| **Claude Code** | The AI assistant that uses the MCP tools |
+| **PPlus Knowledge MCP** | Gives Claude 8 specialized PPlus tools |
+| **PPlus Knowledge Base** | 44+ structured knowledge chunks about PPlus v4 |
+
+**Total setup time:** ~10-15 minutes (one-time setup).
+
+---
+
+## Step 1: Install Node.js
+
+Node.js is a runtime that allows the MCP server to run on your machine. You only need to install it once.
+
+### On Windows
+
+1. Go to [nodejs.org](https://nodejs.org)
+2. Click the big green **"Download Node.js (LTS)"** button
+3. Run the downloaded `.msi` installer
+4. Click **Next** through all the prompts (keep all defaults)
+5. When the installation finishes, click **Finish**
+
+### On macOS
+
+1. Go to [nodejs.org](https://nodejs.org)
+2. Click **"Download Node.js (LTS)"**
+3. Run the downloaded `.pkg` installer
+4. Follow the installation wizard — click **Continue** through each step
+
+### Verify Installation
+
+Open a terminal (see box below) and type:
+
+```bash
+node --version
+```
+
+You should see something like `v22.x.x` or `v20.x.x`. If you see a version number, Node.js is installed correctly.
+
+> **How to open a terminal:**
+> - **Windows:** Press `Win + R`, type `cmd`, and press Enter. Or search for "Command Prompt" in the Start menu.
+> - **macOS:** Press `Cmd + Space`, type `Terminal`, and press Enter.
+
+---
+
+## Step 2: Install Git
+
+Git is a tool that lets you download code repositories from GitHub. You need it to get the MCP server and knowledge base.
+
+### On Windows
+
+1. Go to [git-scm.com/downloads/win](https://git-scm.com/downloads/win)
+2. The download should start automatically — run the installer
+3. Click **Next** through all the prompts (the defaults are fine)
+4. On the "Adjusting your PATH" screen, keep the recommended option selected
+5. Click **Install**, then **Finish**
+
+### On macOS
+
+Git usually comes pre-installed. To check, open Terminal and type:
+
+```bash
+git --version
+```
+
+If you see a version number, you're good. If not, macOS will prompt you to install the Command Line Tools — click **Install** and wait for it to finish.
+
+### Verify Installation
+
+```bash
+git --version
+```
+
+You should see something like `git version 2.x.x`.
+
+---
+
+## Step 3: Install Claude Code
+
+Claude Code is an AI assistant that runs in your terminal. It's the tool that will use the PPlus MCP server to help you with your work.
+
+### On Windows or macOS
+
+1. Open your terminal
+2. Run this command:
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+3. Wait for the installation to complete (may take a minute)
+4. Verify it installed correctly:
+
+```bash
+claude --version
+```
+
+You should see a version number.
+
+### First-Time Login
+
+The first time you use Claude Code, you need to sign in:
+
+1. In your terminal, type:
+
+```bash
+claude
+```
+
+2. Claude Code will open and prompt you to authenticate
+3. It will open your browser to **claude.ai** — sign in with your Anthropic account (or create one if you don't have one)
+4. Once authenticated, your terminal will confirm the connection
+
+> **Don't have an Anthropic account?** Go to [claude.ai](https://claude.ai) and click **Sign Up**. You'll need this to use Claude Code.
+
+---
+
+## Step 4: Download the MCP Server and Knowledge Base
+
+Now you'll download two repositories — the MCP server (the "engine") and the knowledge base (the "brain").
+
+### 4a: Clone the MCP Server
+
+In your terminal, navigate to a folder where you want to store the files. Your Desktop is fine:
+
+**On Windows:**
+```bash
+cd %USERPROFILE%\Desktop
+```
+
+**On macOS:**
+```bash
+cd ~/Desktop
+```
+
+Now clone and build the MCP server:
+
+```bash
+git clone https://github.com/Khalil-am/pplus-knowledge-mcp.git
+cd pplus-knowledge-mcp
+npm install
+npm run build
+```
+
+**What each command does:**
+- `git clone` — Downloads the MCP server code from GitHub
+- `cd pplus-knowledge-mcp` — Enters the downloaded folder
+- `npm install` — Installs the required dependencies
+- `npm run build` — Compiles the server so it's ready to run
+
+Wait for each command to finish before running the next one. If you see no errors, you're good.
+
+### 4b: Clone the Knowledge Base
+
+Go back to your Desktop and clone the knowledge base:
+
+**On Windows:**
+```bash
+cd %USERPROFILE%\Desktop
+```
+
+**On macOS:**
+```bash
+cd ~/Desktop
+```
+
+```bash
+git clone https://github.com/Khalil-am/PPlus-Agent.git
+```
+
+You should now have two folders on your Desktop:
+- `pplus-knowledge-mcp` — The MCP server
+- `PPlus-Agent` — The knowledge base
+
+---
+
+## Step 5: Configure Claude Code to Use the MCP Server
+
+This is the step that connects everything together. You need to create a configuration file that tells Claude Code where to find the MCP server and the knowledge base.
+
+### Find Your Full Folder Paths
+
+You'll need the **full path** to both folders. Here's how to find them:
+
+**On Windows:**
+- Open File Explorer and navigate to your Desktop
+- Click on the `pplus-knowledge-mcp` folder
+- Click the address bar at the top — it will show the full path (e.g., `C:\Users\YourName\Desktop\pplus-knowledge-mcp`)
+- Do the same for the `PPlus-Agent` folder
+
+**On macOS:**
+- Open Finder and navigate to your Desktop
+- Right-click the `pplus-knowledge-mcp` folder → **Get Info**
+- The "Where" field shows the path. Your full path will be something like `/Users/YourName/Desktop/pplus-knowledge-mcp`
+
+### Create the Configuration File
+
+You need to create a file called `.mcp.json` in your **home directory**.
+
+**On Windows — using Command Prompt:**
+
+```bash
+notepad %USERPROFILE%\.mcp.json
+```
+
+When Notepad opens (it may ask if you want to create a new file — click **Yes**), paste the following and **replace the paths** with your actual paths:
+
+```json
+{
+  "mcpServers": {
+    "pplus-knowledge": {
+      "command": "node",
+      "args": ["C:\\Users\\YourName\\Desktop\\pplus-knowledge-mcp\\dist\\index.js"],
+      "env": {
+        "PPLUS_KNOWLEDGE_PATH": "C:\\Users\\YourName\\Desktop\\PPlus-Agent\\knowledge"
+      }
+    }
+  }
+}
+```
+
+Save and close Notepad (`Ctrl + S`, then close).
+
+**On macOS — using Terminal:**
+
+```bash
+nano ~/.mcp.json
+```
+
+Paste the following and **replace the paths** with your actual paths:
+
+```json
+{
+  "mcpServers": {
+    "pplus-knowledge": {
+      "command": "node",
+      "args": ["/Users/YourName/Desktop/pplus-knowledge-mcp/dist/index.js"],
+      "env": {
+        "PPLUS_KNOWLEDGE_PATH": "/Users/YourName/Desktop/PPlus-Agent/knowledge"
+      }
+    }
+  }
+}
+```
+
+Save and exit (`Ctrl + O`, press Enter, then `Ctrl + X`).
+
+> **Important:** Replace `YourName` with your actual computer username in all paths. The paths must match exactly where you cloned the repositories.
+
+---
+
+## Step 6: Restart Claude Code and Verify
+
+Close your terminal completely and open a new one. Then start Claude Code:
+
+```bash
+claude
+```
+
+When Claude Code starts, it will automatically detect and connect to the `pplus-knowledge` MCP server. You should see the MCP tools become available.
+
+### Test It Out
+
+Try these commands to confirm everything is working:
+
+```text
+You: List all available PPlus knowledge chunks
+
+Claude: [Uses list_chunks tool]
+→ Returns all 44+ chunks across 8 categories
+```
+
+```text
+You: What instances are configured in the knowledge base?
+
+Claude: [Uses search_knowledge tool]
+→ Returns Masar, Cruise Saudi, C2, G-PMO, Diwan, MHC JOSOUR, and more
+```
+
+```text
+You: Show me the dashboard replication guide
+
+Claude: [Uses get_dashboard_guide tool]
+→ Returns the complete 6-phase replication process
+```
+
+If Claude responds with structured PPlus knowledge, your setup is complete.
+
+---
+
+## What Can You Do Now?
+
+With the MCP server running, Claude Code has **8 specialized tools** at its disposal:
+
+| Tool | What You Can Ask |
+|---|---|
+| `search_knowledge` | "How does the PPlus authentication system work?" |
+| `read_chunk` | "Show me the full API reference for dashboards" |
+| `list_chunks` | "What knowledge categories are available?" |
+| `get_related` | "What's related to the dashboard builder component?" |
+| `get_api_endpoint` | "What endpoint saves dashboard configurations?" |
+| `get_instance_config` | "What are the Cruise Saudi dashboard settings?" |
+| `get_admin_config` | "How is the Cards Management tab configured?" |
+| `get_dashboard_guide` | "Walk me through the dashboard replication process" |
+
+### Example: Build a Dashboard
+
+Once the MCP is set up, building a dashboard is as simple as telling Claude what you need:
+
+```text
+Replicate executive dashboard from one PPlus instance to another.
+
+Source Instance: [https://source-instance.example.com]
+Target Instance: [https://target-instance.example.com]
+Source Dashboard ID: [5]
+Target Dashboard ID: [5]
+
+Use the pplus-knowledge MCP tools to guide the replication.
+```
+
+Claude will automatically use the right tools to look up APIs, instance configs, chart types, and property mappings — then execute the replication step by step.
+
+For the full dashboard building guide, check out the [AI-Powered Dashboard Building](/blog/ai-dashboard-building-pplus) post.
+
+---
+
+## Troubleshooting
+
+### "node: command not found"
+
+Node.js is not installed or not in your PATH. Re-install Node.js from [nodejs.org](https://nodejs.org) and make sure to restart your terminal after installation.
+
+### "git: command not found"
+
+Git is not installed. Follow the Git installation steps in Step 2.
+
+### "npm: command not found"
+
+npm comes bundled with Node.js. If this happens, re-install Node.js.
+
+### "claude: command not found"
+
+Claude Code is not installed globally. Run `npm install -g @anthropic-ai/claude-code` again. If you get a permission error on macOS, prefix with `sudo`:
+
+```bash
+sudo npm install -g @anthropic-ai/claude-code
+```
+
+### MCP server not connecting
+
+1. Make sure you ran `npm run build` inside the `pplus-knowledge-mcp` folder
+2. Double-check the paths in `~/.mcp.json` — they must be exact, with no typos
+3. On Windows, use double backslashes (`\\`) in paths
+4. Restart Claude Code completely (close terminal and reopen)
+
+### "PPLUS_KNOWLEDGE_PATH" errors
+
+The path to the knowledge base is incorrect. Make sure the path in `.mcp.json` points to the `knowledge` folder **inside** the `PPlus-Agent` repository, not the repository root itself.
+
+```text
+Correct:   .../PPlus-Agent/knowledge
+Incorrect: .../PPlus-Agent
+```
+
+### Still stuck?
+
+Open Claude Code and ask it directly — it can help debug MCP connection issues:
+
+```text
+You: My pplus-knowledge MCP server isn't connecting. Can you help me debug?
+```
+
+---
+
+## Quick Reference Card
+
+Here's a summary you can come back to:
+
+| Step | Command / Action |
+|---|---|
+| **Install Node.js** | Download from [nodejs.org](https://nodejs.org) |
+| **Install Git** | Download from [git-scm.com](https://git-scm.com) |
+| **Install Claude Code** | `npm install -g @anthropic-ai/claude-code` |
+| **Clone MCP server** | `git clone https://github.com/Khalil-am/pplus-knowledge-mcp.git` |
+| **Build MCP server** | `cd pplus-knowledge-mcp && npm install && npm run build` |
+| **Clone knowledge base** | `git clone https://github.com/Khalil-am/PPlus-Agent.git` |
+| **Configure Claude Code** | Create `~/.mcp.json` with server paths |
+| **Start Claude Code** | `claude` |
+
+---
+
+## Next Steps
+
+- **[AI-Powered Dashboard Building](/blog/ai-dashboard-building-pplus)** — Learn the full 6-phase dashboard replication process
+- **[PPlus Knowledge Base on GitHub](https://github.com/Khalil-am/PPlus-Agent)** — Explore the 44+ knowledge chunks directly
+- **[MCP Server on GitHub](https://github.com/Khalil-am/pplus-knowledge-mcp)** — View the server source code and contribute

@@ -5,7 +5,6 @@ import { Suspense } from "react";
 import { BlogCard } from "@/components/blog-card";
 import { TagFilter } from "@/components/tag-filter";
 import { FlickeringGrid } from "@/components/magicui/flickering-grid";
-import { DeliverableCounter } from "@/components/deliverable-counter";
 
 interface BlogData {
   title: string;
@@ -13,6 +12,7 @@ interface BlogData {
   date: string;
   tags?: string[];
   featured?: boolean;
+  pinned?: boolean;
   readTime?: string;
   author?: string;
   authorImage?: string;
@@ -45,12 +45,17 @@ export default async function HomePage({
   const resolvedSearchParams = await searchParams;
   const allPages = blogSource.getPages() as BlogPage[];
   const sortedBlogs = allPages.sort((a, b) => {
+    // Pinned posts always come first
+    const pinnedA = a.data.pinned ? 1 : 0;
+    const pinnedB = b.data.pinned ? 1 : 0;
+    if (pinnedA !== pinnedB) return pinnedB - pinnedA;
+    // Then sort by date (newest first)
     const dateA = new Date(a.data.date).getTime();
     const dateB = new Date(b.data.date).getTime();
     return dateB - dateA;
   });
 
-  const tagPriority = ["PPlus", "SPlus", "Diwan"];
+  const tagPriority = ["Getting Started", "PPlus", "SPlus", "Diwan"];
   const uniqueTags = Array.from(
     new Set(sortedBlogs.flatMap((blog) => blog.data.tags || []))
   );
@@ -99,9 +104,6 @@ export default async function HomePage({
               Business Consulting automation templates — user manuals, test cases, notifications, and more.
             </p>
           </div>
-          <div className="mt-4 p-4 rounded-lg border border-border bg-card/50 backdrop-blur-sm w-fit">
-            <DeliverableCounter />
-          </div>
         </div>
         {allTags.length > 0 && (
           <div className="max-w-7xl mx-auto w-full">
@@ -133,6 +135,7 @@ export default async function HomePage({
                   description={blog.data.description}
                   date={formattedDate}
                   thumbnail={blog.data.thumbnail}
+                  pinned={blog.data.pinned}
                   showRightBorder={filteredBlogs.length < 3}
                 />
               );

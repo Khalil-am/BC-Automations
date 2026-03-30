@@ -8,6 +8,7 @@ interface BlogCardProps {
   description: string;
   date: string;
   thumbnail?: string;
+  pinned?: boolean;
   showRightBorder?: boolean;
 }
 
@@ -17,6 +18,7 @@ export function BlogCard({
   description,
   date,
   thumbnail,
+  pinned,
   showRightBorder = true,
 }: BlogCardProps) {
   return (
@@ -41,6 +43,25 @@ export function BlogCard({
         )}
 
         <div className="p-6 flex flex-col gap-2">
+          {pinned && (
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground w-fit">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="12" y1="17" x2="12" y2="22" />
+                <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z" />
+              </svg>
+              Pinned
+            </span>
+          )}
           <h3 className="text-xl font-semibold text-card-foreground group-hover:underline underline-offset-4">
             {title}
           </h3>

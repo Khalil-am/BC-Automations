@@ -232,12 +232,12 @@ export default async function Image({ params }: { params: { slug: string } }) {
                   <span>{authorDetails.name}</span>
                 </div>
               )}
-              {authorDetails && page.data.date && (
+              {authorDetails && (page.data.date as string) && (
                 <span style={styles.dotSeparator}>•</span>
               )}
-              {page.data.date && (
+              {(page.data.date as string) && (
                 <p style={{ ...styles.metaBase, ...styles.dateMeta }}>
-                  {formatDate(page.data.date)}
+                  {formatDate(page.data.date as string)}
                 </p>
               )}
             </div>
