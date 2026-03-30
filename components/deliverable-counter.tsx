@@ -71,10 +71,10 @@ export function DeliverableCounter() {
       </div>
       <div className="flex flex-col gap-0.5">
         <span className="text-sm md:text-base font-medium tracking-tight">
-          Deliverables Completed
+          Deliverables Automated
         </span>
         <span className="text-xs md:text-sm text-muted-foreground">
-          Across all client projects
+          Completed using our automations
         </span>
       </div>
     </div>
