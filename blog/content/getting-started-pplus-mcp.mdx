@@ -153,15 +153,15 @@ cd ~/Desktop
 Now clone and build the MCP server:
 
 ```bash
-git clone https://github.com/Khalil-am/pplus-knowledge-mcp.git
-cd pplus-knowledge-mcp
+git clone https://github.com/MasterteamSA/PPlus-Agent.git
+cd PPlus-Agent
 npm install
 npm run build
 ```
 
 **What each command does:**
 - `git clone` — Downloads the MCP server code from GitHub
-- `cd pplus-knowledge-mcp` — Enters the downloaded folder
+- `cd PPlus-Agent` — Enters the downloaded folder
 - `npm install` — Installs the required dependencies
 - `npm run build` — Compiles the server so it's ready to run
 
@@ -182,12 +182,12 @@ cd ~/Desktop
 ```
 
 ```bash
-git clone https://github.com/Khalil-am/PPlus-Agent.git
+git clone https://github.com/MasterteamSA/pplus-knowledge.git
 ```
 
 You should now have two folders on your Desktop:
-- `pplus-knowledge-mcp` — The MCP server
-- `PPlus-Agent` — The knowledge base
+- `PPlus-Agent` — The MCP server
+- `pplus-knowledge` — The knowledge base
 
 ---
 
@@ -201,14 +201,14 @@ You'll need the **full path** to both folders. Here's how to find them:
 
 **On Windows:**
 - Open File Explorer and navigate to your Desktop
-- Click on the `pplus-knowledge-mcp` folder
-- Click the address bar at the top — it will show the full path (e.g., `C:\Users\YourName\Desktop\pplus-knowledge-mcp`)
-- Do the same for the `PPlus-Agent` folder
+- Click on the `PPlus-Agent` folder
+- Click the address bar at the top — it will show the full path (e.g., `C:\Users\YourName\Desktop\PPlus-Agent`)
+- Do the same for the `pplus-knowledge` folder
 
 **On macOS:**
 - Open Finder and navigate to your Desktop
-- Right-click the `pplus-knowledge-mcp` folder → **Get Info**
-- The "Where" field shows the path. Your full path will be something like `/Users/YourName/Desktop/pplus-knowledge-mcp`
+- Right-click the `PPlus-Agent` folder → **Get Info**
+- The "Where" field shows the path. Your full path will be something like `/Users/YourName/Desktop/PPlus-Agent`
 
 ### Create the Configuration File
 
@@ -227,9 +227,9 @@ When Notepad opens (it may ask if you want to create a new file — click **Yes*
   "mcpServers": {
     "pplus-knowledge": {
       "command": "node",
-      "args": ["C:\\Users\\YourName\\Desktop\\pplus-knowledge-mcp\\dist\\index.js"],
+      "args": ["C:\\Users\\YourName\\Desktop\\PPlus-Agent\\dist\\index.js"],
       "env": {
-        "PPLUS_KNOWLEDGE_PATH": "C:\\Users\\YourName\\Desktop\\PPlus-Agent\\knowledge"
+        "PPLUS_KNOWLEDGE_PATH": "C:\\Users\\YourName\\Desktop\\pplus-knowledge\\knowledge"
       }
     }
   }
@@ -251,9 +251,9 @@ Paste the following and **replace the paths** with your actual paths:
   "mcpServers": {
     "pplus-knowledge": {
       "command": "node",
-      "args": ["/Users/YourName/Desktop/pplus-knowledge-mcp/dist/index.js"],
+      "args": ["/Users/YourName/Desktop/PPlus-Agent/dist/index.js"],
       "env": {
-        "PPLUS_KNOWLEDGE_PATH": "/Users/YourName/Desktop/PPlus-Agent/knowledge"
+        "PPLUS_KNOWLEDGE_PATH": "/Users/YourName/Desktop/pplus-knowledge/knowledge"
       }
     }
   }
@@ -365,18 +365,18 @@ sudo npm install -g @anthropic-ai/claude-code
 
 ### MCP server not connecting
 
-1. Make sure you ran `npm run build` inside the `pplus-knowledge-mcp` folder
+1. Make sure you ran `npm run build` inside the `PPlus-Agent` folder
 2. Double-check the paths in `~/.mcp.json` — they must be exact, with no typos
 3. On Windows, use double backslashes (`\\`) in paths
 4. Restart Claude Code completely (close terminal and reopen)
 
 ### "PPLUS_KNOWLEDGE_PATH" errors
 
-The path to the knowledge base is incorrect. Make sure the path in `.mcp.json` points to the `knowledge` folder **inside** the `PPlus-Agent` repository, not the repository root itself.
+The path to the knowledge base is incorrect. Make sure the path in `.mcp.json` points to the `knowledge` folder **inside** the `pplus-knowledge` repository, not the repository root itself.
 
 ```text
-Correct:   .../PPlus-Agent/knowledge
-Incorrect: .../PPlus-Agent
+Correct:   .../pplus-knowledge/knowledge
+Incorrect: .../pplus-knowledge
 ```
 
 ### Still stuck?
@@ -398,9 +398,9 @@ Here's a summary you can come back to:
 | **Install Node.js** | Download from [nodejs.org](https://nodejs.org) |
 | **Install Git** | Download from [git-scm.com](https://git-scm.com) |
 | **Install Claude Code** | `npm install -g @anthropic-ai/claude-code` |
-| **Clone MCP server** | `git clone https://github.com/Khalil-am/pplus-knowledge-mcp.git` |
-| **Build MCP server** | `cd pplus-knowledge-mcp && npm install && npm run build` |
-| **Clone knowledge base** | `git clone https://github.com/Khalil-am/PPlus-Agent.git` |
+| **Clone MCP server** | `git clone https://github.com/MasterteamSA/PPlus-Agent.git` |
+| **Build MCP server** | `cd PPlus-Agent && npm install && npm run build` |
+| **Clone knowledge base** | `git clone https://github.com/MasterteamSA/pplus-knowledge.git` |
 | **Configure Claude Code** | Create `~/.mcp.json` with server paths |
 | **Start Claude Code** | `claude` |
 
@@ -409,5 +409,5 @@ Here's a summary you can come back to:
 ## Next Steps
 
 - **[AI-Powered Dashboard Building](/blog/ai-dashboard-building-pplus)** — Learn the full 6-phase dashboard replication process
-- **[PPlus Knowledge Base on GitHub](https://github.com/Khalil-am/PPlus-Agent)** — Explore the 44+ knowledge chunks directly
-- **[MCP Server on GitHub](https://github.com/Khalil-am/pplus-knowledge-mcp)** — View the server source code and contribute
+- **[PPlus Knowledge Base on GitHub](https://github.com/MasterteamSA/pplus-knowledge)** — Explore the 44+ knowledge chunks directly
+- **[MCP Server on GitHub](https://github.com/MasterteamSA/PPlus-Agent)** — View the server source code and contribute
