@@ -7,6 +7,7 @@ import { metadataKeywords } from "./metadata";
 import { SiteNav } from "@/components/site-nav";
 import Footer from "@/components/footer";
 import { CornerCloud } from "@/components/corner-cloud";
+import { Analytics } from "@vercel/analytics/next";
 import "@/app/globals.css";
 
 export const viewport: Viewport = {
@@ -57,6 +58,7 @@ export default function RootLayout({
             />
           </div>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
