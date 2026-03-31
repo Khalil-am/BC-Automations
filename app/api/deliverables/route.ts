@@ -6,8 +6,8 @@ const TRELLO_BOARD_ID = process.env.TRELLO_BOARD_ID!;
 const TRELLO_COMPLETED_LABEL_ID = process.env.TRELLO_COMPLETED_LABEL_ID!;
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY!;
 
-const BASE_COUNT = 6;
-// Snapshot of completed deliverables at the time the counter was set to 6
+const BASE_COUNT = 9;
+// Snapshot of completed deliverables at the time the counter was set to 9
 // Any new completions beyond this baseline will increment the counter
 const BASELINE_COMPLETED = 13;
 
