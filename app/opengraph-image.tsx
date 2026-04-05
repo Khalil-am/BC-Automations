@@ -155,7 +155,7 @@ export default async function Image() {
                 TEMPLATES
               </span>
               <span style={{ fontSize: "14px", fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>
-                6 Automations
+                21 Automations
               </span>
             </div>
             <div
