@@ -6,10 +6,10 @@ const TRELLO_BOARD_ID = process.env.TRELLO_BOARD_ID!;
 const TRELLO_COMPLETED_LABEL_ID = process.env.TRELLO_COMPLETED_LABEL_ID!;
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY!;
 
-const BASE_COUNT = 15;
-// Snapshot of completed deliverables at the time the counter was set to 15
+const BASE_COUNT = 18;
+// Snapshot of completed deliverables at the time the counter was set to 18
 // Any new completions beyond this baseline will increment the counter
-const BASELINE_COMPLETED = 13;
+const BASELINE_COMPLETED = 18;
 
 interface TrelloCard {
   id: string;
