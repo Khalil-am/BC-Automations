@@ -1,354 +1,439 @@
 ---
-title: "S+ Migration Sheet Generation from Live System"
-description: "Navigate any live S+ Strategy Management planner, inspect every creation form for each component type, and generate a ready-to-use migration Excel workbook — with all fields documented, quarterly targets for 3 years, and sample data matching the exact system structure."
-date: "2026-03-29"
-tags: ["SPlus", "Migration Sheet"]
+title: "P+ Migration Sheet Generator from Live System"
+description: "Automatically generate a complete, form-accurate data migration Excel workbook by inspecting any live P+ instance — extracting the exact hierarchy, creation forms, and all sub-item (log) field definitions so clients can fill and import data without guesswork."
+date: "2026-04-05"
+tags: ["PPlus", "Migration", "Data Import"]
+featured: true
+readTime: "15 min read"
 author: "Khalil Abu Mushref"
 ---
 
 ## Automation Name
 
-**S+ Migration Sheet — Live System Extraction to Excel**
+**P+ Migration Sheet Generator — From Live System Inspection**
 
-This automation navigates a client's live S+ (Strategy Management) planner page, inspects the creation forms for every component type in the strategy model hierarchy, and generates a structured migration Excel workbook. The output matches the exact fields found in the system's creation dialogs — ready for the client to fill in their data and import into the system.
+This automation navigates a live P+ instance, discovers the full component hierarchy from the admin Level Management page, opens every creation form to extract exact field names, types, and required/optional status, then inspects all sub-item (log) creation forms within projects, and produces a professionally formatted Excel migration workbook — one sheet per component type AND one sheet per sub-item type, with columns matching the system's actual import fields.
 
-Instead of manually documenting form fields or guessing what the system expects, this pulls directly from the actual creation forms — ensuring zero drift between the migration template and what the system accepts.
+**Why this matters:** Every P+ instance has a different hierarchy and different enabled fields. Manually documenting each creation form across 4-10 component types plus 10-16 sub-item log types, then building an Excel template by hand, takes hours and is error-prone. This automation does it in minutes and guarantees the migration sheet matches what the system actually accepts.
 
 ---
 
 ## How It Works
 
-| Step | What Happens |
-|------|-------------|
-| 1 | Claude navigates to the client's S+ Strategy Builder template page to identify the strategy model hierarchy (e.g., Objectives → Initiatives → KPIs) |
-| 2 | Navigates to the planner page and identifies all component types in the plan |
-| 3 | For each component type, opens the creation form (via "+" buttons or "Add" buttons) |
-| 4 | Captures every field from the creation dialog — including Details, Tracking, and Attachments tabs |
-| 5 | Identifies parent-child relationships between components (what "Contributes to" which parent) |
-| 6 | Generates an Excel workbook with one sheet per component type, all fields as columns, quarterly target columns for 3 years, and sample data |
+The automation follows a four-phase process:
+
+```
+┌─────────────────────────────────────────────────────┐
+│  Phase 1: Discover Hierarchy                        │
+│  Navigate to /admin/level-managment                 │
+│  Map parent→child relationships for all components  │
+├─────────────────────────────────────────────────────┤
+│  Phase 2: Inspect Level Creation Forms              │
+│  Open each component's "Add" form via Quick Actions │
+│  Record every field: label, type, required status   │
+├─────────────────────────────────────────────────────┤
+│  Phase 3: Inspect Sub-Item (Log) Creation Forms     │
+│  Navigate into an existing project                  │
+│  Open each log's "Add" form from the sidebar        │
+│  Also check Admin > Manage Logs for complete list   │
+├─────────────────────────────────────────────────────┤
+│  Phase 4: Generate Excel Workbook                   │
+│  One sheet per level type + one per sub-item type   │
+│  Headers = exact field labels from forms            │
+│  Row 2 = data type hints for users                  │
+│  Parent columns = "Contributes to (Parent Name) *"  │
+│  Save .xlsx to Downloads folder                     │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+## What You Need
+
+| Requirement | Description |
+|---|---|
+| **Claude Code** | Anthropic's CLI agent with browser automation (Claude in Chrome MCP) |
+| **Browser Access** | Chrome with the Claude in Chrome extension installed |
+| **Live Instance** | The target P+ instance URL + admin login credentials |
+| **Reference Template** (optional) | An existing migration `.xlsx` to match formatting |
 
 ---
 
 ## The Prompt
 
-Use this prompt in a **Claude Code** session with browser access (Claude in Chrome / Cowork). Replace the placeholder values with the client's actual URLs. Attach the **S+ SMO Migration Template (.xlsx)** so Claude matches its exact format.
+Copy and paste this prompt into Claude Code. Replace the placeholders with your actual values.
 
-```text
+### Required Attachments
+
+Before running the prompt, attach these files in the Claude Code conversation:
+
+1. **Reference migration sheet** (optional but recommended) — any existing migration `.xlsx` to use as a FORMAT REFERENCE
+2. **Reference template** (optional) — e.g., an existing migration `.xlsx` for style matching
+
+### The Full Prompt
+
+````
+@{{path-to-reference-sheet}}/Data_Migration_Sheet.xlsx
 @{{path-to-template}}/SPlus_SMO_Migration_Template.xlsx
 
 Using the attached migration sheet as a FORMAT REFERENCE, go through the
-following S+ Strategy Management instance and create a migration sheet for
+following P+ instance and create a migration sheet for
 importing data INTO this system.
 
-STRATEGY BUILDER URL (to see the model hierarchy):
-{{TEMPLATE_URL}}
-Example: https://clientname.masterteam.sa/template/14
+Structure URL (to see the model hierarchy):
+{{INSTANCE_URL}}/admin/level-managment
 
-PLANNER URL (to see existing data and access creation forms):
-{{PLANNER_URL}}
-Example: https://clientname.masterteam.sa/planner/12
+Example: https://my-instance.masterteam.sa/admin/level-managment
 
 Follow these steps exactly:
 
-1. DISCOVER THE STRATEGY MODEL HIERARCHY
-   a. Navigate to the Strategy Builder URL (template page).
-   b. On the "Strategy Model" tab, identify ALL component types in the
-      "Plan Details" section of the model diagram.
-   c. Record the hierarchy — which component is the parent of which.
-      Example: Strategic Objectives → Enabler Initiatives → KPI
-   d. Note: The left sidebar shows all available component categories
-      (Principle, Focus Area, Objective, Performance Indicator, Initiative,
-      Division, Key Result) — but only the ones visible in the Plan Details
-      diagram are active for this plan.
+1. DISCOVER THE SYSTEM HIERARCHY
+   a. Navigate to the Level Management page
+   b. On the "Level Management" tab, identify ALL component types in the
+      hierarchy diagram
+   c. Record the hierarchy — which component is the parent of which
 
-2. NAVIGATE TO THE PLANNER AND INSPECT EVERY CREATION FORM
-   a. Navigate to the Planner URL.
-   b. For the TOP-LEVEL component (e.g., Strategic Objectives):
-      - Click the "+ Add [Component Name]" button at the top of the plan.
-      - A creation dialog will open. Capture EVERY field:
-        * Left side: English Name, Arabic Name, any Collaborators fields
-        * Right side "Details" tab: all detail fields (code, dates, etc.)
-        * Right side "Tracking" tab: Source, Baseline, Start Date,
-          Frequency, Number of Years, Reporting buffer, Target Values
-        * Right side "Attachments" tab: note its existence
-        * "Contributes to" section: the parent relationship dropdown
-      - Record which fields are required (marked with *).
-      - Close the dialog (Cancel — do NOT save).
+2. NAVIGATE TO THE HOME AND INSPECT EVERY CREATION FORM
+   a. Go to the Home page
+   b. Click the "+" (Quick Actions) button
+   c. For EACH component type listed in Quick Actions, open its creation form
+   d. Record every field: label, whether it has a * (required), field type
+      (text, dropdown, date, rich text, etc.)
+   e. Scroll down to capture ALL fields — don't miss fields below the fold
+   f. Go back and repeat for the next component type
 
-   c. For CHILD components (e.g., Enabler Initiatives under Objectives):
-      - First expand an existing parent by clicking its chevron (▼) icon.
-      - Click the "+" icon on the parent row — a dropdown menu appears
-        showing the child component type name.
-      - Click the child type name to open its creation form.
-      - If clicking "+" opens the edit form of the parent instead, close it
-        and try the "+" button precisely (it's the leftmost icon in the
-        button group: +, pencil, trash, chevron).
-      - Capture ALL fields from the creation dialog exactly as in step 2b.
-      - If no creation form appears, click the pencil (edit) icon on an
-        existing child item to see the edit form — it has the same fields.
-
-   d. For GRANDCHILD components (e.g., KPI under Initiatives):
-      - Expand an initiative to see its children.
-      - Click the "+" on the initiative row → click the child type (e.g., "KPI").
-      - Capture ALL fields from this creation form.
-      - Pay special attention to the Tracking tab — this is where Frequency,
-        Number of Years, Baseline, and Target Values are configured.
-
-   e. If a component type has no existing items and the "+" button does not
-      produce a form, use the "Add" button for that component type or check
-      the Strategy Builder for its field configuration.
+   THEN INSPECT ALL SUB-ITEM (LOG) CREATION FORMS:
+   g. Navigate into an existing project (click on any project card)
+   h. In the project sidebar, visit EACH sub-item section:
+      Tasks, Deliverables, Milestones, Progress Update, Team Members,
+      Stakeholders, Risks, Issues, Contracts, Payment Plan
+   i. For each section, click the "+ Add" button and record all fields
+   j. Also go to Admin > Level Management > Manage Logs to confirm
+      the complete list of available log types for each level
 
 3. GENERATE THE MIGRATION EXCEL WORKBOOK
-
    CRITICAL REQUIREMENTS:
-   - Match the EXACT format of the attached reference template.
-   - Create ONE sheet per component type, named after the component.
-   - Column headers must match the exact field labels from the creation forms.
-   - Required fields should have " *" appended to the column header.
+   - Match the EXACT format of the attached reference template
+   - Create ONE sheet per component type, named after the component
+   - Create ONE sheet per sub-item type (Task, Deliverable, Milestone, etc.)
+   - Column headers must match the exact field labels from the creation forms
+   - Required fields should have " *" appended to the column header
    - Add a "Contributes to ([Parent Name]) *" column showing the parent
-     relationship for child components.
+     relationship for child components
+   - Sub-item sheets get a "Contributes to (Project Name) *" column
+   - Row 2 should contain data type hints: (Text), (dd-MM-yyyy),
+     (Text (Full Name)), (Select from dropdown ↓), (Number), etc.
+   - Add a "_Lookup" sheet with columns for all parent entity names
+   - Style: dark green header row (#2E7D32) with white bold text,
+     centered headers, thin borders, appropriate column widths
 
-   FOR KPI / PERFORMANCE INDICATOR SHEETS:
-   - Include ALL fields from both the Details tab AND the Tracking tab.
-   - Set Frequency to "Quarter" and Number of Years to "3".
-   - Add 12 quarterly target columns: Target Q1 2026, Target Q2 2026,
-     Target Q3 2026, Target Q4 2026, Target Q1 2027, Target Q2 2027,
-     Target Q3 2027, Target Q4 2027, Target Q1 2028, Target Q2 2028,
-     Target Q3 2028, Target Q4 2028.
-   - These target columns come AFTER all the standard KPI fields.
-
-   SAMPLE DATA:
-   - Include 3-5 sample rows per sheet with realistic data (in blue font).
-   - Sample KPI targets should show a logical progression across quarters.
-   - Use "Admin" as the default Owner/Champion in samples.
-   - Use realistic Arabic names alongside English names.
-
-   FORMATTING:
-   - Headers: dark navy fill (#2B3A67) with white bold text, centered.
-   - Data cells: thin borders, text wrapping enabled.
-   - Sample data in blue font to distinguish from headers.
-   - Column widths auto-sized to fit content.
-
-   INSTRUCTIONS SHEET:
-   - Add an "Instructions" sheet (red tab color) with:
-     * Overview of the migration process
-     * Field-by-field descriptions for every column in every sheet
-     * Which fields are required vs. optional
-     * Allowed values for dropdown fields (Unit of Measure, Polarity,
-       Frequency, Accumulative method, Source, etc.)
-     * The quarterly target structure explanation
-
-4. SAVE the final Excel file to the Downloads folder.
+4. SAVE the final Excel file to the Downloads folder
 
 5. IMPORTANT NOTES:
-   - You are creating a template for IMPORTING data INTO this system.
-   - The fields must match what the system's creation forms accept.
-   - Do NOT invent fields — only include fields visible in the creation dialogs.
-   - If a form has tabs (Details, Tracking, Attachments), check ALL tabs.
-   - The "Contributes to" field links child to parent — always include it.
+   - You are creating a template for IMPORTING data INTO this system
+   - The fields must match what the system's creation forms accept
+   - Do NOT invent fields — only include fields visible in the creation dialogs
+   - Exclude "Attachments" sections — those cannot be bulk-imported
+````
+
+---
+
+## Step-by-Step Walkthrough
+
+### Phase 1: Discovering the Hierarchy
+
+The automation navigates to `{{INSTANCE_URL}}/admin/level-managment` and reads the visual hierarchy diagram. This diagram shows the parent-child relationships between all component types.
+
+**Example hierarchy from a PIF P+ instance:**
+
+```
+Portfolio (top level)
+  └── Initiative
+        ├── Strategic Project
+        └── Other Project
 ```
 
-### URL Pattern Reference
+Every instance is different. The automation reads whatever hierarchy exists — it doesn't assume a fixed structure.
 
-```text
-Strategy Builder: https://{client-subdomain}.masterteam.sa/template/{template-id}
-Planner:          https://{client-subdomain}.masterteam.sa/planner/{plan-id}
+### Phase 2: Inspecting Level Creation Forms
+
+For each component type found in the hierarchy, the automation:
+
+1. Clicks the **"+" Quick Actions** button on the Home page
+2. Selects the component (e.g., "Add Portfolio")
+3. Screenshots and reads every field on the creation form
+4. Scrolls down to capture fields below the fold
+5. Records the field metadata:
+
+| What to Capture | How It Appears | Example |
+|---|---|---|
+| Field label | Text above the input | "English Name" |
+| Required status | Red `*` before the label | `* English Name` → required |
+| Field type | Input element type | Text input, dropdown, date picker, rich text editor |
+| Date format | Placeholder text | `dd-MM-yyyy` |
+| Parent selector | Dropdown labeled with parent type | `* Portfolio` with "Select Portfolio" placeholder |
+
+**Example: What the automation captures from a Strategic Project form:**
+
+| Field Label | Required | Type |
+|---|---|---|
+| English Name | Yes | Text |
+| Arabic Name | Yes | Text |
+| Initiative | Yes | Dropdown (parent link) |
+| English Project Description | No | Rich Text |
+| Arabic Project Description | No | Rich Text |
+| Project Manager | Yes | Dropdown (user) |
+| Project Owner | Yes | Dropdown (user) |
+| Project Sponsor | Yes | Dropdown (user) |
+| Project Classification | Yes | Dropdown |
+
+### Phase 3: Inspecting Sub-Item (Log) Creation Forms
+
+After capturing level forms, the automation navigates INTO an existing project and inspects all sub-item (log) creation forms:
+
+1. Clicks into an existing Strategic or Other Project
+2. Uses the **sidebar navigation** to visit each sub-item section
+3. Clicks the **"+ Add"** button within each section
+4. Records every field from each sub-item creation form
+5. Also visits **Admin > Level Management > Manage Logs** to confirm the complete list
+
+**Standard P+ logs for a Strategic Project:**
+
+| Log Type | Where to Find |
+|---|---|
+| Tasks | Sidebar + Quick Actions |
+| Deliverables | Sidebar + Add button |
+| Milestones | Sidebar + Add button |
+| Progress Update | Sidebar + Add button |
+| Team Members | Sidebar |
+| Stakeholders | Sidebar + Quick Actions |
+| Risks | Sidebar + Quick Actions |
+| Issues | Sidebar + Quick Actions |
+| Contracts | Sidebar |
+| Payment Plan | Sidebar |
+| Phase Gate | Sidebar |
+| Closure | Sidebar |
+| Deliverable Acceptance | Sidebar |
+| Change Status Request | Sidebar |
+| Project Charter | Sidebar |
+| Project Change Request | Sidebar |
+| Project Handover | Sidebar |
+
+**Example: Task creation form fields:**
+
+| Field Label | Required | Type |
+|---|---|---|
+| Name | Yes | Text |
+| Assigned To | Yes | Dropdown (user) |
+| Planned Start Date | Yes | Date (dd-MM-yyyy) |
+| Planned Finish Date | Yes | Date (dd-MM-yyyy) |
+| Details | Yes | Rich Text |
+
+**Example: Risk creation form fields:**
+
+| Field Label | Required | Type |
+|---|---|---|
+| English Risk Title | Yes | Text |
+| Arabic Risk Title | Yes | Text |
+| Description | Yes | Text |
+| Mitigation Plan | Yes | Text |
+| Impact | Yes | Dropdown (Low/Medium/High) |
+| Probability | Yes | Dropdown (Low/Medium/High) |
+| Category | Yes | Dropdown |
+| Due Date | Yes | Date (dd-MM-yyyy) |
+| Assigned To | Yes | Dropdown (user) |
+
+### Phase 4: Generating the Excel Workbook
+
+The automation creates a professionally styled `.xlsx` workbook with:
+
+**One sheet per component type + one sheet per sub-item type:**
+
+Each sheet is named after its component (e.g., "Portfolio", "Task", "Risk").
+
+**Column headers from form fields:**
+
+- Required fields get ` *` appended: `English Name *`
+- Parent relationships become: `Contributes to (Portfolio Name) *`
+- Sub-item parent relationships become: `Contributes to (Project Name) *`
+- Attachments fields are excluded (can't be bulk-imported)
+
+**Row 2 contains data type hints:**
+
+| Hint | Meaning | Example Value |
+|---|---|---|
+| `(Text)` | Free text string | "Sea Ports" |
+| `(Text (Full Name))` | Person's full name | "Ahmed Al-Rashid" |
+| `(dd-MM-yyyy)` | Date in day-month-year format | 15-03-2026 |
+| `(Select from dropdown ↓)` | Must match a parent entity name | "Sea Ports" |
+| `(Number)` | Numeric value | 11000000 |
+| `(Number (0-100))` | Weight percentage | 25 |
+| `(Low / Medium / High)` | Severity/probability level | Medium |
+| `(Email)` | Email address | user@company.com |
+| `(Phone Number)` | Phone number | +966501234567 |
+
+**_Lookup sheet:**
+
+A helper sheet listing all parent entity names as column headers (e.g., "All Portfolio Names", "All Initiative Names", "All Project Names").
+
+---
+
+## Real-World Example: PIF P+ Instance
+
+**Hierarchy discovered:**
+```
+Portfolio → Initiative → Strategic Project / Other Project
 ```
 
-| URL Part | Description | Example |
-|----------|-------------|---------|
-| `{client-subdomain}` | Client-specific subdomain | `dgasplus`, `g-smo`, `scfhs` |
-| `{template-id}` | Strategy template number (from Strategy Builder tabs) | `3`, `14` |
-| `{plan-id}` | Planner ID (from planner page URL) | `2`, `12` |
+**Level sheets generated (4):**
+
+| Sheet Name | Columns | Parent Column |
+|---|---|---|
+| Portfolio | English Name*, Arabic Name*, English/Arabic Portfolio Description, Portfolio Manager* | — (top level) |
+| Initiative | English Name*, Arabic Name*, English/Arabic Initiative Description, Start Date*, Finish Date*, Initiative Manager*, Initiative Owner* | Contributes to (Portfolio Name)* |
+| Strategic Project | English Name*, Arabic Name*, English/Arabic Project Description, Project Manager*, Project Owner*, Project Sponsor*, Project Classification* | Contributes to (Initiative Name)* |
+| Other Project | English Name*, Arabic Name*, English/Arabic Operational Project Description*, Start Date*, Finish Date*, Manager* | Contributes to (Initiative Name)* |
+
+**Sub-item (Log) sheets generated (10):**
+
+| Sheet Name | Columns | Parent Column |
+|---|---|---|
+| Task | Task Name*, Assigned To*, Planned Start Date*, Planned Finish Date*, Details* | Contributes to (Project Name)* |
+| Deliverable | Deliverable Name*, Weight*, Planned Start Date*, Planned Finish Date* | Contributes to (Project Name)* |
+| Milestone | Milestone Name*, Weight*, Planned Start Date*, Planned Finish Date* | Contributes to (Project Name)* |
+| Progress Update | Completed Activities (Previous Cycle)*, Planned Activities (Next Cycle)* | Contributes to (Project Name)* |
+| Team Members | Member Name* | Contributes to (Project Name)* |
+| Stakeholders | Name*, Role*, Email*, Phone*, Stakeholder Type*, Entity Name, Communication Type*, Communication Method*, Responsibilities | Contributes to (Project Name)* |
+| Risk | English Risk Title*, Arabic Risk Title*, Description*, Mitigation Plan*, Impact*, Probability*, Category*, Due Date*, Assigned To* | Contributes to (Project Name)* |
+| Issue | English Issue Title*, Arabic Issue Title*, Details*, Resolution Plan*, Impact*, Due Date*, Assigned To* | Contributes to (Project Name)* |
+| Contracts | Contract Name*, Vendor*, Contract Value*, Start Date*, End Date*, Status* | Contributes to (Project Name)* |
+| Payment Plan | Date*, Amount*, Status*, Notes | Contributes to (Project Name)* |
+
+**Total: 15 sheets** (4 levels + 10 sub-items + 1 _Lookup)
 
 ---
 
-## Required Files
+## Adapting for Different P+ Instances
 
-| # | File | Purpose | Required? |
-|---|------|---------|-----------|
-| 1 | `SPlus_SMO_Migration_Template.xlsx` | Reference template so the output Excel matches the expected column structure and format | **Yes** |
-| 2 | Client's S+ Strategy Builder URL | To discover the component hierarchy | **Yes** |
-| 3 | Client's S+ Planner URL | To access creation forms and capture all fields | **Yes** |
+P+ instances use project management hierarchies. Common component types include:
 
----
+- Entity, Portfolio, Program, Project
+- Strategic Project, Other Project
+- Custom levels (Sector, Department, etc.)
 
-## Downloadable Templates
+Just change the URL to match the target instance:
 
-<DownloadSection>
-  <DownloadButton
-    fileName="SPlus_SMO_Migration_Template.xlsx"
-    label="S+ SMO Migration Template (.xlsx)"
-    description="Standard migration template with sheets for Strategy Plan, Objectives, Initiatives, Strategic KPIs, Operational KPIs, Divisions, Departments. Use this as the format reference for the extraction."
-  />
-</DownloadSection>
+```
+Structure URL: https://my-pplus-instance.masterteam.sa/admin/level-managment
+```
+
+### Instances with Custom Levels
+
+Some instances have custom component types (e.g., "Sector", "Department") added via the Level Templates panel. The automation handles these automatically — it reads whatever hierarchy exists in Level Management, regardless of what the components are called.
 
 ---
 
-## What Gets Extracted
+## Common Variations
 
-The automation extracts directly from the live system creation forms — not from documentation or assumptions. It captures:
+### When forms have conditional fields
 
-| Data Point | How It's Captured |
-|------------|-------------------|
-| **Component hierarchy** | From the Strategy Builder model diagram (Plan Details section) |
-| **Component types** | Each box in the model diagram = one sheet in the migration workbook |
-| **Creation form fields** | By opening "Add" / "+" dialogs and inspecting every field |
-| **Field labels** | Exact labels as shown in the creation form (English Name, Arabic Name, etc.) |
-| **Required fields** | Fields marked with a red asterisk (*) in the creation form |
-| **Dropdown options** | Options available in Select dropdowns (Unit of Measure, Polarity, etc.) |
-| **Parent relationships** | The "Contributes to" section in each creation form |
-| **Tracking configuration** | Source, Baseline, Start Date, Frequency, Number of Years, Reporting buffer |
-| **Target value structure** | Generated based on Frequency (Quarter) × Number of Years (3) = 12 columns |
+Some forms show/hide fields based on dropdown selections (e.g., KPI Type changes available fields). The automation captures the default state of the form. If you need conditional fields included, specify in the prompt:
 
----
+```
+After opening each form, also try selecting each option in dropdown fields
+to check if additional fields appear.
+```
 
-## Output Format — Excel Structure
+### When you need the template to match an existing file exactly
 
-The generated Excel contains one sheet per component type, plus an Instructions sheet.
+Attach the reference file and add:
 
-### Example: Organization Health Plan (3 Components)
-
-| Sheet | Fields | Parent Relationship |
-|-------|--------|-------------------|
-| **Strategic Objectives** | English Name, Arabic Name, Code | Top-level (no parent) |
-| **Enabler Initiatives** | English Name, Arabic Name, Owner, Start Date, Finish Date | Contributes to → Strategic Objective |
-| **KPI** | English Name, Arabic Name, Owner, Champion, Unit of Measure, Polarity, Accumulative Method, Description EN/AR, Source, Baseline, Start Date, Frequency, Number of Years, Reporting Buffer + 12 quarterly targets | Contributes to → Enabler Initiative |
-| **Instructions** | Field-by-field guide, allowed values, target structure explanation | — |
-
-### KPI Target Columns (Quarterly × 3 Years)
-
-| Column | Period |
-|--------|--------|
-| Target Q1 2026 | January – March 2026 |
-| Target Q2 2026 | April – June 2026 |
-| Target Q3 2026 | July – September 2026 |
-| Target Q4 2026 | October – December 2026 |
-| Target Q1 2027 | January – March 2027 |
-| Target Q2 2027 | April – June 2027 |
-| Target Q3 2027 | July – September 2027 |
-| Target Q4 2027 | October – December 2027 |
-| Target Q1 2028 | January – March 2028 |
-| Target Q2 2028 | April – June 2028 |
-| Target Q3 2028 | July – September 2028 |
-| Target Q4 2028 | October – December 2028 |
+```
+Match the EXACT formatting, column order, and naming conventions from the
+attached reference file. Use the same color scheme, fonts, and cell styles.
+```
 
 ---
 
-## Field Reference by Component Type
+## Troubleshooting
 
-These are the fields typically found in S+ creation forms. The actual fields vary by client configuration — that's why the automation extracts from the live system.
+### Login page appears instead of Level Management
 
-### Objective / Strategic Objective Fields
+The instance requires authentication. You need to log in first:
+- Navigate to the instance manually in Chrome
+- Log in with admin credentials
+- Then run the automation (it will use the existing session)
 
-| Field | Type | Required |
-|-------|------|----------|
-| English Name | Text | Yes |
-| Arabic Name | Text | Yes |
-| Code | Text | Yes |
+### Quick Actions button doesn't show all component types
 
-### Initiative / Enabler Initiative Fields
+Some component types can only be created from within a parent context (e.g., you must be inside a Portfolio to create an Initiative under it). If Quick Actions doesn't list all types:
 
-| Field | Type | Required |
-|-------|------|----------|
-| English Name | Text | Yes |
-| Arabic Name | Text | Yes |
-| Owner | User Selector | Yes |
-| Start Date | Date (MM/DD/YYYY) | Yes |
-| Finish Date | Date (MM/DD/YYYY) | Yes |
-| Contributes to (Parent Objective) | Dropdown | Yes |
+```
+Navigate into an existing parent entity (e.g., click into a Portfolio),
+then check the Quick Actions menu again for child component creation options.
+```
 
-### KPI / Performance Indicator Fields
+### The hierarchy diagram is complex or has multiple branches
 
-**Details Tab:**
+The automation reads the visual diagram. If it has many levels or unusual branching, add:
 
-| Field | Type | Required |
-|-------|------|----------|
-| English Name | Text | Yes |
-| Arabic Name | Text | Yes |
-| Owner | User Selector | Yes |
-| Champion | User Selector | Yes |
-| Unit of Measure | Dropdown (Percentage, Number, Currency, Ratio, Days) | Yes |
-| Polarity | Dropdown (Higher is better, Lower is better) | Yes |
-| Accumulative performance calculation method | Dropdown (Cumulative, Average, Latest Value, Sum) | Yes |
-| Description In English | Text Area | No |
-| Description In Arabic | Text Area | No |
-| Contributes to (Parent Initiative) | Dropdown | Yes |
+```
+Take a screenshot of the Level Management hierarchy diagram and describe
+every component type and every parent-child relationship you can see.
+List them as: "Parent → Child" pairs.
+```
 
-**Tracking Tab:**
+### Sub-item "+ Add" button redirects to admin pages
 
-| Field | Type | Required |
-|-------|------|----------|
-| Source | Dropdown (Manual, System, Integration) | Yes |
-| Baseline | Number | Yes |
-| Start Date | Date (MM/DD/YYYY) | Yes |
-| Frequency | Dropdown (Quarter, Month, Year, Semi-Annual) | Yes |
-| Number of Years | Number | Yes |
-| Reporting buffer in days | Number (default: 0) | Yes |
-| Target Values | One column per period (auto-generated based on Frequency × Years) | Yes |
+Some sub-item add buttons may redirect to approval workflow pages instead of creation forms. In this case:
+
+```
+If clicking "+ Add" redirects to an admin page instead of a creation form,
+go back and try clicking directly on the "+" floating action button
+(bottom-right gold circle) instead of the section "+ Add" button.
+Also check Admin > Level Management > Manage Logs to see all available
+log types and their field configurations.
+```
+
+### Date format doesn't match
+
+Different instances may use different date formats. The automation reads the placeholder text from date picker fields (e.g., `dd-MM-yyyy`, `yyyy/MM/dd`). If you need a specific format:
+
+```
+Use (yyyy/MM/dd) as the date format hint instead of whatever the form shows.
+```
 
 ---
 
-## How to Use
+## Output Specifications
 
-1. **Open Claude Code** (desktop app, CLI, or web) with browser access enabled
-2. Have the client's **S+ Strategy Builder URL** and **Planner URL** ready
-3. **Attach the S+ SMO Migration Template (.xlsx)** — this is the format reference
-4. **Paste the prompt** above — replace `{{TEMPLATE_URL}}` and `{{PLANNER_URL}}` with actual URLs, and `{{path-to-template}}` with the file path
-5. Claude navigates the Strategy Builder to discover the model hierarchy
-6. Claude navigates the Planner and opens every creation form to capture fields
-7. Claude generates an Excel workbook with one sheet per component type
-8. **Download the Excel** from the Downloads folder
-9. **Hand it to the client** — they fill in their data following the sample format
-10. **Import the completed sheet** into the S+ system
+The final `.xlsx` file will have:
 
----
-
-## Key Differences from Manual Approach
-
-| Aspect | Manual (Old) | Live System Extraction (This) |
-|--------|-------------|-------------------------------|
-| Source of truth | Previous migration sheets or memory | The actual live system creation forms |
-| Accuracy | Depends on consultant's familiarity | 100% — extracts what the forms actually show |
-| Drift risk | High — system may have been reconfigured | None — pulls directly from current forms |
-| Missing fields | May miss new or custom fields | Finds every field in every tab |
-| Quarterly targets | Manually computed | Auto-generated for 3 years × quarterly |
-| Speed | 2-4 hours per plan | 10-15 minutes |
+| Property | Value |
+|---|---|
+| **File format** | `.xlsx` (OpenXML) |
+| **Sheets** | One per level type + one per sub-item type + one `_Lookup` sheet |
+| **Header row** | Row 1 — field names with `*` for required |
+| **Data type row** | Row 2 — format hints in gray text |
+| **Data rows** | Row 3+ — empty, ready for user input |
+| **Styling** | Dark green headers, white text, thin borders |
+| **Column widths** | Auto-sized, max 35 chars |
+| **Font** | Arial 11pt (headers), Arial 10pt (hints) |
 
 ---
 
-## Supported Strategy Plans
+## Integration with Data Import
 
-This automation works on **any S+ strategy plan** — not just the ones listed here. Common examples:
-
-| Plan Type | Typical Components | Example Client |
-|-----------|--------------------|----------------|
-| **DGA Strategy** | Strategic Objectives → Strategic KPI, Sectors → Operational KPI | DGA |
-| **Organization Health** | Strategic Objectives → Enabler Initiatives → KPI | DGA |
-| **SCFHS Strategy** | Pillars → Objectives → Strategic KPIs → Operational KPIs, Divisions → Departments | SCFHS |
-| **Corporate Strategy** | Themes → Objectives → Initiatives → KPIs | Various |
-
-The prompt adapts to whatever components and hierarchy the client's system has configured.
+Once the migration sheet is filled out by the client, it can be used with the **P+ Data Import** automation to bulk-create all entities in the target system via API. The column headers in the migration sheet are designed to map directly to the system's creation form fields, ensuring a smooth handoff from data collection to data import.
 
 ---
 
-## Quality Checklist
+## Resources
 
-| Check | What to Verify |
-|-------|----------------|
-| All component types covered | Every box in the Strategy Builder model diagram has a corresponding sheet |
-| All fields captured | Every field from the creation form (all tabs) is a column in the sheet |
-| Required fields marked | Columns for required fields have " *" in the header |
-| Parent relationships included | Every child sheet has a "Contributes to" column |
-| Quarterly targets present | KPI sheets have 12 target columns (Q1 2026 through Q4 2028) |
-| Sample data included | 3-5 sample rows per sheet with realistic data in blue font |
-| Instructions sheet present | Field descriptions, allowed values, and structure explanation |
-| Excel formatting correct | Dark headers, borders, text wrapping, appropriate widths |
+| Resource | Link |
+|---|---|
+| Reference migration template | Provided by your project team |
+| Claude Code | [claude.ai/claude-code](https://claude.ai/claude-code) |
+| Claude in Chrome Extension | Required for browser automation |
 
----
-
-## Conclusion
-
-This automation eliminates the manual effort of documenting migration template fields for S+ Strategy Management systems. By navigating the actual system creation forms, it captures every field exactly as the system expects it — including fields that may have been added through custom configuration.
-
-The output is a ready-to-fill Excel workbook that the client can populate and hand back to the implementation team for direct system import — with quarterly targets pre-structured for 3 years.
+<ClaudeCTA />
