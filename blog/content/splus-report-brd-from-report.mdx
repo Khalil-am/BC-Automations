@@ -1,0 +1,301 @@
+---
+title: "S+ Report BRD from Report Design"
+description: "Automatically generate a complete, professionally formatted Business Requirements Document (BRD) from any existing report design — PDF quarterly reports, Excel KPI scorecards, or Word documents — by navigating the live system to map every field to its data source."
+date: "2026-04-05"
+tags: ["SPlus", "Report"]
+featured: true
+readTime: "12 min read"
+author: "Khalil Abu Mushref"
+---
+
+## Automation Name
+
+**S+ Report BRD from Report Design — System-Mapped Requirements Document**
+
+This automation takes any existing report (PDF quarterly report, Excel KPI scorecard, or Word document) and reverse-engineers it into a fully structured BRD — complete with page-by-page breakdowns, embedded design screenshots, data source mapping to the live S+ system, calculation logic, and filter definitions.
+
+Instead of manually documenting each report section, tracing where every field comes from, and formatting tables by hand, this prompt produces a publication-ready `.docx` BRD in minutes — with every element mapped to its exact system module and property.
+
+**What makes this different:** The automation navigates the live S+ system to verify data sources, extracts screenshots from the actual report files as design placeholders, and follows the standard P+ Reports BRD template structure used across all Cruise Saudi projects.
+
+---
+
+## Prompt
+
+```
+You are a Senior Business Analyst generating a Business Requirements Document (BRD)
+for a report module. You will reverse-engineer existing report files into a structured
+BRD that maps every report element to its system data source.
+
+INPUTS:
+1. One or more report files (.pdf, .xlsx, .docx) — the report designs to document
+2. A reference BRD template (.docx) — the formatting standard to follow
+3. Access to the live system (URL provided) — to verify and map data sources
+
+PROCESS — follow this exact sequence:
+
+STEP 1: READ ALL INPUT FILES
+- For PDF reports: Extract every page, identify sections, tables, charts, KPIs,
+  headers, and visual elements
+- For Excel reports: Extract all sheets, column headers, data fields, formulas,
+  grouping logic, and summary rows
+- For Word reports: Extract structure, sections, tables, and content blocks
+- For the reference BRD: Learn the exact template structure (Versions, Approvals,
+  Assumptions, Objective/Business Rules/Report Design/Description tables)
+
+STEP 2: NAVIGATE THE LIVE SYSTEM
+- Log in to the system using the provided URL
+- Navigate to the relevant modules (Strategy, KPIs, Dashboards, Projects, etc.)
+- Identify every data source for each report element
+- Document the system path for each field (e.g., "Strategy > [Theme] > [KPI] > Actual")
+- Take note of entity names, property names, and module hierarchy
+
+STEP 3: EXTRACT DESIGN SCREENSHOTS
+- Render each PDF page as a PNG image
+- Generate a visual representation of each Excel worksheet
+- These become the "Design" placeholders in the BRD description tables
+
+STEP 4: BUILD THE BRD DOCUMENT (.docx)
+Follow this exact structure (matching the reference BRD template):
+
+A. FRONT MATTER
+   - Title page with report name(s), module name, version
+   - Versions table (Comments | Date | Responsible | Version #)
+   - Approvals table (Stakeholder | Approval Date | Signature)
+   - Assumptions section
+
+B. REPORTS PAGE SECTION
+   - Objective: What the user can do on the reports landing page
+   - Business Rules: Export formats, available reports, data scope
+   - Main Scenario: Step-by-step user flow (Login → Homepage → Reports →
+     Select → Filter → Export → Download)
+
+C. FOR EACH REPORT — create a separate section with:
+   - Objective: One sentence describing what the report generates
+   - Business Rules: Authentication, format, section order, color coding,
+     data freshness, branding rules
+   - Report Design: Embedded screenshot(s) from the actual report
+   - Description: Page-by-page OR column-by-column breakdown using the
+     nested description table format:
+
+     For PDF/Word reports (page-by-page):
+     | # Item In Design | [Page Title] |
+     | Design | [Embedded screenshot of that page] |
+     | #Item | Item | Description |
+     | 1 | [Element Name] | [What it shows]. Source: [System Module] — [Entity.Property] |
+
+     For Excel reports (column-by-column):
+     | # Item In Design | [Worksheet Name] |
+     | Design | [Embedded screenshot of the worksheet] |
+     | #Item | Column | Description |
+     | 1 | [Column Name] | [What it contains]. Source: [System Module] — [Entity.Property] |
+
+     Also include Summary Rows table for Excel reports.
+
+D. DATA SOURCES — SYSTEM MAPPING TABLE
+   | # | System Module | System Path | Entity / Property | Maps To (Report Field) |
+   Map every report field back to its system source.
+
+E. CALCULATION LOGIC TABLE
+   | Metric | Formula | System Source |
+   Document every computed/derived value.
+
+F. FILTER PARAMETERS TABLE
+   | # | Filter | Values | System Mapping |
+   Document every filter and how it maps to system queries.
+
+G. REPORT OUTPUT SUMMARY TABLE
+   | # | Report Name | Format | Filters | Content Summary |
+   One row per report covered in the BRD.
+
+FORMATTING RULES:
+- Use dark navy (#1B2A4A) for table headers with white text
+- Use light gray (#E8EDF3) for label cells
+- Use Arial font throughout, 10pt for body, 16pt for H1, 14pt for H2
+- Embed actual screenshots in Design rows (not placeholder text)
+- Keep descriptions SHORT and to the point — one sentence per item
+- Every Description must end with "Source: [Module] — [Property]"
+- Use bullet lists for Business Rules
+- Use numbered steps for Main Scenario
+- US Letter page size with 1-inch margins
+- Header: "[Client Name] — P+ [Report Module] BRD" (right-aligned, gray, italic)
+- Footer: Page numbers centered
+
+OUTPUT:
+A single .docx file containing the complete BRD with:
+- All screenshots embedded
+- All fields mapped to system sources
+- All calculations documented
+- Professional formatting matching the reference template
+```
+
+---
+
+## Required Files
+
+Attach **all** of the following files to your Claude conversation **before** pasting the prompt:
+
+| # | File | Purpose | Notes |
+|---|------|---------|-------|
+| 1 | Report File(s) | The actual report(s) to document — PDF quarterly report, Excel KPI scorecard, or Word document | Can attach multiple reports to cover in one BRD |
+| 2 | Reference BRD Template | An existing BRD from the same project to match formatting and structure | Use the latest version from the project |
+| 3 | System URL | The live system URL for data source verification | Provide in the prompt or as a message |
+
+---
+
+## Description
+
+This automation reverse-engineers any existing report into a structured BRD by:
+
+1. **Analyzing the report files** — extracting every page, section, table, chart, and data field
+2. **Navigating the live system** — verifying where each data point comes from
+3. **Generating the BRD** — creating a professionally formatted `.docx` with embedded screenshots and system mappings
+
+### Supported Report Types
+
+| Report Type | Input Format | BRD Output Style |
+|-------------|-------------|-----------------|
+| Quarterly Performance Report | PDF / Word | Page-by-page breakdown with embedded page screenshots |
+| KPI Scorecard / BSC | Excel (.xlsx) | Column-by-column breakdown with worksheet screenshot |
+| CEO / Executive Report | PDF / Word | Page-by-page with section dividers and chart descriptions |
+| Project Status Report | Excel / Word | Sheet-by-sheet or section-by-section breakdown |
+| Any custom report | PDF / Excel / Word | Adaptive — pages for visual reports, columns for data reports |
+
+### What Gets Generated
+
+A single `.docx` BRD file containing:
+
+| Section | Content |
+|---------|---------|
+| **Front Matter** | Title page, version history, approvals, assumptions |
+| **Reports Page** | Objective, business rules, user scenario for the reports landing page |
+| **Per-Report Section** | Objective, business rules, embedded designs, page/column descriptions |
+| **Data Sources** | System module mapping table with paths and entity/property references |
+| **Calculation Logic** | Formula table for every computed value |
+| **Filter Parameters** | Filter-to-system mapping table |
+| **Output Summary** | Comparison table of all reports in the BRD |
+
+### BRD Description Table Format
+
+Every report element is documented using the standard nested table format:
+
+| Row | Content |
+|-----|---------|
+| **Header** | Section title (e.g., "Page 4 — Overall Performance Summary") |
+| **Design** | Embedded screenshot from the actual report file |
+| **#Item / Item / Description** | Column headers for the element breakdown |
+| **1, 2, 3...** | Each visual element with name and description ending with system source |
+
+### System Mapping Approach
+
+The automation traces every report field to its system source:
+
+| Report Element | System Source Example |
+|---------------|---------------------|
+| Theme Name | Strategy module → Theme entity → name property |
+| KPI Actual Value | KPI module → Strategic KPI → Measure → actual value (quarterly) |
+| KPI Target | KPI module → Strategic KPI → Measure → target value (quarterly) |
+| KPI Weight | KPI module → Strategic KPI → weight property |
+| Performance Score | Computed → Actual ÷ Target |
+| Theme Score | Computed → Sum of (KPI Score × KPI Weight) |
+| Overall BSC Score | Computed → Sum of (Theme Score × Theme Weight) |
+| Owner | KPI module → Strategic KPI → owner property |
+
+---
+
+## How to Use
+
+1. **Gather** the report file(s) you need to document (PDF, Excel, or Word)
+2. **Gather** an existing BRD from the same project as the formatting reference
+3. **Get** the live system URL and login credentials
+4. **Open** a new [Claude Code](https://claude.ai/code) conversation (Claude Code is required for system navigation and file generation)
+5. **Attach** all files (report files + reference BRD)
+6. **Paste** the prompt from above
+7. **Add** the system URL: `"System URL: https://your-system.example.com/login"`
+8. **Send** — Claude will:
+   - Read all input files
+   - Navigate and explore the live system
+   - Extract screenshots from reports
+   - Generate the complete BRD
+9. **Review** the generated `.docx` file
+10. **Spot-check** system source mappings against the live system
+
+---
+
+## Best Practices
+
+- **Always provide the reference BRD** — this ensures consistent formatting across all project BRDs
+- **Attach all reports for the same module together** — if a module has both a PDF report and an Excel export, attach both so they appear in one BRD
+- **Use Claude Code (not claude.ai)** — system navigation requires browser automation and file generation needs local filesystem access
+- **Verify system paths** — the automation maps to the system at the time of generation; if modules are renamed, re-run
+- **Keep descriptions short** — one sentence per item, always ending with the source reference
+- **Include the system URL in your message** — don't embed it in the prompt; provide it separately so Claude can navigate
+- **Run per module** — one BRD per report module (e.g., "Corporate Reports" covers both the quarterly PDF and KPI Excel)
+
+---
+
+## Customization Options
+
+Add any of these instructions to the end of the prompt for specific adjustments:
+
+- **Multiple reports in one BRD:** `"Cover all attached reports in a single BRD"` (default behavior)
+- **Single report only:** `"Generate BRD for the PDF report only, ignore the Excel file"`
+- **Skip system navigation:** `"Do not navigate the system — use the report files only for source mapping"`
+- **Arabic BRD:** `"Generate the BRD in Arabic with RTL alignment"`
+- **Custom branding:** `"Use [Client Name] branding colors: primary #XXXXXX, secondary #XXXXXX"`
+- **Add KPI reference table:** `"Include a full KPI reference table listing all KPIs with owners, weights, and system paths"`
+- **Landscape tables:** `"Use landscape orientation for wide tables"`
+
+---
+
+## Quality Checklist
+
+After generating the BRD, verify the following before delivering:
+
+| Check | What to Verify |
+|-------|---------------|
+| **Every report page/sheet has a section** | No missing pages from the PDF or sheets from the Excel |
+| **All screenshots embedded** | Design rows show actual screenshots, not placeholder text |
+| **System sources documented** | Every description ends with "Source: [Module] — [Property]" |
+| **Calculation logic complete** | Every computed value has a formula row in the Calculation Logic table |
+| **Filters documented** | Every filter parameter mapped to its system query |
+| **Business rules accurate** | Format types, section order, and color coding match the actual report |
+| **Template structure matched** | Versions, Approvals, Assumptions sections present and formatted correctly |
+| **Output summary complete** | One row per report with format, filters, and content summary |
+| **No hardcoded data** | Descriptions reference system entities, not specific values |
+| **Professional formatting** | Dark navy headers, consistent fonts, proper spacing |
+
+---
+
+## Common Variations
+
+### Quarterly Report + KPI Scorecard (Most Common)
+
+This is the standard combination — a branded PDF/Word report for executives and an Excel data export for analysts. Both share the same data sources (Strategy + KPI modules) and filters (Quarter + Year).
+
+### CEO Executive Report
+
+Similar to the quarterly report but includes additional sections like milestone progress, corporate risks, and department-specific charts. The BRD will have more page-by-page sections with chart descriptions.
+
+### Project Status Report (Excel)
+
+Multi-sheet Excel export with project details, tasks, risks, issues, milestones. The BRD will use column-by-column breakdowns per sheet, similar to the Projects Report in the reference BRD.
+
+### Single-Page Dashboard Report
+
+A one-page summary report. The BRD will have fewer page sections but more detailed element descriptions for charts, gauges, and KPI cards.
+
+---
+
+## Conclusion
+
+This automation eliminates the manual effort of:
+- Reading through report files page by page
+- Tracing every data field back to the system
+- Formatting BRD tables and embedding screenshots
+- Writing descriptions for every element
+- Documenting calculation logic and filter mappings
+
+**Typical manual effort: 2–3 days → Automated: 15–30 minutes**
+
+The output is a publication-ready BRD that matches the project's existing template and can be delivered directly to stakeholders.
