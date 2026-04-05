@@ -1,0 +1,316 @@
+---
+title: "P+ Report BRD from Report Design"
+description: "Automatically generate a complete Arabic or English BRD from any P+ report design — PMO reports, executive reports, or project exports — by navigating the live system to map every element to its data source with embedded screenshots."
+date: "2026-04-06"
+tags: ["PPlus", "Report"]
+featured: true
+readTime: "12 min read"
+author: "Khalil Abu Mushref"
+---
+
+## Automation Name
+
+**P+ Report BRD from Report Design — System-Mapped Requirements Document**
+
+This automation takes any existing P+ report (PDF executive report, PMO report, Excel project export) and reverse-engineers it into a fully structured BRD — complete with page-by-page breakdowns, embedded design screenshots, data source mapping to the live P+ system, and RTL Arabic support.
+
+Instead of manually reading each report page, tracing where every chart and table comes from, and formatting BRD tables by hand, this prompt produces a publication-ready `.docx` BRD in minutes — with every element mapped to its exact P+ module and property.
+
+**What makes this different from S+ Report BRD:** P+ covers project management entities (Departments, Portfolios, Projects, Tasks, Risks, Issues, Milestones, Deliverables) rather than strategy/KPI modules. The hierarchy and data sources are P+-specific, and Arabic RTL table support is built in.
+
+---
+
+## Prompt
+
+```
+You are a Senior Business Analyst generating a Business Requirements Document (BRD)
+for a P+ (Project Management System) report module.
+
+LANGUAGE: [EN/AR]
+- If EN → All text in English, LTR tables and alignment
+- If AR → All text in Arabic, RTL alignment, bidi:true on all paragraphs,
+  visuallyRightToLeft:true on all tables
+
+You will reverse-engineer existing report files into a structured BRD that maps
+every report element to its P+ system data source.
+
+INPUTS:
+1. One or more report files (.pdf, .docx) — the report designs to document
+2. A reference BRD template (.docx) — the formatting standard to follow (optional)
+3. Access to the live P+ system (URL provided) — to verify and map data sources
+
+PROCESS — follow this exact sequence:
+
+STEP 1: READ ALL INPUT FILES
+- For PDF reports: Extract every page as a PNG screenshot (use pypdfium2, scale=2)
+- For each page: identify section type (cover, TOC, divider, summary, detail, risks,
+  portfolio, project table, closing)
+- Note the report hierarchy: Cover → TOC → Performance Summary → Department Details
+  → Portfolio Details → Project Details → Risks → Closing
+
+STEP 2: NAVIGATE THE LIVE SYSTEM
+- Log in to the P+ system using the provided URL
+- Navigate to Home/Cards to identify all Departments
+- Click into each Department to see Portfolios
+- Check the sidebar for Dashboard links (Executive Dashboard, EPMO Dashboard)
+- Open each Dashboard and note the widgets (SPI, counters, charts, tables)
+- Document the system path for each field:
+  * Departments: Home > Departments (name, manager, start/end date, status, progress)
+  * Portfolios: Department > Portfolios (name, manager, status, risks, milestones)
+  * Projects: Portfolio > Projects (name, manager, dates, budget, spent, actual/planned
+    progress, status, budget type)
+  * Risks: Project > Risks (name, assignee, due date, classification, status)
+  * Support: Support Needed count per department/portfolio
+  * Tasks: Tasks Center (task, risk, issue, support, general task tabs)
+  * Dashboards: Executive Dashboard (ID), EPMO Dashboard (ID)
+
+STEP 3: BUILD THE BRD DOCUMENT (.docx)
+Follow this exact structure:
+
+A. FRONT MATTER (in [EN/AR])
+   - Title page: client logo placeholder, report name(s), module, version
+   - Versions table (الملاحظات/Comments | التاريخ/Date | المسؤول/Responsible | رقم#/Version)
+   - Approvals table (الجهة/Stakeholder | التاريخ/Date | التوقيع/Signature)
+   - Assumptions section
+
+B. REPORTS PAGE SECTION
+   - Objective: What the user can do on the reports landing page
+   - Business Rules: Export formats, available reports, data scope
+   - Main Scenario: Step-by-step user flow
+
+C. FOR EACH REPORT — create a separate section with:
+   - Objective: One sentence describing what the report generates
+   - Business Rules: Auth, format, section order, color coding, data source references
+   - Report Design: [See designs below]
+   - Description: Page-by-page breakdown using nested description tables:
+
+     | # العنصر / # Item In Design | [Page Title] |
+     | التصميم / Design | [Embedded PNG screenshot of that page] |
+     | # / #Item | العنصر / Item | الوصف / Description |
+     | 1 | [Element] | [What it shows]. المصدر/Source: P+ > [Module] > [Entity.Property] |
+
+D. DATA SOURCES TABLE
+   | # | الوحدة/Module | المسار/Path | الكيان/Entity | الحقول/Fields |
+   Map every report field back to P+ system source.
+
+E. FILTER PARAMETERS TABLE
+   | # | الفلتر/Filter | القيم/Values | الربط بالنظام/System Mapping |
+
+F. REPORT OUTPUT SUMMARY TABLE
+   | # | التقرير/Report | الصيغة/Format | الفلاتر/Filters | المحتوى/Content |
+
+FORMATTING RULES:
+- Use JOSOUR blue (#0077B6) for table headers with white text
+- Use light blue (#E8F4FD) for label cells
+- Use Arial font throughout
+- If AR: set bidi:true on ALL paragraphs, visuallyRightToLeft:true on ALL tables
+- Embed actual PDF page screenshots in Design rows
+- Keep descriptions SHORT — one sentence per item, always ending with source reference
+- Status colors: Green = On Track, Yellow = Slightly Delayed, Red = Delayed, Gray = Not Started
+- US Letter page size with 1-inch margins
+- Header/Footer with report name and page numbers
+
+P+ ENTITY HIERARCHY (for source mapping):
+Home
+├── Department (name, manager, startDate, finishDate, status, progress)
+│   ├── Portfolio (name, manager, status, risks count, milestones count)
+│   │   ├── Project (name, manager, startDate, finishDate, budget, spent,
+│   │   │           actualProgress, plannedProgress, baselineProgress, status, budgetType)
+│   │   │   ├── Task (name, assignee, status, dates, progress)
+│   │   │   ├── Risk (name, assignee, dueDate, classification, status)
+│   │   │   ├── Issue (name, assignee, status)
+│   │   │   ├── Milestone (name, weight, dates, progress, status)
+│   │   │   └── Deliverable (name, status, dates, progress)
+│   │   └── ...more projects
+│   └── ...more portfolios
+└── ...more departments
+
+Dashboards:
+├── Executive Dashboard (SPI, portfolio/project/risk/support counts,
+│   progress bars, financial charts, status donuts)
+└── EPMO Dashboard (SPI, dept/portfolio/project counts, project count by portfolio,
+    portfolio performance, projects by type/status, deliverables, risks, issues,
+    budgets by type)
+
+OUTPUT:
+A single .docx file containing the complete BRD with all screenshots embedded
+and all fields mapped to P+ system sources.
+```
+
+---
+
+## Required Files
+
+Attach **all** of the following files to your Claude Code conversation **before** pasting the prompt:
+
+| # | File | Purpose | Notes |
+|---|------|---------|-------|
+| 1 | Report File(s) | The P+ report(s) to document — PMO report, Executive report, or project export | Can attach multiple PDFs to cover in one BRD |
+| 2 | Reference BRD (optional) | An existing BRD from the same project for formatting reference | Use if available |
+| 3 | System URL | The live P+ system URL for data source verification | Provide in the prompt message |
+
+---
+
+## Description
+
+This automation reverse-engineers any P+ report into a structured BRD by:
+
+1. **Rendering every PDF page** as a high-quality PNG screenshot
+2. **Navigating the live P+ system** to verify where each data point comes from
+3. **Generating the BRD** as a professionally formatted `.docx` with embedded screenshots and system mappings
+
+### Supported Report Types
+
+| Report Type | Input Format | BRD Output Style |
+|-------------|-------------|-----------------|
+| PMO Report (تقرير مكتب إدارة المشاريع) | PDF / Word | Page-by-page: cover, performance summary, financial, department/portfolio/project details, risks |
+| Executive Report (التقرير التنفيذي) | PDF / Word | Page-by-page: cover, department summary, department details with portfolios and projects |
+| Project Status Report | Excel / PDF | Sheet-by-sheet or page-by-page with project tables |
+| Combined (multiple reports) | Multiple PDFs | Both reports in one BRD with shared data sources |
+
+### What Gets Generated
+
+A single `.docx` BRD file containing:
+
+| Section | Content |
+|---------|---------|
+| **Front Matter** | Title page, version history, approvals, assumptions |
+| **Reports Page** | Objective, business rules, user scenario |
+| **Per-Report Section** | Objective, business rules, page-by-page designs with screenshots |
+| **Data Sources** | P+ system module mapping table |
+| **Filter Parameters** | Filter-to-system mapping |
+| **Output Summary** | Comparison table of all reports |
+
+### P+ System Entity Mapping
+
+The automation traces every report element to its P+ system source:
+
+| Report Element | System Source |
+|---------------|-------------|
+| Department count/list | Home > Departments |
+| Portfolio count/status | Department > Portfolios |
+| Project count/details | Portfolio > Projects |
+| Overall progress bars | EPMO Dashboard > Progress Performance |
+| Financial charts | Projects > budget/spent grouped by budgetType |
+| Department status bars | Departments > progress + status |
+| Risk tables | Project > Risks entity (name, assignee, dueDate, classification, status) |
+| Support count | Support Needed count per department/portfolio |
+| SPI score | Executive/EPMO Dashboard > SPI widget |
+| Portfolio donut chart | Portfolios > status distribution |
+| Project donut chart | Projects > status distribution |
+| Project detail table | Projects > name, manager, dates, budget, spent, planned/actual progress, status |
+
+### Arabic RTL Support
+
+| Property | EN (English) | AR (Arabic) |
+|----------|-------------|-------------|
+| **Language** | English | Arabic |
+| **Text Direction** | LTR | RTL |
+| **Table Direction** | Left-to-Right columns | Right-to-Left columns (`visuallyRightToLeft: true`) |
+| **Paragraph Direction** | Default | `bidi: true` on all paragraphs |
+| **Cell Alignment** | Left-aligned | Right-aligned |
+| **Section Headers** | English | Arabic (الهدف, قواعد العمل, التصميم, الوصف) |
+| **Table Headers** | English (Item, Description) | Arabic (العنصر, الوصف) |
+| **Description Format** | "Source: P+ > Module > Entity" | "المصدر: P+ > الوحدة > الكيان" |
+
+Replace `[EN/AR]` in the prompt with your desired language before running.
+
+---
+
+## How to Use
+
+1. **Gather** the P+ report PDF(s) you need to document
+2. **Get** the live P+ system URL and login credentials
+3. **Open** a new [Claude Code](https://claude.ai/code) conversation (required for system navigation)
+4. **Attach** all report files
+5. **Paste** the prompt from above
+6. **Replace** `[EN/AR]` with your desired language:
+   - `EN` → English BRD, LTR tables
+   - `AR` → Arabic BRD, RTL tables with `visuallyRightToLeft`
+7. **Add** the system URL: `"System URL: https://your-system.example.com/Home/Cards"`
+8. **Send** — Claude will:
+   - Read and render all PDF pages as screenshots
+   - Navigate the P+ system to map data sources
+   - Generate the complete `.docx` BRD
+9. **Review** the generated file in Word
+10. **Verify** RTL table direction renders correctly (columns should flow right-to-left for Arabic)
+
+---
+
+## Best Practices
+
+- **Use Claude Code** — system navigation and `.docx` generation require browser automation and filesystem access
+- **Attach all reports for the same module together** — if the client has both a PMO report and an Executive report, attach both for one combined BRD
+- **Verify RTL in Word** — open the generated `.docx` in Microsoft Word (not Google Docs) to confirm RTL tables render correctly
+- **Keep descriptions short** — one sentence per item, always ending with the source reference
+- **System paths matter** — the automation navigates the live system to confirm entity names and dashboard IDs; if the system changes, re-run
+- **Use AR for Arabic-first clients** — government entities and Arabic-first organizations expect RTL alignment throughout
+- **Include dashboard IDs** — note the dashboard URL IDs (e.g., `/remote2/5` = Executive Dashboard ID 5) for precise source mapping
+
+---
+
+## Customization Options
+
+Add any of these instructions to the end of the prompt:
+
+- **Language:** Replace `[EN/AR]` with `EN` or `AR` in the prompt
+- **Single report only:** `"Generate BRD for the PMO report only"`
+- **Skip system navigation:** `"Do not navigate the system — use the report files only"`
+- **Custom branding colors:** `"Use primary color #XXXXXX for table headers"`
+- **Add project field reference:** `"Include a full P+ entity field reference table"`
+- **Landscape tables:** `"Use landscape orientation for wide project detail tables"`
+- **Both languages:** Run twice — once with `EN`, once with `AR`
+
+---
+
+## Quality Checklist
+
+After generating the BRD, verify the following:
+
+| Check | What to Verify |
+|-------|---------------|
+| **Every report page has a section** | No missing pages from the PDF |
+| **All screenshots embedded** | Design rows show actual screenshots, not placeholder text |
+| **System sources documented** | Every description ends with source reference |
+| **RTL tables correct (AR)** | Columns flow right-to-left, text is right-aligned |
+| **All P+ entities mapped** | Departments, Portfolios, Projects, Risks, Support all referenced |
+| **Dashboard IDs noted** | Executive Dashboard and EPMO Dashboard IDs documented |
+| **Business rules accurate** | Format types, section order, color coding match the report |
+| **Template structure matched** | Versions, Approvals, Assumptions present |
+| **Output summary complete** | One row per report with format, filters, content |
+| **No hardcoded data** | Descriptions reference entities, not specific values |
+
+---
+
+## Common Variations
+
+### PMO Report + Executive Report (Most Common)
+
+Two reports in one BRD. The PMO report includes financial breakdown by budget type and per-department/portfolio/project detail pages. The Executive report is a higher-level view focusing on department summaries and portfolio distributions. Both share the same P+ data sources but pull from different dashboard views.
+
+### PMO Report Only
+
+Single report BRD with detailed page breakdown covering: cover, TOC, performance summary (progress bars + status donut), financial achievement (by budget type), department status bars, then repeating sections for each department → portfolios → projects → risks.
+
+### Executive Report Only
+
+Single report BRD with: cover, TOC, department summary (risks/support cards + status donut + stacked bars), department detail table, risks table, then repeating sections for each department → portfolios → projects.
+
+### Arabic Government Entity Report
+
+Same structure but with full RTL support. Use `AR` language setting. All table headers, descriptions, and labels in Arabic. Tables render right-to-left. Common for Saudi government health clusters, ministries, and public sector organizations.
+
+---
+
+## Conclusion
+
+This automation eliminates the manual effort of:
+- Reading through P+ report PDFs page by page
+- Tracing every chart, table, and card back to the P+ system
+- Formatting Arabic RTL BRD tables and embedding screenshots
+- Writing descriptions for every visual element
+- Documenting the P+ entity hierarchy and dashboard mappings
+
+**Typical manual effort: 2–3 days → Automated: 15–30 minutes**
+
+The output is a publication-ready BRD that matches the project's template and can be delivered directly to stakeholders — in Arabic or English.
