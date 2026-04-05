@@ -46,7 +46,7 @@ export function DeliverableCounter() {
         setLoading(false);
       })
       .catch(() => {
-        setTarget(18);
+        setTarget(21);
         setLoading(false);
       });
   }, []);
