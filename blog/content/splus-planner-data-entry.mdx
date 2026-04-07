@@ -1,0 +1,311 @@
+---
+title: "S+ Planner Data Entry — AI-Powered Strategic Plan Population"
+description: "Use Claude Code + the SPlus MCP to populate any S+ Planner with realistic strategic plan data — from custom lists or AI-generated content. Supports bilingual names, hierarchical objectives, and bulk seeding."
+date: "2026-04-07"
+tags: ["SPlus", "Data Entry", "MCP"]
+author: "Khalil Abu Mushref"
+featured: true
+readTime: "10 min read"
+---
+
+## Who Is This For?
+
+This automation is for **consultants, PMO staff, and delivery teams** who need to populate the S+ Planner with strategic plan data — either from a provided list (client requirements, migration sheets) or with realistic demo data for presentations and UAT.
+
+**What this automation does:**
+
+| Capability | Description |
+|---|---|
+| **Custom List Entry** | Provide your own list of objectives, KPIs, and initiatives — Claude enters them via API |
+| **Realistic Data Generation** | Tell Claude the organization's context and it generates sector-appropriate strategic plans |
+| **Bilingual Support** | All items are created with both English and Arabic names |
+| **Hierarchical Structure** | Automatically creates parent-child connections between objectives |
+| **Bulk Operations** | Seeds dozens of items in seconds via direct API calls |
+
+**Prerequisites:** You need the SPlus MCP set up and running. If you haven't done that yet, follow the [Getting Started: SPlus MCP Setup Guide](/blog/getting-started-splus-mcp) first.
+
+---
+
+## How It Works
+
+The automation uses the SPlus Planner API to:
+
+1. **Discover** the template schema (what component types exist in this plan)
+2. **Map** the hierarchy (which components are parents, which are children)
+3. **Rename** parent objectives if they have placeholder names
+4. **Create** child objectives with bilingual names, codes, and proper parent connections
+5. **Verify** everything appears correctly on the Planner page
+
+All of this happens through the `get_planner_guide` MCP tool, which gives Claude the exact API format, endpoints, and payload structure for any S+ instance.
+
+---
+
+## Option A: Enter Data from a Custom List
+
+Use this when you have a **specific list of objectives, KPIs, or initiatives** to enter — from a client, a migration sheet, or your own planning document.
+
+### The Prompt
+
+Copy and paste this into Claude Code:
+
+```text
+I need you to populate the S+ Planner with strategic plan data from the
+list I'll provide below.
+
+Instance URL: [PASTE YOUR S+ PLANNER URL HERE, e.g., https://clientname.masterteam.sa/planner/1]
+
+Use the SPlus MCP tools (get_planner_guide) to understand the Planner API.
+Then navigate to the instance, authenticate, and use the API to:
+
+1. First discover the template schema to find the correct component schema IDs
+2. Find existing parent components (Objectives/FocusAreas) and their IDs
+3. Rename parents if needed to match my list
+4. Create all child items with bilingual names and proper parent connections
+
+Here is the data to enter:
+
+[PASTE YOUR LIST HERE — SEE FORMAT BELOW]
+
+Requirements:
+- All items must have both English AND Arabic names
+- Each item needs a hierarchical code (e.g., SO1.1, SO1.2)
+- Items must be connected to the correct parent objective
+- Use the direct API approach (POST /Service/api/component/objective) for speed
+```
+
+### List Format
+
+You can provide your list in several formats. Claude will adapt to any of them:
+
+**Format 1 — Simple table:**
+
+```text
+Parent: Digital Transformation | تحول رقمي
+- Modernize Core Systems | تحديث الأنظمة الأساسية
+- Implement Cloud Infrastructure | تطبيق البنية السحابية
+- Enable Data-Driven Decisions | تمكين القرارات المبنية على البيانات
+
+Parent: Operational Excellence | التميز التشغيلي
+- Streamline Business Processes | تبسيط العمليات التجارية
+- Enhance Quality Management | تعزيز إدارة الجودة
+```
+
+**Format 2 — Coded list:**
+
+```text
+SO1: Digital Transformation (تحول رقمي)
+  SO1.1: Modernize Core Systems (تحديث الأنظمة الأساسية)
+  SO1.2: Implement Cloud Infrastructure (تطبيق البنية السحابية)
+
+SO2: Operational Excellence (التميز التشغيلي)
+  SO2.1: Streamline Business Processes (تبسيط العمليات التجارية)
+```
+
+**Format 3 — English only (Claude generates Arabic):**
+
+```text
+If you only have English names, tell Claude:
+"Generate professional Arabic translations for all items"
+```
+
+---
+
+## Option B: Generate Realistic Demo Data
+
+Use this when you need **realistic-looking strategic plan data** for a demo, UAT, or presentation — and you don't have a specific list.
+
+### The Prompt
+
+```text
+I need you to populate the S+ Planner with realistic strategic plan data
+for a demo/presentation.
+
+Instance URL: [PASTE YOUR S+ PLANNER URL HERE]
+
+Organization context:
+- Name: [e.g., "Events Investment Fund"]
+- Sector: [e.g., "Entertainment & Events", "Government", "Healthcare", "Energy"]
+- Mission: [Paste the mission statement if visible on the planner, or describe it]
+- Focus areas: [Optional: "Infrastructure, Talent, Economic Impact" etc.]
+
+Use the SPlus MCP tools (get_planner_guide) to understand the API, then:
+1. Navigate to the planner and read the existing Vision/Mission
+2. Generate 3-5 strategic objectives that align with the organization's mission
+3. Under each objective, create 3-4 child strategic objectives with:
+   - Realistic, sector-appropriate English names
+   - Professional Arabic translations
+   - Hierarchical codes (SO1.1, SO1.2, etc.)
+4. Use the direct API to create all items efficiently
+5. Verify by expanding each objective on the planner page
+
+Make the data look polished and presentation-ready.
+```
+
+### What Claude Generates
+
+Claude uses the organization's context to generate appropriate strategic language. Here are examples by sector:
+
+| Sector | Example Objectives |
+|---|---|
+| **Government** | "Enhance Public Service Delivery", "Strengthen Governance Framework", "Drive Digital Government" |
+| **Healthcare** | "Expand Patient Access", "Integrate Digital Health Platforms", "Advance Clinical Excellence" |
+| **Energy** | "Accelerate Clean Energy Transition", "Optimize Upstream Operations", "Ensure Grid Reliability" |
+| **Education** | "Modernize Curriculum Standards", "Expand Digital Learning", "Strengthen Research Output" |
+| **Financial Services** | "Enhance Customer Digital Experience", "Strengthen Risk Management", "Drive Fintech Innovation" |
+| **Events & Tourism** | "Develop World-Class Venues", "Grow Events Calendar", "Maximize Economic Impact" |
+
+---
+
+## Step-by-Step: What Happens Behind the Scenes
+
+Here's exactly what Claude does when you run either prompt:
+
+### 1. Schema Discovery
+
+Claude calls the SPlus API to understand the plan structure:
+
+```text
+GET /Service/api/schema/templateInstance/{templateId}
+```
+
+This returns all component types (Vision, Mission, Values, Objectives, KPIs, etc.) with their schema IDs and hierarchy rules.
+
+### 2. Parent Component Discovery
+
+Claude finds the existing top-level grouping components:
+
+```text
+GET /Service/api/component/template/{templateId}/schema/{parentSchemaId}/Parents
+```
+
+This returns the parent objectives with their IDs — needed to connect children.
+
+### 3. Parent Renaming (if needed)
+
+If parents have placeholder names like "Strategic Objective 1", Claude renames them:
+
+```text
+GET  /Service/api/component/focusarea/{id}?mode=edit
+PUT  /Service/api/component/focusarea/{id}
+```
+
+The PUT sends the full component object with updated bilingual names.
+
+### 4. Bulk Child Creation
+
+Claude creates all children via direct API calls — no slow UI interaction:
+
+```text
+POST /Service/api/component/objective
+Body: {
+  "name": { "en": "...", "ar": "..." },
+  "values": [{ "id": "5", "value": "SO1.1" }],
+  "componentId": 5,
+  "templateId": 1,
+  "connections": [{ "parentComponentId": 49 }]
+}
+```
+
+Each call takes ~200ms. A full plan with 15 objectives completes in under 5 seconds.
+
+### 5. Verification
+
+Claude reloads the Planner page and expands each objective to confirm all children appear correctly with proper names, codes, and dates.
+
+---
+
+## Advanced Options
+
+### Add KPIs Under Objectives
+
+If the plan schema supports KPIs (PerformanceIndicator type), extend the prompt:
+
+```text
+After creating strategic objectives, also create 2-3 KPIs under each
+objective. Use realistic metric names like:
+- "Venue Utilization Rate (%)"
+- "International Events Hosted (#)"
+- "Saudization Percentage (%)"
+- "Tourism Revenue Contribution (SAR M)"
+```
+
+### Add Initiatives / Projects
+
+For plans with Initiative components:
+
+```text
+Also create 1-2 initiatives (projects) under each objective:
+- "Smart Venue Management Platform"
+- "National Events Academy Launch"
+- "Annual Events Calendar Development"
+```
+
+### Multi-Language Support
+
+```text
+Create all items in three formats:
+1. English name
+2. Arabic name
+3. Code reference (SO1.1, KPI-1.1.1, etc.)
+
+Ensure Arabic names are professional translations, not transliterations.
+```
+
+### Adapt to Any Instance
+
+The Planner API works the same across all S+ instances. The only differences are:
+- **Template ID** (from the URL: `/planner/{templateId}`)
+- **Component Schema IDs** (discovered automatically via API)
+- **Parent Component IDs** (discovered automatically via API)
+- **Component Types** (varies by instance: some have KPI L1/L2, others have Initiatives, etc.)
+
+Claude handles all of this automatically through schema discovery.
+
+---
+
+## Quality Checklist
+
+Before marking the data entry as complete, verify:
+
+- [ ] All parent objectives have meaningful bilingual names (not "Strategic Objective 1")
+- [ ] Each parent has 3-5 child items (not too few, not too many)
+- [ ] All children have both English and Arabic names
+- [ ] Codes follow a consistent pattern (SO1.1, SO1.2, SO2.1, etc.)
+- [ ] Children are connected to the correct parent
+- [ ] Expanding each parent on the Planner page shows the correct children
+- [ ] Names are sector-appropriate and aligned with the Vision/Mission
+- [ ] No duplicate names exist (the API rejects these)
+- [ ] Arabic text is professionally written (not machine-translated gibberish)
+
+---
+
+## Troubleshooting
+
+| Issue | Cause | Solution |
+|---|---|---|
+| "Name already exists" (422) | Duplicate component name | Use unique names for each item |
+| "componentId: This field is required" | Missing field in API call | Claude's MCP guide has the correct format |
+| Items don't appear after creation | Page not refreshed | Reload the Planner page |
+| Wrong parent connection | Used incorrect parent ID | Re-run schema discovery to get correct IDs |
+| Arabic text not showing | Page in English mode | Switch language to verify; both are stored |
+| Token expired | Session timeout | Navigate to the instance to refresh the session |
+
+---
+
+## Key Benefits
+
+- **Fast** — Bulk API calls seed an entire plan in seconds, not hours of manual clicking
+- **Accurate** — Direct API ensures proper bilingual names, codes, and connections every time
+- **Flexible** — Works with custom lists OR generates realistic data on the fly
+- **Reusable** — The same process works on any S+ instance with any template structure
+- **Bilingual** — Professional Arabic translations included, not just transliterations
+- **Documented** — Full process is captured in the SPlus Knowledge Base for future reference
+
+---
+
+## Related Resources
+
+- **[Getting Started: SPlus MCP Setup Guide](/blog/getting-started-splus-mcp)** — Set up the MCP server before using this automation
+- **[SPlus Knowledge Base](https://github.com/MasterteamSA/splus-knowledge)** — Full API documentation including `planner-api.md` and `planner-data-seeding.md`
+- **[SPlus Agent](https://github.com/MasterteamSA/SPlus-Agent)** — The MCP server with the `get_planner_guide` tool
+- **[S+ Migration Sheet Generation](/blog/splus-migration-sheet-from-live-system)** — Extract data FROM a live instance (the reverse of this automation)
