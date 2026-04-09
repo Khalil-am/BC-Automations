@@ -4,7 +4,7 @@ const TRELLO_API_KEY = process.env.TRELLO_API_KEY!;
 const TRELLO_TOKEN = process.env.TRELLO_TOKEN!;
 const TRELLO_BOARD_ID = process.env.TRELLO_BOARD_ID!;
 
-const BASE_COUNT = 37;
+const BASE_COUNT = 42;
 
 const AUTOMATION_LABEL = "automation";
 
