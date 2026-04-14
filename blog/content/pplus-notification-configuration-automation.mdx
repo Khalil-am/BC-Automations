@@ -1,0 +1,250 @@
+---
+title: "P+ Notification Configuration Automation"
+description: "Configure every notification on a live P+ instance from a single Claude Code prompt — point Claude at the client URL, paste the prompt, optionally drop in a branded HTML email template, and the script discovers all notification scopes (Levels, Logs, Manage Approvals, Process Builder), creates templates for every event, and wires receivers automatically."
+date: "2026-04-14"
+tags: ["PPlus", "Notification Configuration"]
+featured: true
+readTime: "10 min read"
+author: "Khalil Abu Mushref"
+---
+
+## Automation Name
+
+**P+ Notification Configuration — Auto-populate every notification on a live instance**
+
+This automation goes one step beyond the [P+ Notification Template from BRD](/blog/pplus-notification-template-from-brd) automation. Instead of producing a `.xlsx` file for the configuration team to enter manually, it **pushes the notifications directly into a live P+ instance** using the system's REST API. Claude Code drives a browser session to discover every notification scope your tenant exposes — every level, every per-level log instance, every workflow in Manage Approvals, every Process Builder — then creates a template for each event with bilingual (Arabic + English) email + in-app + SMS bodies and default receivers.
+
+You only need to provide the **client URL** and a one-line **prompt**. Optionally drop in a branded **HTML email template** and the script will use it as the email shell.
+
+---
+
+## Prompt
+
+Paste this verbatim into Claude Code (in a session that has the Chrome MCP installed):
+
+```
+Configure all notifications on this P+ instance: <CLIENT_URL>
+
+I want every event in every scope to have a Default template populated with a
+bilingual (AR/EN) email body, an in-app body, and admin + Creator as the default
+receivers. Cover all four scope types:
+
+  1. Level events       (level/{moduleId})
+  2. Log events         (levelLog/{levelLogId})  ← per-level instance, NOT log-type
+  3. Process Builder    (request/{processBuilderId})
+  4. Manage Approvals   (workflow/{workflowId})
+
+Please:
+  - Open Chrome at the client URL and ask me to log in if not already authenticated
+  - Discover every scope by enumerating /Service/api/Levels,
+    /Service/api/schemalevels/{lvl}/logs,
+    /Service/api/ProcessBuilder/{lvl}/requestSchema,
+    and /Service/api/workflowschema/workflowregistry?levelId={lvl} for all 4 levels
+  - For each event without a template: POST /notifications/events/{eventId},
+    then PUT /notifications/templates/{templateId} with the bilingual body,
+    then POST /notifications/templates/{templateId} with receivers
+  - Name each template with a meaningful bilingual subject derived from the
+    event displayName (e.g. "اشعار انشاء مهمة / Task Creation Notification")
+  - Use the PIF P+ HTML email shell (if I attach one — otherwise use a clean
+    bilingual default with a green PIF-style header)
+  - After completion, run a final audit and report the number of events covered
+    in each bucket and confirm 0 missing
+```
+
+If you also want a custom branded email shell, attach an HTML file with this structure:
+
+```html
+<!-- Anywhere in the file, mark the two bilingual body slots: -->
+<!-- ARABIC_BODY -->
+<!-- ENGLISH_BODY -->
+```
+
+The script substitutes the slots with the per-event Arabic and English content. If the placeholders aren't found, it falls back to the default PIF P+.html shell.
+
+---
+
+## Required Files
+
+You need **only one input** — the client URL. Everything else is optional.
+
+| # | Input | Required? | Purpose |
+|---|-------|-----------|---------|
+| 1 | Client P+ URL (e.g. `https://pifpplus-dev.masterteam.sa`) | **Yes** | The live instance to configure |
+| 2 | Branded HTML email template | Optional | Custom email shell with `<!-- ARABIC_BODY -->` and `<!-- ENGLISH_BODY -->` placeholders |
+| 3 | A logged-in browser session for the client URL | Yes | The script reads the JWT from `localStorage.currentUser` |
+
+---
+
+## Downloadable Templates
+
+<DownloadSection>
+  <DownloadButton
+    fileName="pplus-notification-config-script.js"
+    label="P+ Notification Auto-Config Script (.js)"
+    description="Drop-in browser-console script. Discovers every scope on a live P+ instance and creates templates for every event."
+  />
+  <DownloadButton
+    fileName="pplus-notification-config-typescript.ts"
+    label="P+ Notification Auto-Config (TypeScript source)"
+    description="Annotated TypeScript source — same logic with full type signatures and inline documentation of every endpoint."
+  />
+  <DownloadButton
+    fileName="pplus-email-template-sample.html"
+    label="P+ Branded Email Template Sample (.html)"
+    description="Reference bilingual (RTL Arabic + LTR English) email shell with PIF green header — drop in placeholders to customize."
+  />
+</DownloadSection>
+
+---
+
+## Description
+
+Manual notification configuration in a P+ instance is one of the longest-running configuration tasks on a typical deployment:
+
+- Every level (Portfolio, Initiative, Project, etc.) has 3 events × N levels
+- Every log instance is **per-level** (not per-log-type), so a single project's logs become a different scope from the initiative's logs
+- Every approval workflow has 4 events (Started, Approved, Rejected, Returned)
+- Every process builder has up to 6 events
+- A typical PPlus tenant has **800+ events** across **~200 scopes**
+
+Configuring this manually means: open the admin panel → navigate to Level Management → pick a level → click Notifications → pick an event → click Add Template → fill the form → save → repeat 800 times. **One full day minimum.**
+
+This automation does the same in **under 90 seconds** from a single prompt.
+
+### What gets configured
+
+| Scope | Endpoint pattern | Event count (typical PIF deploy) |
+|---|---|---:|
+| Level events | `/notifications/level/{moduleId}/events` | 9 |
+| Log events (per-level) | `/notifications/levelLog/{levelLogId}/events` | 158 |
+| Process Builder | `/notifications/request/{processBuilderId}/events` | 84 |
+| Manage Approvals workflows | `/notifications/workflow/{workflowId}/events` | 572 |
+| **Total** | — | **823** |
+
+For each event the script:
+1. Calls `POST /notifications/events/{eventId}` with `{name: "Default"}` to create a template
+2. Calls `PUT /notifications/templates/{templateId}` with the bilingual email + app + SMS payload
+3. Calls `POST /notifications/templates/{templateId}` to add `Creator` actor + `admin` group as receivers
+4. Renames the template to a meaningful bilingual subject (`اشعار انشاء مهمة / Task Creation Notification`)
+
+### Discovered API endpoints
+
+All under `/Service/api`:
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/notifications/level/{moduleId}/events` | List Level events + their templates |
+| `GET` | `/notifications/levelLog/{levelLogId}/events` | List per-level Log events |
+| `GET` | `/notifications/request/{processBuilderId}/events` | List Process Builder events |
+| `GET` | `/notifications/workflow/{workflowId}/events` | List Workflow events |
+| `GET` | `/notifications/{scope}/receivers` | Available receivers (Roles, Groups, Actors) |
+| `GET` | `/notifications/{scope}/properties?IsMultiLanguageEnabled=true` | Available `{{variables}}` |
+| `POST` | `/notifications/events/{eventId}` | Create new template (returns template id) |
+| `PUT` | `/notifications/templates/{templateId}` | Update template content (name, email, sms, app) |
+| `POST` | `/notifications/templates/{templateId}` | Add receivers to a template |
+| `DELETE` | `/notifications/receivers/{receiverInternalId}` | Remove a receiver |
+| `DELETE` | `/notifications/templates/{templateId}` | Delete a template |
+| `GET` | `/Service/api/schemalevels/{levelId}/logs` | Per-level log instances (returns `levelLogId` for each) |
+| `GET` | `/Service/api/ProcessBuilder/{levelId}/requestSchema` | List process builders for a level |
+| `GET` | `/Service/api/workflowschema/workflowregistry?levelId={levelId}` | List workflows for a level |
+
+---
+
+## How to Use
+
+There are **two ways** to run this — Claude Code (recommended) or direct browser console.
+
+### Option A — Claude Code (one prompt, hands-off)
+
+1. Make sure Claude Code has the Chrome MCP installed (browser automation).
+2. Open the client P+ URL in Chrome and log in.
+3. In Claude Code, paste the [Prompt](#prompt) above with `<CLIENT_URL>` replaced.
+4. (Optional) Attach a branded `.html` email template.
+5. Wait — Claude reads the JWT from your browser's `localStorage`, runs the discovery sweep, and pushes templates in parallel batches. Final audit prints `TOTAL ok=823  fail=0` (numbers vary by tenant scope).
+
+### Option B — Browser console (no Claude Code required)
+
+1. Log into the client P+ instance in Chrome.
+2. Open DevTools → Console.
+3. Download `pplus-notification-config-script.js` from the box above.
+4. Paste the entire script contents into the console and press Enter.
+5. Watch the console — each scope reports `✓ [evt {evtId}/tpl {tplId}] {event name}`.
+6. The final summary block prints the bucket totals and overall success rate.
+
+### Option C — TypeScript with custom email template
+
+1. Download `pplus-notification-config-typescript.ts` (annotated source).
+2. Edit the `buildEmailHtml(ar, en)` function to swap in your branded HTML shell.
+3. Replace `<!-- ARABIC_BODY -->` and `<!-- ENGLISH_BODY -->` in your template with `${arBody}` and `${enBody}`.
+4. Compile to JS (`tsc` or paste through the [TS Playground](https://www.typescriptlang.org/play)) and run as in Option B.
+
+---
+
+## Best Practices
+
+- **Always run on a dev/staging instance first** to confirm the receiver mapping (admin + Creator) matches the client's expectations.
+- **Spot-check 3–5 templates in the UI** after the run. Specifically open one Level event, one Log event, one Process Builder event, and one Workflow event.
+- The script is **idempotent** — events that already have a Default template are skipped on subsequent runs.
+- **Run the final audit again** after any manual edits to confirm coverage is still 100%.
+- For multi-tenant work, **change the URL only** — same script works across PIF, MTPPLUS, MASAR, MHC, etc.
+- If your client uses **non-default groups** (not `admin`), edit the `getDefaultReceivers()` function to look for the correct group name.
+- **Keep the master HTML template in source control** — when you re-brand, regenerate all 800+ templates by re-running the script.
+
+---
+
+## Customization Options
+
+Add any of these lines to the prompt for specific adjustments:
+
+- **Restrict to one bucket:** `"Only configure Workflow notifications — skip Level, Log, and Process Builder."`
+- **Custom receivers:** `"Use the Portfolio Manager role and the PMO Executive Director group as default receivers instead of admin + Creator."`
+- **English-only:** `"Skip the Arabic body — only populate the English email and the English app template."`
+- **Specific level:** `"Only configure scopes under the Initiative level (level/3, all logs/workflows/process builders attached to it)."`
+- **Branded subject:** `"Prefix every template name with [PIF] so they group together in the admin panel."`
+- **Extra channel:** `"Also enable the SMS channel for every template — use the en_app text as the SMS body."`
+- **Dry-run:** `"Just enumerate every scope and event and report what WOULD be created — do not actually POST or PUT anything."`
+- **Reset:** `"First DELETE every existing Default template, then re-create them from scratch."`
+
+---
+
+## Quality Checklist
+
+After the script finishes, verify the following before declaring the configuration done:
+
+| Check | What to Verify |
+|-------|---------------|
+| **Final audit** | Script logs `TOTAL ok=N fail=0` and the audit re-pass shows `missingCount: 0` |
+| **All 4 buckets covered** | Bucket totals: Level / Log / PB / WF all > 0 (unless the tenant has none of that bucket) |
+| **Admin panel spot-check** | Open `/admin/level-managment/{lvl}/levels/notifications` → every event in the dropdown has a non-empty templates tab |
+| **Email rendering** | Open one template → confirm Arabic RTL section, divider, English LTR section, gold-highlighted `{{variables}}` |
+| **Receivers** | Confirm `admin` + `Creator` appear in the Receivers panel (or your custom roles) |
+| **In-app body** | Channel switch to "App" → confirm the Arabic + English text is populated |
+| **Bilingual subject** | Template name shown above the form is the bilingual subject, not "Default" |
+| **No 500 errors** | Console shows zero failures across all POST/PUT calls |
+| **Idempotency** | Re-run the script — it should report `alreadyOk: <total>` and create 0 new templates |
+| **Per-level log coverage** | Each level's `Manage Logs` page lists all logs with the green dot indicator removed (configured) |
+| **Process Builder coverage** | Each process builder's Notifications tab lists all 6 events with templates |
+| **Workflow coverage** | Each workflow under Manage Approvals → Notification Workflow tab has all 4 events configured |
+
+---
+
+## Common Issues
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `NOT LOGGED IN — log into pifpplus-dev first` | `localStorage.currentUser` not present | Refresh the admin page, log in, retry |
+| HTTP 403 on POST | Missing `csr` header | The script reads `localStorage.csr` — refresh the page to re-cache it |
+| HTTP 500 on POST `/events/{id}` | Event ID doesn't exist for this tenant | Skip — some tenants disable specific event types |
+| Some logs not configured | Per-level `levelLogId` mapping wrong | Use `/schemalevels/{lvl}/logs` to read the correct `levelLogId` (NOT the global log type id) |
+| Workflow notifications not visible in UI | Workflow has no steps configured | Step events only exist on multi-step workflows — the 4 base events still apply |
+| `currentUser is null` | Different localStorage key on this tenant | Inspect localStorage — find the key holding the JWT, update the auth block |
+
+---
+
+## Conclusion
+
+The P+ Notification Configuration Automation closes the loop on the notification setup phase of any P+ deployment. After running [P+ Notification Template from BRD](/blog/pplus-notification-template-from-brd) to produce the cleaned `.xlsx` template, this automation pushes those notifications directly into the live system — eliminating the manual data entry step entirely. **A full notification configuration that previously took a working day now takes ~90 seconds and a single prompt.**
+
+Pair this with [Getting Started: PPlus MCP Setup Guide](/blog/getting-started-pplus-mcp) to use Claude Code with the PPlus MCP for end-to-end live-system automation.
+
+<ClaudeCTA />
