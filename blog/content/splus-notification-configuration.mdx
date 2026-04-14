@@ -1,0 +1,356 @@
+---
+title: "S+ Notification Configuration — Automated System Import"
+description: "Automatically populate an entire SPlus notification system from a single client URL — PIF-branded bilingual email templates, app notifications, receivers, and template names — all imported directly into the live system via API."
+date: "2026-04-14"
+tags: ["SPlus", "Notification Configuration"]
+author: "Khalil Abu Mushref"
+readTime: "10 min read"
+---
+
+## Automation Name
+
+**S+ Notification Configuration — Direct System Import**
+
+This automation takes a client's SPlus notification page URL, discovers all components, events, properties, and receivers from the live system, then populates every notification template with professionally branded bilingual (AR/EN) email content, app notifications, SMS templates, descriptive names, and best-practice receiver assignments — all imported directly into the system via API. No manual data entry required.
+
+---
+
+## What It Does
+
+| Step | What Happens |
+|------|-------------|
+| 1 | You provide the client's SPlus notification URL and optionally an HTML email template |
+| 2 | Claude navigates to the system, authenticates, and discovers all components + events |
+| 3 | For each component, Claude fetches available properties, receiver roles, and existing template state |
+| 4 | Claude maps the notification spreadsheet data to the correct component IDs, event IDs, and property keys |
+| 5 | Builds PIF-branded (or client-branded) bilingual HTML email templates for every event |
+| 6 | Builds app notification templates using `{{Name}}` (not `{{Name_en}}`/`{{Name_ar}}`) |
+| 7 | Sends PUT requests to update all notification templates via the API |
+| 8 | Sends POST requests to assign best-practice receivers to every template |
+| 9 | Renames all templates from "Default" to descriptive bilingual notification titles |
+| 10 | Verifies every template was imported correctly |
+
+---
+
+## The Prompt
+
+Use this prompt in a **Claude Code** session with browser access. Replace the placeholders with your actual values.
+
+### Required Inputs
+
+| Input | Description | Example |
+|-------|-------------|---------|
+| **Client URL** | The notification page URL from the client's SPlus instance | `https://pifsplus-dev.masterteam.sa/template/1/notifications/5?eventId=61&activeIndex=0` |
+| **Notification Template** | The filled-in bilingual notification spreadsheet (.xlsx) | `SPlus_Notifications_Template.xlsx` |
+| **HTML Template** *(optional)* | A branded HTML email template file if the client has one | `PIF_S+.html` |
+
+### The Prompt
+
+```text
+@{{path-to-notification-template}}/SPlus_Notifications_Template.xlsx
+@{{path-to-html-template}}/ClientBrand.html  (optional — omit if no custom template)
+
+Go to the following SPlus notification system URL:
+
+{{CLIENT_NOTIFICATION_URL}}
+
+Then perform a FULL notification configuration import following these steps:
+
+--- PHASE 1: DISCOVERY ---
+
+1. Navigate to the URL and authenticate. Get the auth token from
+   localStorage.getItem('userData') and the CSR header.
+
+2. Identify ALL components in the left sidebar (e.g., Objective,
+   Strategic KPI, Operational KPI Cascading, Operational KPI, Division,
+   Initiative).
+
+3. For EACH component, use the API to fetch:
+   a. All events: GET /Service/api/notifications/component/{id}/events
+   b. All properties: GET /Service/api/notifications/component/{id}/properties?IsMultiLanguageEnabled=true
+   c. All receivers: GET /Service/api/notifications/component/{id}/receivers
+
+4. Record which components have events (can be configured) and which
+   don't (skip those).
+
+5. For each event, record the existing template ID, current content,
+   and current receivers.
+
+--- PHASE 2: MAPPING ---
+
+6. Map the notification spreadsheet rows to the discovered components:
+   - Match spreadsheet "Component" column to system component names
+   - Match spreadsheet "Event" column to system event displayNames
+   - Map spreadsheet property keys (e.g., {{owner_126}}) to REAL system
+     property keys (e.g., {{owner_6}}) using the properties API response
+   - CRITICAL: App templates must use {{Name}} not {{Name_en}}/{{Name_ar}}
+
+--- PHASE 3: TEMPLATE BUILDING ---
+
+7. For each notification event, build THREE templates:
+
+   EMAIL TEMPLATE (emailTemplate):
+   - If an HTML template file was provided, use it as the base design
+   - Include bilingual AR/EN sections with RTL/LTR formatting
+   - Arabic section: greeting, body text, link, signature
+   - English section: greeting, body text, link, signature
+   - Use client brand colors for highlighting entity names and user names
+   - Include {{webUrl}} link in both sections
+   - Include {{receiver}} in greeting
+   - Use correct property keys from the system (not spreadsheet keys)
+
+   APP TEMPLATE (appTemplate):
+   - JSON object with "ar" and "en" keys
+   - Short, concise notification text
+   - MUST use {{Name}} (not {{Name_en}} or {{Name_ar}})
+   - Other properties ({{userCausedEvent}}, {{Frequency}}) are the same
+
+   TEMPLATE NAME:
+   - Bilingual format: "Arabic Title / English Title"
+   - e.g., "إشعار إنشاء هدف استراتيجي / Strategic Objective Creation Notification"
+
+--- PHASE 4: IMPORT ---
+
+8. For each template, send a PUT request:
+   PUT /Service/api/notifications/templates/{templateId}
+   Body: {id, name, emailTemplate, SmsTemplate, appTemplate,
+          emailContentTranslatable: null, eventId, isSystem, receivers}
+
+   NOTE: Include existing receivers in PUT to preserve them.
+   New receivers CANNOT be added via PUT.
+
+9. For templates that need NEW receivers, send a POST request:
+   POST /Service/api/notifications/templates/{templateId}
+   Body: {receivers: [{id: "identifier", displayName: "Name", type: "Role|Actor|Group"}]}
+
+   Best practice receivers:
+   - Objective events → Creator (Actor)
+   - KPI events → Owner + Champion (Roles)
+   - Corrective Actions → Same as parent component
+   - Use the receiver identifiers from the receivers API response
+
+10. Add a 300-400ms delay between API calls to avoid rate limiting.
+
+--- PHASE 5: VERIFICATION ---
+
+11. After all imports, fetch every template back via the events API
+    and verify:
+    - Email template contains the branded HTML (not default text)
+    - App template has correct {ar, en} with {{Name}}
+    - Template name is bilingual (not "Default")
+    - Receivers are assigned (not empty)
+
+12. Navigate to 2-3 notification pages in the browser and take
+    screenshots to visually confirm the templates render correctly.
+
+--- CRITICAL RULES ---
+
+- NEVER use {{Name_en}} or {{Name_ar}} in app templates — use {{Name}}
+- ALWAYS fetch real property keys from the API — spreadsheet keys may be wrong
+- ALWAYS preserve existing receivers when sending PUT requests
+- Use POST (not PUT) to ADD new receivers to a template
+- Each component has DIFFERENT receiver role UUIDs — don't reuse across components
+- Test with ONE template first before bulk importing
+```
+
+---
+
+## How the API Works
+
+### Authentication
+
+```javascript
+// Get token from browser localStorage
+const token = JSON.parse(localStorage.getItem('userData')).token;
+
+// Required headers for all API calls
+const headers = {
+  'Authorization': 'Bearer ' + token,
+  'Content-Type': 'application/json',
+  'csr': '=8yPFwmIQPX96bxPVFP_62WCH*+o]v*g'
+};
+```
+
+### Discovery Endpoints
+
+| Method | Endpoint | Returns |
+|--------|----------|---------|
+| GET | `/Service/api/notifications/component/{id}/events` | All events + existing templates for a component |
+| GET | `/Service/api/notifications/component/{id}/properties?IsMultiLanguageEnabled=true` | Available template variables grouped by component |
+| GET | `/Service/api/notifications/component/{id}/receivers` | Available receiver roles, groups, and actors |
+| GET | `/Service/api/notifications/component/{id}/events/{eventId}` | Single event with full template details |
+
+### Update Endpoints
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| PUT | `/Service/api/notifications/templates/{templateId}` | Update template content (email, app, SMS, name) — preserves existing receivers |
+| POST | `/Service/api/notifications/templates/{templateId}` | Add NEW receivers to a template |
+
+### PUT Payload Format
+
+```json
+{
+  "id": 5,
+  "name": "إشعار إنشاء مؤشر أداء / KPI Creation Notification",
+  "emailTemplate": "<table>...full HTML...</table>",
+  "SmsTemplate": "Short SMS text",
+  "appTemplate": {
+    "ar": "تم إنشاء مؤشر أداء \"{{Name}}\" بواسطة \"{{userCausedEvent}}\".",
+    "en": "KPI \"{{Name}}\" has been created by \"{{userCausedEvent}}\"."
+  },
+  "emailContentTranslatable": null,
+  "eventId": 105,
+  "isSystem": true,
+  "receivers": []
+}
+```
+
+### POST Receiver Format
+
+```json
+{
+  "receivers": [
+    { "id": "role-uuid", "displayName": "Champion", "type": "Role" },
+    { "id": "role-uuid", "displayName": "Owner", "type": "Role" }
+  ]
+}
+```
+
+For actors: `{ "id": "creator", "displayName": "Creator", "type": "Actor" }`
+For groups: `{ "id": "1", "displayName": "Admin", "type": "Group" }`
+
+---
+
+## Critical Knowledge: App vs Email Properties
+
+This is the **#1 source of bugs** in notification configuration:
+
+| Channel | Name Property | Why |
+|---------|--------------|-----|
+| **Email** | `{{Name_en}}` (English section), `{{Name_ar}}` (Arabic section) | Email has separate AR/EN HTML sections |
+| **App** | `{{Name}}` (both `ar` and `en` bodies) | App resolves language automatically by user locale |
+
+If you see `{{Name_en}}` appearing as literal text in app notifications, the fix is to replace it with `{{Name}}`.
+
+Other properties (`{{userCausedEvent}}`, `{{webUrl}}`, `{{Frequency}}`, `{{owner_X}}`) work the same in both channels.
+
+---
+
+## Property Key Mapping
+
+The notification spreadsheet uses generic property keys. The **real** keys are component-specific and must be fetched from the API:
+
+| Spreadsheet Key | Real Key (varies by component) | How to Find |
+|-----------------|-------------------------------|-------------|
+| `{{owner_126}}` | `{{owner_6}}`, `{{owner_23}}`, `{{owner_24}}` | Properties API → component group → "Owner" |
+| `{{finishDate_131}}` | `{{DueDate_6}}`, `{{DueDate_23}}` (may not exist) | Properties API → check if available |
+| `{{owner_147}}` | Component-specific owner key | Properties API |
+| `{{Frequency}}` | `{{Frequency}}` (usually the same) | Properties API → "Frequency" |
+
+Always use the **real** keys from `GET /Service/api/notifications/component/{id}/properties`.
+
+---
+
+## Best Practice Receiver Assignment
+
+| Component Type | Recommended Receivers | Rationale |
+|---------------|----------------------|-----------|
+| **Objectives** | Creator | Notify the person who created/modified the objective |
+| **KPIs** (all levels) | Owner + Champion | Both responsible parties must track KPI lifecycle |
+| **Corrective Actions** | Same as parent component | Corrective actions inherit the parent's accountability |
+| **Initiatives** | Creator (if no roles) | Notify the person responsible for the initiative |
+
+---
+
+## Required Files
+
+| # | File | Purpose | Required? |
+|---|------|---------|-----------|
+| 1 | `SPlus_Notifications_Template.xlsx` | Filled-in bilingual notification content for all events | **Yes** |
+| 2 | Client SPlus notification URL | The live system URL to import into | **Yes** |
+| 3 | HTML email template (`.html`) | Client-branded email design with header, colors, signature | Optional |
+
+---
+
+## Downloadable Templates
+
+<DownloadSection>
+  <DownloadButton
+    fileName="SPlus_Notifications_Template.xlsx"
+    label="S+ Notification Master Template (.xlsx)"
+    description="Standard bilingual notification template with sheets for Objectives, KPIs, Initiatives, Key Results, and Variables Reference."
+  />
+</DownloadSection>
+
+---
+
+## Custom HTML Email Template
+
+If the client has a branded HTML email template, provide it as an additional file. The automation will use it as the base for all email notifications. The template should include:
+
+- **Header section** with client logo/banner image
+- **Arabic RTL section** with greeting, body placeholder, link, and signature
+- **English LTR section** with greeting, body placeholder, link, and signature
+- **Client brand colors** for text highlights and links
+
+If no HTML template is provided, Claude will generate a clean, professional bilingual email layout using the client's system colors (extracted from the instance configuration).
+
+---
+
+## What Gets Configured
+
+For each notification event in the system, the automation sets:
+
+| Field | Content |
+|-------|---------|
+| **Template Name** | Bilingual title (Arabic / English) — shown as email subject header |
+| **Email Template** | Full HTML with client branding, bilingual AR/EN sections, dynamic variables, links |
+| **App Template** | Concise bilingual {ar, en} JSON with `{{Name}}` for locale-aware resolution |
+| **SMS Template** | Short English summary text |
+| **Receivers** | Best-practice role/actor assignments (Owner, Champion, Creator) |
+
+---
+
+## Example Output
+
+After running the automation on a PIF SPlus instance with 4 active components:
+
+| Component | Events Configured | Receivers |
+|-----------|------------------|-----------|
+| Objective | 4 (Created, Updated, Corrective Created, Corrective Updated) | Creator |
+| Strategic KPI | 13 (9 KPI lifecycle + 4 Corrective Actions) | Champion + Owner |
+| Op KPI Cascading | 11 (9 KPI lifecycle + 2 Corrective Actions) | Owner + Champion |
+| Operational KPI | 11 (9 KPI lifecycle + 2 Corrective Actions) | Champion + Owner |
+| **Total** | **39 templates** | All assigned |
+
+---
+
+## Troubleshooting
+
+| Issue | Cause | Fix |
+|-------|-------|-----|
+| `{{Name_en}}` appears literally in app notifications | Used email property key in app template | Replace with `{{Name}}` |
+| Receivers not saving via PUT | PUT preserves but can't create receivers | Use POST to add new receivers |
+| `owner_126` doesn't resolve | Spreadsheet key doesn't match system | Fetch real key from properties API |
+| Template shows "Default" name | Name wasn't updated | PUT with bilingual name in the `name` field |
+| Events appear on wrong component page | URL has mismatched componentId/eventId | Navigate via sidebar — system auto-loads correct events |
+
+---
+
+## URL Pattern Reference
+
+```text
+https://{client-subdomain}.masterteam.sa/template/{template-id}/notifications/{component-id}?eventId={event-id}&activeIndex=0
+```
+
+| URL Part | Description |
+|----------|-------------|
+| `{client-subdomain}` | Client-specific subdomain (e.g., `pifsplus-dev`, `g-smo`) |
+| `{template-id}` | Strategy template number (1, 2, etc.) |
+| `{component-id}` | Notification component ID from sidebar |
+| `{event-id}` | Specific event within the component |
+
+---
+
+<Author id="Khalil Abu Mushref" />
