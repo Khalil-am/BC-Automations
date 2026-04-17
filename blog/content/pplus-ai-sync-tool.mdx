@@ -1,0 +1,289 @@
+---
+title: "PPlus AI Sync Tool — One-Click Configuration Sync Across Instances"
+description: "A standalone, Autopilot-first tool that captures configuration from one PPlus instance and replays it on any number of targets, with Claude in the loop to rewrite renamed keys, recover from POST failures, and keep every write auditable and reversible."
+date: "2026-04-18"
+tags: ["PPlus", "Sync Tool"]
+author: "Khalil Abu Mushref"
+---
+
+## Why this tool exists
+
+Every PPlus delivery hits the same wall: configuration drift between
+dev → stage → prod, and between customer instances. The legacy
+`ConfigurationDiffTool` inside `MasterteamSA/pplus4-backend` tried to solve
+this, but two gaps quietly ate hours of engineering time every cycle:
+
+1. **It didn't copy everything.** Dashboards, ChartComponents, and
+   `Level.Sources` were *captured* into the snapshot but never *synced*
+   to the target. Anyone relying on it for a dashboard migration had to
+   finish the job by hand.
+2. **It didn't map renamed keys.** The rewriter was a naïve
+   `string.Replace`, and the formula rewriting path was commented out.
+   Any property rename in the target broke every formula that
+   referenced the old key.
+
+The **PPlus AI Sync Tool** is a ground-up rebuild that fixes both. It
+adds preview + audit + rollback, and it puts Claude in the loop for the
+semantic work a regex cannot do — matching renamed entities and
+rewriting C#/`{{Key}}` formulas against the new schema.
+
+Repo: [https://github.com/Khalil-am/pplus-ai-sync-tool](https://github.com/Khalil-am/pplus-ai-sync-tool)
+
+---
+
+## What you get
+
+- **Autopilot-first UI.** `/` redirects straight to `/autopilot`. One
+  screen: paste a source URL, a target URL, pick what to sync, click
+  *Run autopilot*. Claude handles capture → diff → apply end-to-end.
+- **Safe by default.** Updates, deletes, and system-record syncs are
+  all **off** until you explicitly opt in. The worst thing a fresh run
+  can do is create new entities the target doesn't have yet.
+- **Multi-target fan-out.** One source, many targets. Each target is
+  its own sub-run with independent match / diff / plan / apply /
+  rollback state.
+- **Never-give-up apply.** If a POST fails, Claude inspects the server
+  error and a real target sample, proposes a fix, and the tool retries.
+  Every attempt is streamed to the UI and persisted to the audit log.
+- **Deterministic formula rewriting.** A `{{Key}}` AST parser handles
+  the grammar; Claude's `rewriteFormula` is only the fallback for
+  embedded JS. Every rewrite is re-parsed and rejected if it introduces
+  an unknown key.
+- **Credentials stay server-side.** AES-256-GCM in the embedded
+  Postgres. The UI never sees more than `****`.
+- **Rollback on every run.** Pre-apply snapshot is captured before the
+  first write; one click in `/history` replays it.
+
+---
+
+## Prerequisites
+
+| | Required |
+|---|---|
+| **Node.js** | 22 or newer (`node -v` → `v22.x` or higher) |
+| **pnpm** | 9 or newer (`npm i -g pnpm` if missing) |
+| **Claude Code CLI** | Optional — enables the AI features. If absent, the tool still runs but without Claude in the loop. |
+| **Docker / Postgres** | **Not needed.** The tool ships with an embedded PGlite database. |
+
+No `ANTHROPIC_API_KEY` is needed anywhere. The tool reuses whatever
+auth the local `claude` CLI already has.
+
+---
+
+## Install & run — macOS / Linux
+
+**Step 1: Clone the repo**
+
+```bash
+git clone https://github.com/Khalil-am/pplus-ai-sync-tool.git
+cd pplus-ai-sync-tool
+```
+
+**Step 2: One command — `pnpm dev`**
+
+```bash
+pnpm dev
+```
+
+That's it. The first time you run it, the `scripts/dev.mjs` wrapper:
+
+1. Runs `pnpm install` if `node_modules` is missing.
+2. Generates Drizzle migrations into `packages/db/drizzle` if the
+   folder is empty.
+3. Copies `.env.example` → `.env.local` on first boot.
+4. Finds the first free port starting at **3000** (no EADDRINUSE
+   crashes when another dev server is already running).
+5. Boots `next dev --turbopack` on that port.
+
+Every subsequent `pnpm dev` is instant — dependencies and migrations
+are cached.
+
+---
+
+## Install & run — Windows
+
+The top-level `pnpm dev` wrapper relies on
+`child_process.spawn('pnpm', ...)`, which Windows can't resolve without
+`shell: true`. Until the wrapper is patched upstream, run the web app
+directly:
+
+```bash
+git clone https://github.com/Khalil-am/pplus-ai-sync-tool.git
+cd pplus-ai-sync-tool
+pnpm install
+cd apps/web
+pnpm exec next dev --turbopack -p 3000
+```
+
+The first request still triggers migrations + seed automatically — you
+just bypass the Node-spawn-`pnpm` layer.
+
+---
+
+## First-run checklist
+
+Once the server is up:
+
+1. Open **http://localhost:3000**. You land on `/autopilot`.
+2. Sign in with the seeded operator. Defaults:
+   - Username: `admin`
+   - Password: `admin`
+   - Override by setting `SEED_USER` / `SEED_PASSWORD` in
+     `.env.local` before first boot.
+3. In the header you'll see two tabs — **Autopilot** and **History** —
+   plus a theme toggle. Everything else (connect, snapshot, match,
+   diff, apply) still exists under direct URLs and is reachable from
+   the `configure` link on Autopilot, but the happy path does not need
+   them.
+
+---
+
+## Using Autopilot
+
+### Step 1 — Source
+
+Paste the PPlus instance URL you're **copying from**. Pasted URLs are
+normalized to their origin (`https://host` — no paths, no query). Pick
+the auth mode:
+
+| Mode | Secret field |
+|---|---|
+| **cookie** | Paste the `Cookie` header from a logged-in browser session. |
+| **bearer** | Paste a valid bearer token. |
+| **basic** | Paste `user:pass`. |
+
+If the instance requires a CSR token
+(`localStorage.getItem('csr')`), paste it in the **CSR token** field.
+
+### Step 2 — Target
+
+Same three fields, but this is the instance you're **writing to**.
+*Every write happens here.*
+
+### Step 3 — Pick the scope
+
+Click `configure` on the **Kinds** row. You land on `/snapshot` with a
+check-box matrix of every entity kind PPlus exposes (levels, logs,
+properties, level statuses, phase gates, lookups, sources, roles,
+cards, process builder, notifications, workflows, dashboards, chart
+components, users, groups, settings, holidays, accessibilities, …).
+
+Presets to start from:
+
+- **Schema only** — the safe default. Just the data model:
+  levels, logs, properties, statuses, phase gates, lookups, sources.
+  9 kinds.
+- **Schema + Admin** — add per-level admin: roles, escalations,
+  procurement, cards management, process builder, approvals, code
+  builder, notifications. 18 kinds.
+- **Schema + Dashboards** — schema plus the dashboard layer. 9 kinds.
+- **Global admin** — users, groups, settings, holidays, accessibility,
+  classification, schedule views, delegations. 9 kinds.
+- **Everything** — all 30 kinds. Use for full instance clone only.
+
+Click **← Back to Autopilot** — selections persist automatically.
+
+### Step 4 — Safe-mode switches
+
+The three checkboxes are **off by default**:
+
+- **Include updates** — overwrites existing target entities when the
+  source version differs. Leave **off** if the target may have local
+  customizations you don't want clobbered.
+- **Include deletes** — removes target entities that don't exist on
+  source. Leave **off** unless you're intentionally mirroring.
+- **Include system records** — built-in logs, lookups, and levels that
+  ship with every instance. Leave **off** unless you know why you're
+  touching them.
+
+### Step 5 — Run
+
+Two buttons:
+
+- **Run autopilot** — live apply. Writes will happen on the target.
+- **Dry-run (no writes)** — capture + match + diff + plan, then stop.
+  Nothing is written. Use this to preview risk before arming the live
+  button.
+
+Every event — `capture`, `diff`, `op`, `phase`, `done`, `error` — streams
+to the log panel in real time. On a POST failure you'll see:
+
+```
+ai: Claude is thinking… (inspecting target 400 response)
+ai: proposed fix — retry with payload.rolesIds removed (target doesn't
+    expose it on this endpoint)
+op:  retry 2/3 → 201 Created
+```
+
+---
+
+## Rollback
+
+Every applied run captures a pre-apply snapshot before the first write.
+To roll back:
+
+1. Open **/history** from the header.
+2. Find the run row (ordered newest-first, capped at 50).
+3. Click **Rollback**. The pre-apply snapshot is replayed.
+
+The run is marked `rolled-back` in the history table; the original
+`applied` record is preserved for audit.
+
+---
+
+## Troubleshooting
+
+**`Error: spawn pnpm ENOENT` on Windows.** This is the known issue in
+`scripts/dev.mjs` — Node's `spawn` on Windows can't resolve the `pnpm`
+`.cmd` shim without `shell: true`. Use the Windows instructions above
+(run `next dev` directly from `apps/web`).
+
+**"Storage — embedded PGlite unreachable."** Delete
+`~/.pplus-ai-sync/db` and restart. First request will re-migrate and
+re-seed.
+
+**AI features don't run.** Check that `claude` is on PATH and has been
+signed in at least once:
+
+```bash
+npm i -g @anthropic-ai/claude-code
+claude                                # sign in once
+```
+
+**Want a real Postgres instead of PGlite?** Set
+`DATABASE_URL=postgres://user:pass@host/db` in `.env.local`. The schema
+is identical — no migrations to re-run.
+
+---
+
+## Design decisions worth knowing
+
+- **API-first, not DB-first.** The connector hits PPlus REST
+  endpoints, not the database. Safer (goes through app-layer
+  validation) and works against any deployed instance.
+- **Nothing writes without explicit confirmation.** The manual `/apply`
+  path (direct URL, bypassing Autopilot) requires typing
+  `APPLY <targetHost>` and is gated by a 60-second server nonce.
+- **Scope is per-run.** The entity-kind selection is stored on the run,
+  not globally. You can run Schema-only today and Everything tomorrow
+  without re-configuring.
+
+---
+
+## What's next
+
+The pipeline stage execution (capture / match / diff / plan / apply /
+rollback) is live in Autopilot today. The manual per-stage pages
+(`/connect`, `/snapshot`, `/match`, `/diff`, `/apply`) are reachable by
+direct URL for debugging; most operators will never need them.
+
+Planned for the next pass:
+
+- NextAuth operator login (replacing the seeded `admin/admin`).
+- Per-target diff viewer with inline mapping editor.
+- Apply-with-nonce confirm flow inline in Autopilot.
+
+If you're running a migration right now, clone the repo, run
+`pnpm dev` (or the Windows variant), and start with a dry-run on your
+next target. The audit log is the fastest way to see exactly what the
+old tool was leaving behind.
