@@ -6,12 +6,14 @@ import { BlogCard } from "@/components/blog-card";
 import { TagFilter } from "@/components/tag-filter";
 import { FlickeringGrid } from "@/components/magicui/flickering-grid";
 import { DeliverableCounter } from "@/components/deliverable-counter";
+import { SegmentTabs } from "@/components/segment-tabs";
 
 interface BlogData {
   title: string;
   description: string;
   date: string;
   tags?: string[];
+  segment?: "BC" | "QA" | "Configuration";
   featured?: boolean;
   pinned?: boolean;
   readTime?: string;
@@ -41,24 +43,40 @@ const formatDate = (date: Date): string => {
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams: Promise<{ tag?: string }>;
+  searchParams: Promise<{ tag?: string; segment?: string }>;
 }) {
   const resolvedSearchParams = await searchParams;
   const allPages = blogSource.getPages() as BlogPage[];
   const sortedBlogs = allPages.sort((a, b) => {
-    // Pinned posts always come first
     const pinnedA = a.data.pinned ? 1 : 0;
     const pinnedB = b.data.pinned ? 1 : 0;
     if (pinnedA !== pinnedB) return pinnedB - pinnedA;
-    // Then sort by date (newest first)
     const dateA = new Date(a.data.date).getTime();
     const dateB = new Date(b.data.date).getTime();
     return dateB - dateA;
   });
 
+  // Segment filtering
+  const selectedSegment = resolvedSearchParams.segment || "All";
+  const segmentFilteredBlogs =
+    selectedSegment === "All"
+      ? sortedBlogs
+      : sortedBlogs.filter((blog) => blog.data.segment === selectedSegment);
+
+  // Segment counts
+  const segmentCounts: Record<string, number> = {
+    All: sortedBlogs.length,
+    BC: sortedBlogs.filter((b) => b.data.segment === "BC").length,
+    QA: sortedBlogs.filter((b) => b.data.segment === "QA").length,
+    Configuration: sortedBlogs.filter(
+      (b) => b.data.segment === "Configuration"
+    ).length,
+  };
+
+  // Tag filtering (within segment)
   const tagPriority = ["Getting Started", "PPlus", "SPlus", "Diwan"];
   const uniqueTags = Array.from(
-    new Set(sortedBlogs.flatMap((blog) => blog.data.tags || []))
+    new Set(segmentFilteredBlogs.flatMap((blog) => blog.data.tags || []))
   );
   const sortedTags = [
     ...tagPriority.filter((t) => uniqueTags.includes(t)),
@@ -69,19 +87,24 @@ export default async function HomePage({
   const selectedTag = resolvedSearchParams.tag || "All";
   const filteredBlogs =
     selectedTag === "All"
-      ? sortedBlogs
-      : sortedBlogs.filter((blog) => blog.data.tags?.includes(selectedTag));
+      ? segmentFilteredBlogs
+      : segmentFilteredBlogs.filter((blog) =>
+          blog.data.tags?.includes(selectedTag)
+        );
 
-  const tagCounts = allTags.reduce((acc, tag) => {
-    if (tag === "All") {
-      acc[tag] = sortedBlogs.length;
-    } else {
-      acc[tag] = sortedBlogs.filter((blog) =>
-        blog.data.tags?.includes(tag)
-      ).length;
-    }
-    return acc;
-  }, {} as Record<string, number>);
+  const tagCounts = allTags.reduce(
+    (acc, tag) => {
+      if (tag === "All") {
+        acc[tag] = segmentFilteredBlogs.length;
+      } else {
+        acc[tag] = segmentFilteredBlogs.filter((blog) =>
+          blog.data.tags?.includes(tag)
+        ).length;
+      }
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   return (
     <div className="min-h-screen bg-background relative">
@@ -102,19 +125,29 @@ export default async function HomePage({
               BC Automations
             </h1>
             <p className="text-muted-foreground text-sm md:text-base lg:text-lg">
-              Business Consulting automation templates — user manuals, test cases, notifications, and more.
+              Business Consulting automation templates — user manuals, test
+              cases, notifications, and more.
             </p>
           </div>
           <div className="mt-4 p-4 rounded-lg border border-border bg-card/50 backdrop-blur-sm w-fit">
             <DeliverableCounter />
           </div>
         </div>
-        {allTags.length > 0 && (
+
+        <div className="max-w-7xl mx-auto w-full">
+          <SegmentTabs
+            selectedSegment={selectedSegment}
+            segmentCounts={segmentCounts}
+          />
+        </div>
+
+        {allTags.length > 1 && (
           <div className="max-w-7xl mx-auto w-full">
             <TagFilter
               tags={allTags}
               selectedTag={selectedTag}
               tagCounts={tagCounts}
+              currentSegment={selectedSegment}
             />
           </div>
         )}
@@ -145,6 +178,12 @@ export default async function HomePage({
               );
             })}
           </div>
+          {filteredBlogs.length === 0 && (
+            <div className="text-center py-16 text-muted-foreground">
+              <p className="text-lg">No posts found for this filter.</p>
+              <p className="text-sm mt-1">Try selecting a different segment or tag.</p>
+            </div>
+          )}
         </Suspense>
       </div>
     </div>

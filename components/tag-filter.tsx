@@ -14,18 +14,29 @@ interface TagFilterProps {
   tags: string[];
   selectedTag: string;
   tagCounts?: Record<string, number>;
+  currentSegment?: string;
 }
 
-export function TagFilter({ tags, selectedTag, tagCounts }: TagFilterProps) {
+export function TagFilter({
+  tags,
+  selectedTag,
+  tagCounts,
+  currentSegment,
+}: TagFilterProps) {
   const router = useRouter();
   const pathname = usePathname();
 
   const handleTagClick = (tag: string) => {
     const params = new URLSearchParams();
+    // Preserve segment when switching tags
+    if (currentSegment && currentSegment !== "All") {
+      params.set("segment", currentSegment);
+    }
     if (tag !== "All") {
       params.set("tag", tag);
     }
-    router.push(`${pathname}?${params.toString()}`);
+    const query = params.toString();
+    router.push(query ? `${pathname}?${query}` : pathname);
   };
 
   const DesktopTagFilter = () => (

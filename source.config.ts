@@ -18,6 +18,7 @@ export const { docs, meta } = defineDocs({
     schema: frontmatterSchema.extend({
       date: z.string(),
       tags: z.array(z.string()).optional(),
+      segment: z.enum(["BC", "QA", "Configuration"]).optional(),
       featured: z.boolean().optional().default(false),
       pinned: z.boolean().optional().default(false),
       readTime: z.string().optional(),
