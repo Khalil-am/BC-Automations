@@ -1,0 +1,306 @@
+---
+title: "QA Agent — AI Frontend QA That Doesn't Invent Bugs"
+description: "A Claude-Code-driven QA agent that drives a real browser via the Playwright MCP server, reproduces every candidate bug 3 times on clean state before confirming it, and cross-references the source in the mapped MasterteamSA repo so it never reports a bug that isn't really there."
+date: "2026-04-18"
+tags: ["QA", "Diwan", "PPlus", "SPlus"]
+author: "Khalil Abu Mushref"
+---
+
+## Why this tool exists
+
+Every QA cycle on **Diwan / PPlus / SPlus** ends up with the same
+argument: *"is this a real bug, or did the page just hiccup once?"*
+One-shot anomalies (a CDN flake, a cold-hydration race, a stale
+session) get filed as bugs, engineers can't reproduce them, and the
+ticket gets closed as *"works on my machine."* Meanwhile, real bugs
+sit next to the noise, lose urgency, and ship to prod.
+
+Existing AI browser agents make the problem worse, not better. They
+run a page once, see a warning, and write it up as a confirmed bug.
+There's no reproduction discipline, no code grounding — just vibes.
+
+The **QA Agent** is a ground-up rebuild of that workflow with two
+non-negotiable rules:
+
+1. **No bug is "confirmed" until it fails 3 times on clean browser
+   state.** One failure is noise. Two is flaky. Three is a bug.
+2. **Every confirmed bug is grounded in the source code.** Before it
+   files a finding, the agent reads the backing repo in
+   [MasterteamSA](https://github.com/MasterteamSA) and quotes the
+   lines that produce the behavior. If the code matches what the page
+   does, it's a spec gap — not a bug.
+
+Repo: [https://github.com/MasterteamSA/QA-Agent](https://github.com/MasterteamSA/QA-Agent)
+
+---
+
+## What you get
+
+- **3× verification loop.** Every candidate bug goes through:
+  close the browser context → reopen fresh → replay the steps → record
+  pass/fail. Classifications: `confirmed-bug` (3/3 fail), `flaky`
+  (1–2/3), `not-reproducible` (0/3 — dropped).
+- **Source-grounded reports.** For every confirmed bug, the agent
+  points you at the exact file and line in `diwanv3-web`,
+  `pplus5-web`, `SPlusV3-web`, or the backing C# repo — and quotes
+  the offending code.
+- **URL → repo mapping out of the box.** Point it at
+  `stadiwan-dev.masterteam.sa`, `pplus.*.masterteam.sa`, or
+  `splus.*.masterteam.sa` and it already knows which repo to read.
+- **Real Playwright, not screenshot guessing.** Uses Microsoft's
+  [Playwright MCP server](https://github.com/microsoft/playwright-mcp)
+  — accessibility-tree snapshots, not pixel grids — so it's fast,
+  cheap, and deterministic. Screenshots are reserved for bug
+  evidence.
+- **Safe by default.** Prod URLs are flagged read-only. Destructive
+  flows (delete, irreversible approvals) require explicit user
+  confirmation. Credentials are never persisted — the agent asks for
+  them in-chat and forgets them at the end of the session.
+- **One command to run.** `/test-platform <url>` from inside Claude
+  Code kicks off the whole flow. No scripting required.
+- **Structured markdown reports.** Every run drops a
+  `test-runs/<platform>/<timestamp>/report.md` plus the Playwright
+  trace. Shareable, diff-able, archivable.
+
+---
+
+## Prerequisites
+
+| | Required |
+|---|---|
+| **Node.js** | 20 or newer (`node -v` → `v20.x` or higher) |
+| **GitHub CLI** | Authenticated against your MasterteamSA-member account (`gh auth login`) |
+| **Claude Code CLI** | [docs.claude.com/en/docs/claude-code](https://docs.claude.com/en/docs/claude-code) |
+| **Playwright browsers** | Installed automatically by `npm run setup` |
+
+No `ANTHROPIC_API_KEY` is needed. The agent reuses whatever auth the
+local `claude` CLI already has.
+
+---
+
+## Install & run — macOS / Linux
+
+**Step 1: Clone the repo**
+
+```bash
+git clone https://github.com/MasterteamSA/QA-Agent.git
+cd QA-Agent
+```
+
+**Step 2: Install & verify**
+
+```bash
+npm run setup
+npm run doctor
+```
+
+`npm run setup` installs node deps, downloads Chromium via Playwright,
+and registers the Playwright MCP server so Claude Code picks it up
+automatically.
+
+`npm run doctor` is a preflight — it prints `PASS`/`FAIL` for every
+dependency (Node version, `gh` auth, MasterteamSA org access,
+Playwright browsers, config files, MCP wiring). Fix any `FAIL` before
+moving on.
+
+**Step 3: Launch Claude Code**
+
+```bash
+claude
+```
+
+From inside the Claude Code prompt:
+
+```
+/test-platform https://stadiwan-dev.masterteam.sa/main
+```
+
+That's it. The agent will:
+
+1. Match the URL to `diwan-v3-dev` in `config/platforms.json`.
+2. Load the `diwan-smoke` flow.
+3. Open a real browser via the Playwright MCP and navigate.
+4. If the page redirects to a login form, it **pauses** and asks you
+   for credentials in-chat. Paste them — they're never written to
+   disk.
+5. Walk the top navigation, taking accessibility snapshots and
+   checking console / network after every click.
+6. For every anomaly, run the 3× verification loop from clean state.
+7. For every confirmed bug, `gh api` the backing repo, read the
+   suspected file, quote the offending lines.
+8. Write `test-runs/diwan-v3-dev/<timestamp>/report.md`.
+
+---
+
+## Install & run — Windows
+
+Same three steps, same commands. PowerShell works out of the box:
+
+```powershell
+git clone https://github.com/MasterteamSA/QA-Agent.git
+cd QA-Agent
+npm run setup
+npm run doctor
+claude
+```
+
+If you prefer a wrapper, `.\scripts\setup.ps1` and `.\scripts\run.ps1`
+are included.
+
+> **OneDrive gotcha:** If `npm install` fails with `EBUSY` on a
+> OneDrive-synced folder, move the checkout out of your OneDrive
+> directory. OneDrive occasionally locks files mid-write during
+> `node_modules` installs.
+
+---
+
+## The three slash commands
+
+| Command | What it does |
+|---|---|
+| `/test-platform <url> [flow]` | Full QA pass against a URL. The agent picks the flow based on `config/platforms.json`, or uses the one you name. |
+| `/verify-bug <url> "<description>"` | Single-bug verification. Reproduces the described bug 3× and classifies it as `confirmed-bug`, `flaky`, or `not-reproducible`. |
+| `/add-platform <url>` | Register a new Masterteam product (URL → repo mapping). Asks you a short Q&A, validates the repos exist, updates `config/platforms.json`, and scaffolds a flow file. |
+
+---
+
+## What a report looks like
+
+Every session produces a markdown report you can paste straight into
+a ticket:
+
+```markdown
+# QA Run — Diwan v3 (dev) — 2026-04-18T10:15:00Z
+
+- Target: https://stadiwan-dev.masterteam.sa/main
+- Authenticated as: khalil@masterteam.sa
+- Flow: diwan-smoke
+- Summary: 2 confirmed bugs · 0 spec mismatches · 1 flaky · 0 not reproducible
+
+## Confirmed bugs
+
+### CONFIRMED-BUG-001: Save button on new-record form returns 500
+- Severity: blocker
+- Reproducibility: 3/3
+- Steps:
+  1. Navigate to /main/new
+  2. Fill required fields
+  3. Click Save
+- Expected: record persisted, redirect to /main
+- Actual: 500 response, toast "Internal server error"
+- Evidence: test-runs/.../run-1.png, run-2.png, run-3.png
+- Suspected source: MasterteamSA/Diwan3.BE/Controllers/RecordsController.cs:142
+```
+
+Open the Playwright trace in the built-in viewer:
+
+```bash
+npx playwright show-trace test-runs/<platform>/<timestamp>/trace.zip
+```
+
+---
+
+## Seeded platforms
+
+Out of the box, the URL → repo map covers every Masterteam product
+family:
+
+| Platform | Frontend repo | Backend repo(s) |
+|---|---|---|
+| **Diwan v3 (dev)** | `diwanv3-web` | `Diwan3.BE` |
+| **Diwan v3 (prod)** | `diwanv3-web` | `Diwan3.BE` |
+| **Diwan v2** | `DiwanV2-Angular` | `diwanV2` |
+| **PPlus 5** | `pplus5-web` | `Pplus5.BE` |
+| **PPlus 4** | `pplus5-web` | `pplus4-backend` |
+| **SPlus v3** | `SPlusV3-web` | `SPlusV3-backend` |
+| **Momtathil** | `Momtathil-web` | `Momtathil-backend` |
+
+To test something else, run `/add-platform <url>` once and it's in
+the map for every future run.
+
+---
+
+## How the 3× rule actually works
+
+When the agent spots an anomaly — a console error, a 5xx response,
+a missing element, a broken form — it does **not** immediately file
+a bug. Instead:
+
+1. It closes the browser context entirely (no shared cookies,
+   localStorage, or cache with the previous attempt).
+2. It opens a fresh context, re-authenticates if needed, and waits
+   for `networkidle` before the first action. This kills cold-cache
+   races, which are the #1 source of false-positive "bugs."
+3. It replays the exact same steps, verbatim.
+4. It records whether the same symptom reappeared.
+5. It does this **three times total.**
+
+| Failures | Label | What happens |
+|---|---|---|
+| 3/3 | `confirmed-bug` | Filed in the report, cross-referenced to source |
+| 1/3 or 2/3 | `flaky` | Filed with flake notes; not claimed as a bug |
+| 0/3 | `not-reproducible` | Dropped. One-line entry in `test-runs/index.md`. |
+
+The whole loop lives in a reusable **skill**
+(`.claude/skills/verify-bug/SKILL.md`) — any future agent in the
+workspace can call it and inherit the same discipline without
+copy-paste.
+
+---
+
+## Why this is faster than writing Playwright tests by hand
+
+- **No test maintenance.** The agent re-discovers the nav on every
+  run. When a button moves or is renamed, the agent adapts instead of
+  breaking.
+- **Source grounding finds bugs you'd miss.** If the page behaves
+  oddly but the code says "this is intentional," the report labels
+  it a **spec mismatch** — you resolve it with product, not engineering.
+- **i18n fallbacks built in.** Clicks try Arabic and English labels
+  in the same step, so EN/AR parity bugs surface on the first pass.
+- **Traces are free.** Every run produces a Playwright trace viewable
+  in the same tooling your engineers already use.
+
+---
+
+## Common questions
+
+**Will it invent bugs?** No. Every candidate must fail 3/3 on clean
+state. Anything less is labeled `flaky` or `not-reproducible` and
+never appears as a confirmed bug.
+
+**Does it need my credentials ahead of time?** No. It prompts in the
+chat at runtime and never persists them. Don't add them to `.env` —
+they're session-only by design.
+
+**Prod safety?** Prod URLs are flagged `readOnly: true` in
+`config/platforms.json`. The agent refuses destructive actions
+against them unless you override for a single flow.
+
+**What about SSO?** If the SSO flow can't be scripted (e.g. Entra AD
+with MFA), the agent stops at the SSO wall, describes what it
+reached, and asks you for a session cookie or throwaway credentials.
+It will not try common defaults.
+
+**What about Shadow DOM?** Accessibility-tree snapshots can't see
+inside shadow roots. The agent calls this out explicitly in the
+report instead of silently reporting a "missing element" bug — a
+common failure mode of AI browser agents in 2026.
+
+---
+
+## What's next
+
+- More seeded flows per product — beyond the default smoke tests.
+- A GitHub Action that runs `/test-platform` against dev after every
+  merge and opens issues for `confirmed-bug` findings.
+- Integration with the `pplus-knowledge` and `splus-knowledge` MCPs
+  for deeper code grounding.
+
+If you want a flow added for a platform that isn't in the seed list
+yet, run `/add-platform <url>` once and commit the generated entry —
+PRs welcome.
+
+---
+
+**Repo:** [github.com/MasterteamSA/QA-Agent](https://github.com/MasterteamSA/QA-Agent)
