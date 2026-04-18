@@ -12,16 +12,105 @@ import {
 
 export type Segment = "BC" | "QA" | "Configuration";
 
+function BCPointerIcon() {
+  return (
+    <motion.div
+      animate={{ scale: [0.9, 1.05, 0.9] }}
+      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      className="flex items-center gap-1.5"
+    >
+      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-500 shadow-lg shadow-blue-500/30 ring-2 ring-white/80">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="white"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+        </svg>
+      </div>
+      <span className="rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-semibold text-white shadow-md whitespace-nowrap">
+        BC
+      </span>
+    </motion.div>
+  );
+}
+
+function QAPointerIcon() {
+  return (
+    <motion.div
+      animate={{ scale: [0.9, 1.05, 0.9] }}
+      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+      className="flex items-center gap-1.5"
+    >
+      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/30 ring-2 ring-white/80">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="white"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          <path d="m9 12 2 2 4-4" />
+        </svg>
+      </div>
+      <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-semibold text-white shadow-md whitespace-nowrap">
+        QA
+      </span>
+    </motion.div>
+  );
+}
+
+function ConfigPointerIcon() {
+  return (
+    <motion.div
+      animate={{ scale: [0.9, 1.05, 0.9] }}
+      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
+      className="flex items-center gap-1.5"
+    >
+      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-500 shadow-lg shadow-amber-500/30 ring-2 ring-white/80">
+        <motion.svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="white"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          animate={{ rotate: [0, 90] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+        >
+          <circle cx="12" cy="12" r="3" />
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+        </motion.svg>
+      </div>
+      <span className="rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-semibold text-white shadow-md whitespace-nowrap">
+        Config
+      </span>
+    </motion.div>
+  );
+}
+
 const segments: {
   id: Segment;
   title: string;
   subtitle: string;
   description: string;
   icon: React.ReactNode;
+  pointerIcon: React.ReactNode;
   color: string;
   bgColor: string;
   borderColor: string;
-  pointerClass: string;
   labelBg: string;
 }[] = [
   {
@@ -30,10 +119,10 @@ const segments: {
     subtitle: "Business Consulting",
     description: "Dashboards, migrations, reports & data workflows",
     icon: <Briefcase className="h-5 w-5" />,
+    pointerIcon: <BCPointerIcon />,
     color: "text-blue-500",
     bgColor: "bg-blue-500/10",
     borderColor: "border-blue-500/40",
-    pointerClass: "text-blue-500 stroke-blue-500",
     labelBg: "bg-blue-500",
   },
   {
@@ -42,10 +131,10 @@ const segments: {
     subtitle: "Quality Assurance",
     description: "Test cases, user manuals & documentation",
     icon: <ClipboardCheck className="h-5 w-5" />,
+    pointerIcon: <QAPointerIcon />,
     color: "text-emerald-500",
     bgColor: "bg-emerald-500/10",
     borderColor: "border-emerald-500/40",
-    pointerClass: "text-emerald-500 stroke-emerald-500",
     labelBg: "bg-emerald-500",
   },
   {
@@ -54,10 +143,10 @@ const segments: {
     subtitle: "Configuration",
     description: "Setup guides, notifications & permissions",
     icon: <Settings className="h-5 w-5" />,
+    pointerIcon: <ConfigPointerIcon />,
     color: "text-amber-500",
     bgColor: "bg-amber-500/10",
     borderColor: "border-amber-500/40",
-    pointerClass: "text-amber-500 stroke-amber-500",
     labelBg: "bg-amber-500",
   },
 ];
@@ -77,7 +166,6 @@ export function SegmentTabs({
   const handleSegmentClick = (segmentId: string) => {
     const params = new URLSearchParams();
     if (segmentId === selectedSegment) {
-      // Toggle off — show all
       router.push(pathname);
     } else {
       params.set("segment", segmentId);
@@ -123,7 +211,7 @@ export function SegmentTabs({
                   : "border-border hover:border-border/80 hover:bg-muted/30"
               )}
             >
-              <Pointer className={segment.pointerClass} name={segment.subtitle} />
+              <Pointer>{segment.pointerIcon}</Pointer>
 
               <div className="flex items-start gap-3">
                 <div
