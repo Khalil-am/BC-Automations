@@ -7,11 +7,18 @@ const TRELLO_BOARD_ID = process.env.TRELLO_BOARD_ID!;
 const BASE_COUNT = 55;
 
 const AUTOMATION_LABEL = "automation";
+const DONE_LIST_NAME = "done";
 
 interface TrelloCard {
   id: string;
   name: string;
+  idList: string;
   labels: { id: string; name: string }[];
+}
+
+interface TrelloList {
+  id: string;
+  name: string;
 }
 
 // In-memory cache
@@ -28,25 +35,50 @@ export async function GET() {
       });
     }
 
-    // Fetch all cards from the board
-    const trelloUrl = `https://api.trello.com/1/boards/${TRELLO_BOARD_ID}/cards?key=${TRELLO_API_KEY}&token=${TRELLO_TOKEN}&fields=name,labels&limit=1000`;
+    const authParams = `key=${TRELLO_API_KEY}&token=${TRELLO_TOKEN}`;
 
-    const trelloResponse = await fetch(trelloUrl, { cache: "no-store" });
+    // Fetch lists and cards in parallel
+    const [listsResponse, cardsResponse] = await Promise.all([
+      fetch(
+        `https://api.trello.com/1/boards/${TRELLO_BOARD_ID}/lists?${authParams}&fields=name`,
+        { cache: "no-store" }
+      ),
+      fetch(
+        `https://api.trello.com/1/boards/${TRELLO_BOARD_ID}/cards?${authParams}&fields=name,labels,idList&limit=1000`,
+        { cache: "no-store" }
+      ),
+    ]);
 
-    if (!trelloResponse.ok) {
-      throw new Error(`Trello API error: ${trelloResponse.status}`);
+    if (!listsResponse.ok || !cardsResponse.ok) {
+      throw new Error(
+        `Trello API error: lists=${listsResponse.status} cards=${cardsResponse.status}`
+      );
     }
 
-    const allCards: TrelloCard[] = await trelloResponse.json();
+    const allLists: TrelloList[] = await listsResponse.json();
+    const allCards: TrelloCard[] = await cardsResponse.json();
 
-    // Count cards with the "automation" label
-    const automationCards = allCards.filter((card) =>
-      card.labels.some(
-        (label) => label.name.toLowerCase() === AUTOMATION_LABEL
-      )
+    // Find the Done list (case-insensitive)
+    const doneList = allLists.find(
+      (list) => list.name.toLowerCase() === DONE_LIST_NAME
     );
 
-    const totalCount = BASE_COUNT + automationCards.length;
+    if (!doneList) {
+      throw new Error(
+        `No "${DONE_LIST_NAME}" list found. Available: ${allLists.map((l) => l.name).join(", ")}`
+      );
+    }
+
+    // Count cards in Done list with the "automation" label
+    const automationDoneCards = allCards.filter(
+      (card) =>
+        card.idList === doneList.id &&
+        card.labels.some(
+          (label) => label.name.toLowerCase() === AUTOMATION_LABEL
+        )
+    );
+
+    const totalCount = BASE_COUNT + automationDoneCards.length;
 
     // Update cache
     cachedResult = { count: totalCount, timestamp: Date.now() };
