@@ -1,0 +1,300 @@
+---
+title: "PPlus Bulk Data Migration with TypeScript"
+description: "Migrate an entire portfolio (Portfolios, Initiatives, Projects, Risks, Issues, Stakeholders, Contracts, Payment Plans, Progress Updates, and .mpp project schedules) into any PPlus instance with reusable TypeScript scripts. End-to-end playbook validated on PIF: 276 records and 19 schedules in one run."
+date: "2026-04-29"
+tags: ["PPlus", "Data Migration"]
+segment: "BC"
+featured: true
+readTime: "10 min read"
+author: "Khalil Abu Mushref"
+---
+
+## Automation Name
+
+**PPlus Bulk Data Migration — Excel + .mpp → Live Instance**
+
+A reusable TypeScript script set that takes a client's migration Excel workbook plus their Microsoft Project schedule files and writes everything into a target PPlus instance via API — no UI clicking, fully resumable, and idempotent.
+
+**Why this matters:** A typical onboarding has 250–500 records across 8–10 sheets, plus 10–30 `.mpp` schedules. Doing this through the UI takes a person 1–2 days and produces inconsistent dates, broken parent links, and wrong managers. This automation does it in **under 10 minutes**.
+
+---
+
+## What it migrates
+
+| Entity | Source | Endpoint pattern |
+|---|---|---|
+| Portfolios (L2) | `Portfolio` sheet | `POST /Service/api/Levels/2` |
+| Initiatives (L3) | `Initiative` sheet | `POST /Service/api/Levels/3` (with `sources: [portfolioId]`) |
+| Projects (L1) | `Project` sheet | `POST /Service/api/Levels/1` (with `sources: [initiativeId]`) |
+| Risks | `Risk` sheet | `POST /Service/api/Levels/1/{projectId}/Risks` |
+| Issues | `Issue` sheet | `POST /Service/api/Levels/1/{projectId}/Issues` |
+| Stakeholders | `Stakeholders` sheet | `POST /Service/api/Levels/1/{projectId}/Stakeholders` |
+| Progress Updates | `Progress Update` sheet | `POST /Service/api/Levels/1/{projectId}/ProgressStatus` |
+| Contracts (custom log) | `Contracts` sheet | `POST /Service/api/Levels/1/{projectId}/K_Contracts_xxx` |
+| Payment Plans (custom log) | `Payment Plan` sheet | `POST /Service/api/Levels/1/{projectId}/K_Payment_Plan_xxx` |
+| Project Schedules | `.mpp` / `.xer` files | Two-step parse + save (see below) |
+
+---
+
+## How it works
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  Phase 1: Auth & Discovery                               │
+│  Read JWT + csr from browser localStorage               │
+│  List levels, users, lookups, existing components       │
+├──────────────────────────────────────────────────────────┤
+│  Phase 2: Cleanup (optional)                             │
+│  Delete logs first, then components bottom-up           │
+│  L1 → L3 → L2  (children before parents)                │
+├──────────────────────────────────────────────────────────┤
+│  Phase 3: Migrate Hierarchy (top-down)                   │
+│  Portfolios → Initiatives (link to Portfolio)           │
+│  → Projects (link to Initiative)                        │
+│  Save state.json after each — fully resumable           │
+├──────────────────────────────────────────────────────────┤
+│  Phase 4: Migrate Logs                                   │
+│  Risks, Issues, Stakeholders, Progress Updates,         │
+│  Contracts, Payment Plans — all attach to projects      │
+├──────────────────────────────────────────────────────────┤
+│  Phase 5: Schedule Import (.mpp / .xer)                  │
+│  For each file:                                         │
+│    a. POST /Service/api/Tasks/mmp/import   (parse)      │
+│    b. PATCH /Service/api/Tasks/{lvl}/{id}  (save)       │
+│    With overrideCurrent: true and flattened tree        │
+├──────────────────────────────────────────────────────────┤
+│  Phase 6: Verify                                         │
+│  Re-read level summaries, count records, spot-check     │
+└──────────────────────────────────────────────────────────┘
+```
+
+---
+
+## The reusable `api.ts` helper
+
+Every script imports this single helper:
+
+```ts
+// api.ts
+import * as fs from 'fs';
+
+const auth = JSON.parse(fs.readFileSync('auth.json', 'utf8'));
+export const BASE = auth.baseUrl;
+export const TOKEN = auth.token;
+export const CSR = auth.csr;
+
+export async function api(path: string, options: any = {}): Promise<any> {
+  const url = path.startsWith('http') ? path : `${BASE}${path}`;
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+      csr: CSR,
+      'Content-Type': 'application/json',
+      ...(options.headers || {}),
+    },
+  });
+  const text = await res.text();
+  let data: any;
+  try { data = JSON.parse(text); } catch { data = text; }
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status} on ${options.method || 'GET'} ${path}: ${text.slice(0, 500)}`);
+  }
+  return data;
+}
+```
+
+Auth is captured once from the browser's DevTools console:
+
+```js
+const u = JSON.parse(localStorage.getItem('currentUser'));
+console.log({
+  token: u.data.token,                    // JWT
+  csr: localStorage.getItem('csr'),       // = "=8yPFwmIQPX96bxPVFP_62WCH*+o]v*g" on every PPlus instance
+  cacheSession: u.cacheSession
+});
+```
+
+---
+
+## Creating a level component
+
+The shape is identical for any level — only `levelId`, `props[]`, and `sources[]` change:
+
+```ts
+const body = {
+  name: { ar: "اسم عربي", en: "English Name" },
+  props: [
+    {
+      id: 0, propertyId: 8014,
+      key: "K_Portfolio_Dvrc9wzwV6OJD1sB_manager",
+      value: "<userId>", viewType: "User",
+      label: "Portfolio Manager",
+      AlldataForItem: { userId, displayName, userName, photo, email },
+      order: 14, isBasic: false
+    },
+    // ...other props
+  ],
+  levelId: 2,
+  sources: [],                  // [] for root, [parentId] for child levels
+  attachments: [],
+  isDraft: false,
+  returnURL: null
+};
+const r = await api('/Service/api/Levels/2', { method: 'POST', body: JSON.stringify(body) });
+const newPortfolioId = r.data;
+```
+
+**Three things will trip you up if you skip discovery:**
+
+1. **Property keys are per-instance** — they include random suffixes like `_OtB`, `_MCP`. Always read one existing record first to harvest them.
+2. **User props need `AlldataForItem`** — passing only the userId works on some endpoints, fails silently on others. Always include the full user object.
+3. **Lookup props need `{ id: <itemId> }`** for level creates, but **string keys** (`"Low"`, `"High"`) for Risks/Issues. Don't mix the two formats.
+
+---
+
+## The schedule import — two-step flow
+
+Unlike everything else, importing a `.mpp` file requires two API calls:
+
+### Step 1 — Parse the file
+
+```ts
+const fd = new FormData();
+fd.append('file', new Blob([fs.readFileSync(filePath)]), 'Project.mpp');
+fd.append('levelId', String(projectId));
+
+const parseRes = await fetch(`${BASE}/Service/api/Tasks/mmp/import`, {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${TOKEN}`, csr: CSR },
+  body: fd
+});
+const parsed = await parseRes.json();   // { data: [tree of tasks with .children] }
+```
+
+> Yes, the URL really is `/mmp/import` (not `/mpp/import`). Typo in the product, kept for backward compatibility.
+
+### Step 2 — Save the schedule
+
+The save endpoint expects a **flattened DFS-ordered array** with `parentGuid` references and a few field renames:
+
+```ts
+function flattenTasks(tree: any[]): any[] {
+  const out: any[] = [];
+  let id = 0;
+  function walk(nodes: any[], parentGuid?: string) {
+    for (const node of nodes) {
+      const flat: any = {
+        id: id++,
+        startDate: node.startDate,
+        finishDate: node.finishDate,
+        baselineStart: node.baselineStart || node.startDate,
+        baselineFinish: node.baselineFinish || node.finishDate,
+        customProperties: node.customProperties || [],
+        progress: node.progress || '0%',
+        name: node.name,
+        guid: node.guid,
+        predecessors: node.predecessor                       // singular -> plural
+          ? (Array.isArray(node.predecessor) ? node.predecessor : [node.predecessor])
+          : [],
+        isSelected: true,
+        isMilestone: !!node.isMilestone,
+      };
+      if (parentGuid) flat.parentGuid = parentGuid;
+      if (node.assignedTo) {
+        flat.assignedTo = typeof node.assignedTo === 'string'
+          ? node.assignedTo : node.assignedTo.userId;        // unwrap to id string
+      }
+      out.push(flat);
+      if (node.children?.length) walk(node.children, node.guid);
+    }
+  }
+  walk(tree);
+  return out;
+}
+
+await fetch(`${BASE}/Service/api/Tasks/1/${projectId}`, {
+  method: 'PATCH',
+  headers: { Authorization: `Bearer ${TOKEN}`, csr: CSR, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ overrideCurrent: true, data: flattenTasks(parsed.data) })
+});
+```
+
+The two field renames (`predecessor` → `predecessors`, `assignedTo` object → string) are mandatory — the parse output and save input use different conventions.
+
+---
+
+## Reliability — what actually breaks in production
+
+After running this on PIF (and seeing every failure mode at least once), here's what your script must handle:
+
+| Failure | Cause | Fix |
+|---|---|---|
+| **HTTP 422 `الاسم مكرر`** | Duplicate name at this level | De-duplicate the source data, or delete the existing record first |
+| **HTTP 422 `اسم المستخدم الداخلي غير صالح`** | Stakeholder marked Internal but the user doesn't exist | Force `position: "External"` and put the name in `externalUsername` |
+| **HTTP 502 / 503 from nginx** | MS Project parser overloaded on large files | Exponential backoff retry (5/10/15/20s) |
+| **Save returns 200 but no tasks appear** | Wrong `schemaLevelId` in `/Tasks/{lvl}/{id}` | Read `data.level.id` from the project record |
+| **Excel project name doesn't match** | Whitespace, plurals, typos in source data | Multi-stage fuzzy matcher: exact → case-insensitive → substring → hardcoded aliases |
+| **JWT expired mid-run** | 24h token lifetime | Save `state.json` after every record so the script is restartable |
+
+The complete failure-mode catalog is documented in the [data-migration-troubleshooting](https://github.com/MasterteamSA/pplus-knowledge/blob/development/knowledge/data-migration/troubleshooting.md) chunk.
+
+---
+
+## Validated results — PIF migration
+
+| Entity | Excel rows | Migrated | Success rate |
+|---|---:|---:|---|
+| Portfolios | 2 | 2 | 100% |
+| Initiatives | 5 | 5 | 100% |
+| Projects | 55 | 55 | 100% |
+| Risks | 54 | 54 | 100% |
+| Issues | 11 | 11 | 100% |
+| Stakeholders | 54 | 54 | 100% |
+| Progress Updates | 28 | 28 | 100% |
+| Contracts | 27 | 27 | 100% |
+| Payment Plans | 40 | 40 | 100% |
+| Project Schedules (.mpp) | 19 | 19 | 100% |
+| **Total tasks imported from .mpp** | — | **6,693** | — |
+
+Total runtime: ~8 minutes including a 60s recovery wait for the largest schedule (Marketing Plan, 8 MB).
+
+---
+
+## What's already in the knowledge base
+
+This entire workflow is documented as 6 chunks under the `data-migration` category in the [PPlus knowledge MCP server](https://github.com/MasterteamSA/PPlus-Agent):
+
+| Chunk | What's in it |
+|---|---|
+| `data-migration-overview` | End-to-end flow, auth setup, hierarchy ordering rules, complete checklist |
+| `data-migration-create-payloads` | Exact create-record bodies for Portfolio/Initiative/Project |
+| `data-migration-log-payloads` | Risks/Issues/Stakeholders + custom log payloads |
+| `data-migration-schedule-mpp-import` | `.mpp`/`.xer` two-step parse+save with reusable `importMppFile()` |
+| `data-migration-excel-mapping` | Sheet structure, Excel-serial date, fuzzy parent matching, email→userId |
+| `data-migration-troubleshooting` | Every failure mode with root cause and fix |
+
+Once the MCP server is connected, Claude Code can answer migration questions instantly with the same level of detail.
+
+---
+
+## When to use it
+
+| Use this for | Don't use this for |
+|---|---|
+| Onboarding a new client with a filled migration sheet | Live-running production updates (use the UI for those) |
+| Re-platforming from another PMO tool to PPlus | Single-record edits |
+| Restoring a dev/test environment to a known seed state | Anything where you don't have admin credentials |
+| Building a CI seed pipeline for a tenant | Migrations to instances with custom approval workflows on creation (you'd need to handle approvals separately) |
+
+---
+
+## What's next
+
+This release covers the standard log set. Coming improvements:
+- **Tasks/Deliverables/Milestones direct import** when the source is Excel rather than .mpp
+- **User auto-creation** when migration emails reference users not yet in the instance
+- **Diff mode** — compare a migration sheet against current instance state and apply only the delta
+- **Approval-aware mode** — for instances where create requests trigger approval workflows
+
+For now, the script handles the most common 90% — the remaining edge cases are documented in the troubleshooting chunk so you can handle them per-instance.
