@@ -7,7 +7,9 @@ const TRELLO_BOARD_ID = process.env.TRELLO_BOARD_ID!;
 const BASE_COUNT = 79;
 
 const AUTOMATION_LABEL = "automation";
-const DONE_LIST_NAME = "done";
+// Match any list whose name starts with "done" (case-insensitive)
+// e.g. "Done", "Done (Business)", "Done - Q1"
+const DONE_LIST_PREFIX = "done";
 
 interface TrelloCard {
   id: string;
@@ -58,21 +60,24 @@ export async function GET() {
     const allLists: TrelloList[] = await listsResponse.json();
     const allCards: TrelloCard[] = await cardsResponse.json();
 
-    // Find the Done list (case-insensitive)
-    const doneList = allLists.find(
-      (list) => list.name.toLowerCase() === DONE_LIST_NAME
+    // Find ALL lists whose name starts with "done" (case-insensitive)
+    // Catches "Done", "Done (Business)", "Done - Q1", etc.
+    const doneListIds = new Set(
+      allLists
+        .filter((list) => list.name.trim().toLowerCase().startsWith(DONE_LIST_PREFIX))
+        .map((list) => list.id)
     );
 
-    if (!doneList) {
+    if (doneListIds.size === 0) {
       throw new Error(
-        `No "${DONE_LIST_NAME}" list found. Available: ${allLists.map((l) => l.name).join(", ")}`
+        `No list starting with "${DONE_LIST_PREFIX}" found. Available: ${allLists.map((l) => l.name).join(", ")}`
       );
     }
 
-    // Count cards in Done list with the "automation" label
+    // Count cards in any Done list with the "automation" label
     const automationDoneCards = allCards.filter(
       (card) =>
-        card.idList === doneList.id &&
+        doneListIds.has(card.idList) &&
         card.labels.some(
           (label) => label.name.toLowerCase() === AUTOMATION_LABEL
         )
